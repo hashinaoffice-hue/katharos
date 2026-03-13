@@ -34,7 +34,7 @@
             --blue-bg: #E8F3FF; --dark-gray-bg: #333D4B;
         }
 
-        /* 기기/브라우저 강제 다크모드 방어 (무조건 라이트모드 변수 덮어쓰기) */
+        /* 기기/브라우저 강제 다크모드 방어 */
         @media (prefers-color-scheme: dark) {
             :root {
                 --brand-color: #036eb8; 
@@ -63,8 +63,8 @@
         }
 
         #app-container { 
-            display: flex; width: 100%; height: calc(100dvh - var(--nav-height) - env(safe-area-inset-bottom)); 
-            flex-direction: column; position: relative;
+            display: none; width: 100%; height: calc(100dvh - var(--nav-height) - env(safe-area-inset-bottom)); 
+            flex-direction: column; position: relative; opacity: 0; transition: opacity 0.3s ease-in;
         }
 
         .view-section {
@@ -75,7 +75,6 @@
         
         .view-header { padding: 32px 24px 16px 24px; flex-shrink: 0; background: var(--bg-color); z-index: 10; }
         
-        /* 홈화면 상단 여백 넉넉하게 확보 */
         #view-home .view-header { padding-top: 85px; padding-bottom: 12px; }
 
         .scroll-area { flex: 1; overflow-y: auto; touch-action: pan-y; padding: 0 24px 32px 24px; -ms-overflow-style: none; scrollbar-width: none; }
@@ -91,19 +90,18 @@
 
         #fx-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 10000; pointer-events: none; display: none; }
 
-        #login-overlay { position:fixed; top:0; left:0; width:100vw; height:100vh; background:var(--bg-color); background-image: linear-gradient(var(--bg-color), var(--bg-color)); z-index:9000; display:none; flex-direction:column; justify-content:center; align-items:center; padding:24px; }
+        /* 로그인 오버레이 */
+        #login-overlay { position:fixed; top:0; left:0; width:100vw; height:100vh; background:var(--bg-color); background-image: linear-gradient(var(--bg-color), var(--bg-color)); z-index:9000; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:32px; }
         
-        /* --- 캐릭터 구조 및 모션 설정 --- */
-        /* 컨테이너 높이를 명시적으로 주어 터질때 하단 글씨가 올라오지 않게 고정 */
+        /* --- 캐릭터 설정 --- */
         .helper-container { display: flex; justify-content: center; margin-bottom: 20px; position: relative; height: 66px; }
         
-        /* 둥둥 떠다니는 모션을 감싸는 래퍼. scale 모션과 충돌 방지용 */
         #helper-floater { animation: float 2.5s ease-in-out infinite; transform-origin: bottom center; }
         
         .helper-character {
             width: 66px; height: 66px; background-color: var(--brand-color); border-radius: 30px 30px 20px 20px; position: relative;
             box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1); cursor: pointer; transition: transform 0.4s ease; z-index: 10;
-            transform-origin: bottom center; /* 아래를 기준으로 부풀어 오름 */
+            transform-origin: bottom center;
         }
         .helper-character::before, .helper-character::after { content: ''; position: absolute; background: #fff; width: 8px; height: 12px; border-radius: 50%; top: 22px; transition: all 0.2s ease; }
         .helper-character::before { left: 14px; } .helper-character::after { right: 14px; }
@@ -120,7 +118,6 @@
 
         .motion-jump { animation: jump 0.6s ease !important; } .motion-spin { animation: spin 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; } .motion-squish { animation: squish 0.5s ease !important; } .motion-wiggle { animation: wiggle 0.5s ease !important; }
         
-        /* 표정들 */
         .helper-character.face-surprised::before, .helper-character.face-surprised::after { height: 14px; width: 14px; top: 20px; border-top: none; background: #fff;} 
         .helper-character.face-surprised .smile { width: 10px; height: 10px; border: 3px solid #fff; border-radius: 50%; bottom: 12px; background: transparent; transform: translateX(-50%); }
         .helper-character.face-wink::before { transform: scaleY(0.2); border-top: none; background: #fff;} 
@@ -128,7 +125,6 @@
         .helper-character.face-happy::before, .helper-character.face-happy::after { border-top: 3px solid #fff; background: transparent; height: 8px; width: 12px; border-radius: 50% 50% 0 0; top: 24px; transform: none;} 
         .helper-character.face-happy .smile { width: 20px; height: 12px; bottom: 12px; border: none; border-bottom: 2.5px solid #fff; border-radius: 0 0 20px 20px; background: transparent; transform: translateX(-50%);}
         
-        /* 꾹 누를 때 볼 빵빵하게 부푸는 표정 추가 */
         .helper-character.face-puff::before, .helper-character.face-puff::after { height: 6px; width: 6px; top: 22px; background: #fff; border-radius: 50%; border: none; transform: none;} 
         .helper-character.face-puff::before { left: 10px; }
         .helper-character.face-puff::after { right: 10px; }
@@ -136,14 +132,14 @@
 
         .greeting { font-size: 21px; font-weight: 700; line-height: 1.4; margin-bottom: 20px; text-align: center; word-break: keep-all; letter-spacing: -0.5px; transition: color 0.4s ease; }
 
-        /* 검색바 비율 조정 */
+        /* 검색바 */
         .search-container { position: relative; margin-bottom: 20px; }
         .search-container input { width: 100%; padding: 15px 20px 15px 48px; border: none; border-radius: 16px; background-color: var(--gray-100); font-size: 15px; color: var(--text-main); outline: none; transition: all 0.2s; }
         .search-container input:focus { background-color: var(--gray-50); box-shadow: 0 0 0 2px var(--brand-color) inset; }
         .search-container input::placeholder { color: var(--gray-600); }
         .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; fill: var(--gray-600); }
         
-        /* 대시보드 카드 비율 압축 */
+        /* 대시보드 카드 */
         .dashboard-header { font-size: 17px; font-weight: 700; margin-bottom: 12px; color: var(--text-main); }
         .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-bottom: 10px; }
         .dash-card { background: var(--gray-50); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; border: 1px solid var(--gray-100); transition: all 0.4s ease; }
@@ -152,7 +148,7 @@
         .dash-value { font-size: 14px; font-weight: 600; color: var(--text-main); line-height: 1.4; word-break: keep-all;}
         .dash-value b { color: var(--brand-color); font-size: 20px; font-weight: 800; margin-right: 2px;}
 
-        /* --- 캘린더 화면 --- */
+        /* 캘린더 화면 */
         .calendar-header { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; }
         .calendar-month { font-size: 24px; font-weight: 800; }
         .calendar-year { font-size: 16px; font-weight: 700; color: var(--gray-600); cursor: pointer; padding: 6px 12px; border-radius: 12px; background: var(--gray-50); transition: background 0.2s; }
@@ -185,7 +181,7 @@
         .schedule-box.type-apply { background-color: var(--yellow-bg); border-color: transparent; } .schedule-box.type-apply .sch-name { color: var(--yellow-color); } .schedule-box.type-apply .sch-type { color: var(--yellow-color); background-color: #fff; border-color: var(--yellow-border); }
         .schedule-empty { text-align: center; color: var(--gray-400); padding: 30px; font-size: 14px; font-weight:500;}
 
-        /* --- 매장관리 탭 --- */
+        /* 매장관리 탭 */
         .store-sub-view { display: none; animation: fadeIn 0.3s ease; flex-direction: column; height: 100%; width: 100%;}
         .store-sub-view.active { display: flex; }
         
@@ -280,7 +276,14 @@
         .ts-content { overflow-y: auto; flex: 1; padding-bottom: 10px; -ms-overflow-style: none; scrollbar-width: none;}
         .ts-content::-webkit-scrollbar { display: none; }
 
-        /* --- 컨설팅 탭 --- */
+        /* 공통 체크박스 UI 재사용 */
+        .hygiene-check { display: none; }
+        .custom-chk { width: 22px; height: 22px; border: 2px solid var(--gray-300); border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; background: #fff;}
+        .hygiene-check:checked + .custom-chk { background-color: var(--brand-color); border-color: var(--brand-color); }
+        .hygiene-check:checked + .custom-chk::after { content: ''; width: 5px; height: 10px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-bottom: 2px; }
+        .hygiene-check:disabled + .custom-chk { background-color: var(--gray-100); border-color: var(--gray-200); opacity: 0.5; }
+
+        /* 컨설팅 탭 */
         .accordion-item { background: white; border: 1px solid var(--gray-100); border-radius: 20px; margin-bottom: 12px; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.02);}
         .accordion-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 16px; color: var(--text-main); cursor: pointer; background: var(--gray-50);}
         .accordion-header svg { width: 20px; height: 20px; transition: transform 0.2s; }
@@ -296,12 +299,6 @@
         .chk-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0;}
         .btn-na { background: var(--gray-100); color: var(--gray-600); border: none; padding: 5px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
         .btn-na.active { background: var(--gray-800); color: white; }
-        
-        .hygiene-check { display: none; }
-        .custom-chk { width: 22px; height: 22px; border: 2px solid var(--gray-300); border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; background: #fff;}
-        .hygiene-check:checked + .custom-chk { background-color: var(--brand-color); border-color: var(--brand-color); }
-        .hygiene-check:checked + .custom-chk::after { content: ''; width: 5px; height: 10px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-bottom: 2px; }
-        .hygiene-check:disabled + .custom-chk { background-color: var(--gray-100); border-color: var(--gray-200); opacity: 0.5; }
 
         /* 하단 고정 점수 & 저장 바 */
         .score-bar {
@@ -384,10 +381,17 @@
     <div id="toast" class="toast">알림 메시지</div>
 
     <div id="login-overlay">
-        <img src="logo2.png" alt="로고" style="width:120px; margin-bottom:32px;" onerror="this.style.display='none'">
-        <h2 style="font-size:24px; font-weight:800; margin-bottom:24px; color:var(--text-main);">카다로스 로그인</h2>
+        <img src="logo2.png" alt="로고" style="width:240px; margin-bottom:40px;" onerror="this.style.display='none'">
+        
         <input type="email" id="login-email" class="form-input" placeholder="이메일" style="margin-bottom:12px;">
-        <input type="password" id="login-pw" class="form-input" placeholder="비밀번호" style="margin-bottom:24px;">
+        <input type="password" id="login-pw" class="form-input" placeholder="비밀번호" style="margin-bottom:16px;">
+        
+        <label style="display:flex; align-items:center; gap:10px; margin-bottom:24px; cursor:pointer; width:100%; justify-content:flex-start; padding-left:4px;">
+            <input type="checkbox" id="login-remember" class="hygiene-check" checked>
+            <div class="custom-chk"></div>
+            <span style="font-size:15px; font-weight:600; color:var(--text-main);">자동 로그인 유지</span>
+        </label>
+
         <button class="btn-submit" onclick="handleLogin()" style="margin-top:0;">로그인</button>
     </div>
 
@@ -705,22 +709,35 @@ const firebaseConfig = {
             }
         }
 
+        // 로그인 유지 로직 추가
         window.handleLogin = function() {
             const email = document.getElementById('login-email').value;
             const pw = document.getElementById('login-pw').value;
+            const remember = document.getElementById('login-remember').checked;
+
             if(!email || !pw) return showToast("이메일과 비밀번호를 모두 입력해주세요.");
             
-            auth.signInWithEmailAndPassword(email, pw).then(() => {
-                showToast("로그인 되었습니다.");
-            }).catch(error => {
-                showToast("로그인 실패: " + error.message);
-            });
+            // 체크 여부에 따라 로컬(영구) 또는 세션(앱 종료시 해제) 모드 설정
+            const persistence = remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
+
+            auth.setPersistence(persistence)
+                .then(() => {
+                    return auth.signInWithEmailAndPassword(email, pw);
+                })
+                .then(() => {
+                    showToast("로그인 되었습니다.");
+                })
+                .catch(error => {
+                    showToast("로그인 실패: " + error.message);
+                });
         };
 
         window.handleLogout = function() {
             auth.signOut().then(() => {
                 showToast("로그아웃 되었습니다.");
                 storesData = [];
+                // 재로그인을 위해 비번 칸 초기화
+                document.getElementById('login-pw').value = '';
             });
         };
 
@@ -787,7 +804,6 @@ const firebaseConfig = {
 
         document.addEventListener("DOMContentLoaded", () => {
 
-            // 캔버스 해상도 맞춤 (터질때 화질 저하 방지)
             const canvas = document.getElementById('fx-canvas');
             const ctx = canvas.getContext('2d');
             function resizeCanvas() {
@@ -797,7 +813,6 @@ const firebaseConfig = {
             window.addEventListener('resize', resizeCanvas);
             resizeCanvas();
 
-            // --- 캐릭터 애니메이션 (프로 레벨) ---
             const helperChar = document.getElementById('helper-char');
             const motions = ['motion-jump', 'motion-spin', 'motion-squish', 'motion-wiggle']; 
             const faces = ['face-happy', 'face-surprised', 'face-wink'];
@@ -807,7 +822,6 @@ const firebaseConfig = {
             let isInflating = false; let isPopped = false;
             let pressStartTime = 0; let rafId = null;
 
-            // 1. 일반 클릭 액션 (감정 표현)
             function doClickAction() {
                 if (!isGolden && Math.random() < 0.03) { 
                     isTransitioning = true; isGolden = true; playMotionGraphicWipe(true); return; 
@@ -817,7 +831,6 @@ const firebaseConfig = {
                 helperChar.classList.add(rm, rf); setTimeout(() => { helperChar.classList.remove(rm, rf); }, 600);
             }
 
-            // 2. 3% 확률 황금이 전환 모션
             function playMotionGraphicWipe(isToGolden) {
                 canvas.style.display = 'block'; 
                 let start = null; const duration = 2000;
@@ -851,12 +864,10 @@ const firebaseConfig = {
                 else { document.body.classList.remove('golden-theme'); helperChar.classList.remove('golden'); greeting.innerHTML = "카다로스 업무 도우미입니다.<br>무엇을 도와드릴까요?"; }
             }
 
-            // 3. 액체 폭발 물리엔진 (프로 디테일)
             function triggerLiquidPop() {
                 isPopped = true;
                 isInflating = false;
                 
-                // 터지는 순간 캐릭터 숨김 (레이아웃 밀림 방지를 위해 투명도+스케일 조정)
                 helperChar.style.transition = 'none';
                 helperChar.style.opacity = '0';
                 helperChar.style.transform = 'scale(0)';
@@ -868,12 +879,10 @@ const firebaseConfig = {
                 const centerX = rect.left + rect.width / 2;
                 const centerY = rect.top + rect.height / 2;
 
-                // 페인트 액체 파티클 세팅
                 let pList = Array.from({length: 70}, () => {
                     const angle = Math.random() * Math.PI * 2;
                     const speed = Math.random() * 45 + 15; 
                     
-                    // 황금/일반 색상 미세 톤 변화 부여
                     let pColor = isGolden ? 
                         `rgba(${200 + Math.random()*55}, ${150 + Math.random()*50}, 30, 1)` : 
                         `rgba(${10 + Math.random()*20}, ${90 + Math.random()*40}, ${170 + Math.random()*50}, 1)`;
@@ -883,7 +892,7 @@ const firebaseConfig = {
                         vx: Math.cos(angle) * speed,
                         vy: Math.sin(angle) * speed,
                         size: Math.random() * 14 + 4,
-                        friction: 0.80 + Math.random() * 0.08, // 벽에 부딪혀 멈추는 마찰력
+                        friction: 0.80 + Math.random() * 0.08,
                         color: pColor
                     };
                 });
@@ -897,7 +906,6 @@ const firebaseConfig = {
                     let allGathered = true;
 
                     pList.forEach(p => {
-                        // 터져서 튀어나가기 (0 ~ 0.8초)
                         if (elapsed < 800) {
                             p.x += p.vx;
                             p.y += p.vy;
@@ -905,7 +913,6 @@ const firebaseConfig = {
                             p.vy *= p.friction;
                             allGathered = false;
                         } 
-                        // 역재생으로 다시 중앙으로 모이기 (0.8초 ~ 1.8초)
                         else if (elapsed >= 800 && elapsed < 1800) {
                             const dx = centerX - p.x;
                             const dy = centerY - p.y;
@@ -913,7 +920,6 @@ const firebaseConfig = {
                             
                             if (dist > 8) {
                                 allGathered = false;
-                                // 시간이 지날수록 빨려들어가는 힘 가속
                                 const gatherForce = Math.pow((elapsed - 800) / 1000, 2) * 0.4; 
                                 p.vx += dx * gatherForce;
                                 p.vy += dy * gatherForce;
@@ -929,7 +935,6 @@ const firebaseConfig = {
                             }
                         }
 
-                        // 물방울 찌그러짐 디테일 (속도 비례 타원)
                         const speedSq = p.vx*p.vx + p.vy*p.vy;
                         const stretch = Math.max(1, speedSq * 0.015);
                         const angle = Math.atan2(p.vy, p.vx);
@@ -947,7 +952,6 @@ const firebaseConfig = {
                     if (elapsed < 1800 || !allGathered) {
                         rafId = requestAnimationFrame(renderPop);
                     } else {
-                        // 복구 (뿅! 하고 나타남)
                         canvas.style.display = 'none';
                         
                         helperChar.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s';
@@ -958,7 +962,7 @@ const firebaseConfig = {
 
                         setTimeout(() => {
                             isPopped = false;
-                            helperChar.style.transition = 'transform 0.4s ease'; // 일반 트랜지션 원복
+                            helperChar.style.transition = 'transform 0.4s ease'; 
                             helperChar.style.transform = '';
                         }, 600);
                     }
@@ -968,21 +972,19 @@ const firebaseConfig = {
                 rafId = requestAnimationFrame(renderPop);
             }
 
-            // 4. 누르기 이벤트 핸들링
             const startPress = (e) => { 
                 if (isTransitioning || isPopped) return; 
                 isPressing = true; 
                 pressStartTime = Date.now();
                 
-                // 0.5초 동안 누르고 있으면 부풀기 시작
                 pressTimer = setTimeout(() => { 
                     if(!isPressing) return;
                     isInflating = true;
-                    helperChar.classList.add('face-puff'); // 볼 빵빵 표정
-                    helperChar.style.transition = 'transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                    helperChar.style.transform = 'scale(2.8)';
+                    helperChar.classList.add('face-puff');
                     
-                    // 1.5초 더 부풀면 (총 2초) 터짐
+                    helperChar.style.transition = 'transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                    helperChar.style.transform = 'scale(2.5)';
+                    
                     explodeTimer = setTimeout(() => { 
                         if(isInflating) triggerLiquidPop();
                     }, 1500); 
@@ -998,11 +1000,9 @@ const firebaseConfig = {
                 
                 const holdDuration = Date.now() - pressStartTime;
 
-                // 0.5초 안되서 뗐을 땐 일반 클릭 감정표현
                 if(holdDuration < 500 && !isPopped && !isTransitioning) {
                     doClickAction();
                 } 
-                // 부풀어 오르다가 터지기 전에 뗐을 땐 바람 빠지며 원상복구
                 else if (isInflating && !isPopped) {
                     isInflating = false;
                     helperChar.classList.remove('face-puff');
@@ -1016,7 +1016,6 @@ const firebaseConfig = {
             helperChar.addEventListener('touchend', cancelPress); helperChar.addEventListener('touchcancel', cancelPress);
 
 
-            // 네비게이션
             const navItems = document.querySelectorAll('.nav-item');
             const viewSections = document.querySelectorAll('.view-section');
             navItems.forEach(item => {
@@ -1033,7 +1032,6 @@ const firebaseConfig = {
                 });
             });
 
-            // 검색 & 대시보드
             document.getElementById('home-search-input').addEventListener('input', function(e) {
                 const query = e.target.value.trim().toLowerCase();
                 const dash = document.getElementById('dashboard'); const dashHeader = document.getElementById('home-dash-header'); const resWrap = document.getElementById('home-search-results');
@@ -1082,7 +1080,6 @@ const firebaseConfig = {
                 document.getElementById('dash-next-week').innerHTML = `<b>${nextWeekCount}</b>번의 방문<br>일정이 있어요!`;
             }
 
-            // 매장관리
             let currentListFilters = []; let isSelectionMode = false; let selectedStoreIds = new Set();
 
             window.goBackToStoreManage = function() { 
@@ -1358,10 +1355,6 @@ const firebaseConfig = {
             };
             window.applyYear = function() { const newYear = document.getElementById('year-input').value; if (newYear && !isNaN(newYear)) { currentDate.setFullYear(parseInt(newYear)); renderCalendar(); closeYearModal(); } };
 
-
-            // ==========================================
-            // 컨설팅 탭
-            // ==========================================
             let currentChecklistStoreId = null;
             let currentChecklistData = {};
 
