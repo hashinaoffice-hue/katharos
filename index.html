@@ -24,7 +24,7 @@
             --gray-600: #8b95a1;
             --gray-800: #333d4b;
             --text-main: #191f28;
-            --nav-height: 60px;
+            --nav-height: 64px;
             
             --red-color: #E53E3E; --red-bg: #FFF5F5; --red-border: #FED7D7;
             --yellow-color: #D97706; --yellow-bg: #FFFBEB; --yellow-border: #FDE68A;
@@ -35,25 +35,26 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
 
+        /* 바디 스크롤 차단 */
         body, html { 
-            width: 100vw; height: 100dvh; background-color: var(--bg-color); color: var(--text-main); 
+            width: 100%; height: 100dvh; background-color: var(--bg-color); color: var(--text-main); 
             overflow: hidden; touch-action: none; transition: background-color 0.4s ease, color 0.4s ease; 
         }
 
         /* 로그인 뷰 */
         #view-login {
             display: none; flex-direction: column; justify-content: center; align-items: center;
-            width: 100vw; height: 100dvh; background-color: var(--bg-color); position: fixed; top: 0; left: 0; z-index: 5000;
+            width: 100%; height: 100dvh; background-color: var(--bg-color); position: fixed; top: 0; left: 0; z-index: 5000;
             padding: 24px; transition: opacity 0.4s ease;
         }
         .login-box { width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 16px; text-align: center;}
         .login-box img { width: 180px; margin: 0 auto 32px auto; }
         
         .btn-google-login {
-            width: 100%; padding: 16px; background-color: white; color: #3c4043; border: 1px solid #dadce0; border-radius: 16px; font-size: 16px; font-weight: 700; margin-top: 12px; cursor: pointer; transition: transform 0.2s, background-color 0.2s; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            width: 100%; padding: 18px; background-color: white; color: #3c4043; border: 1px solid #dadce0; border-radius: 18px; font-size: 16px; font-weight: 700; cursor: pointer; transition: transform 0.2s, background-color 0.2s; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         .btn-google-login:active { transform: scale(0.98); background-color: #f8f9fa;}
-        .btn-google-login svg { width: 22px; height: 22px; }
+        .btn-google-login svg { width: 24px; height: 24px; }
 
         /* 메인 앱 컨테이너 */
         #app-container { 
@@ -61,16 +62,17 @@
             flex-direction: column; opacity: 0; transition: opacity 0.4s ease-in; position: relative;
         }
 
+        /* 뷰 관리 (여백 복구) */
         .view-section {
             display: none; flex: 1; flex-direction: column; width: 100%; height: 100%;
             animation: fadeIn 0.3s ease; position: relative; background: var(--bg-color);
         }
         .view-section.active { display: flex; }
         
-        .view-header { padding: 32px 24px 16px 24px; flex-shrink: 0; background: var(--bg-color); z-index: 10; }
+        .view-header { padding: 32px 24px 16px 24px; flex-shrink: 0; background: var(--bg-color); z-index: 10; width: 100%; box-sizing: border-box;}
         #view-home .view-header { padding-top: 50px; }
 
-        .scroll-area { flex: 1; overflow-y: auto; touch-action: pan-y; padding: 0 24px 32px 24px; -ms-overflow-style: none; scrollbar-width: none; }
+        .scroll-area { flex: 1; overflow-y: auto; touch-action: pan-y; padding: 0 24px 32px 24px; -ms-overflow-style: none; scrollbar-width: none; width: 100%; box-sizing: border-box;}
         .scroll-area::-webkit-scrollbar { display: none; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -78,10 +80,11 @@
         /* 토스트 알림창 */
         .toast {
             position: fixed; bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 24px); left: 50%; transform: translateX(-50%) translateY(50px);
-            background: rgba(25, 31, 40, 0.9); color: white; padding: 14px 24px; border-radius: 20px; font-size: 14px; font-weight: 600; opacity: 0; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 9999; pointer-events: none; box-shadow: 0 8px 24px rgba(0,0,0,0.15); white-space: nowrap;
+            background: rgba(25, 31, 40, 0.9); color: white; padding: 14px 24px; border-radius: 24px; font-size: 14px; font-weight: 600; opacity: 0; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 9999; pointer-events: none; box-shadow: 0 8px 24px rgba(0,0,0,0.15); white-space: nowrap;
         }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
+        /* 스플래시 & 캔버스 */
         #fx-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 10000; pointer-events: none; display: none; }
         #splash-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background-color: var(--bg-color); display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.4s ease-out; }
         #splash-screen img { width: 200px; height: auto; }
@@ -123,13 +126,15 @@
         .btn-submit { width: 100%; padding: 18px; background-color: var(--brand-color); color: white; border: none; border-radius: 18px; font-size: 16px; font-weight: 700; margin-top: 12px; cursor: pointer; transition: transform 0.2s;}
         .btn-submit:active { transform: scale(0.98); }
 
-        /* 검색 & 대시보드 */
-        .search-container { position: relative; margin-bottom: 24px; flex-shrink: 0;}
-        .search-container input { padding-left: 48px; }
-        .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; fill: var(--gray-600); }
+        /* 검색 & 대시보드 (디자인 완벽 복구) */
+        .search-container { position: relative; margin-bottom: 24px; flex-shrink: 0; width: 100%;}
+        .search-container input { width: 100%; padding: 18px 20px 18px 52px; border: none; border-radius: 20px; background-color: var(--gray-100); font-size: 16px; color: var(--text-main); outline: none; transition: all 0.2s; box-sizing: border-box;}
+        .search-container input:focus { background-color: var(--gray-50); box-shadow: 0 0 0 2px var(--brand-color) inset; }
+        .search-container input::placeholder { color: var(--gray-600); }
+        .search-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; fill: var(--gray-600); }
         
-        .dashboard-header { font-size: 19px; font-weight: 700; margin-bottom: 12px; color: var(--text-main); }
-        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .dashboard-header { font-size: 19px; font-weight: 700; margin-bottom: 16px; color: var(--text-main); }
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%;}
         .dash-card { background: var(--gray-50); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; border: 1px solid var(--gray-100); transition: all 0.4s ease; }
         .dash-card.full { grid-column: 1 / -1; }
         .dash-title { font-size: 14px; font-weight: 600; color: var(--gray-600); }
@@ -155,7 +160,7 @@
         .calendar-cell.empty { pointer-events: none; }
         .calendar-cell.today { background-color: var(--gray-50); color: var(--brand-color); font-weight: 800; border: 1px solid var(--brand-color);}
         .calendar-cell.selected { background-color: var(--brand-color); color: white; font-weight: 800; box-shadow: 0 4px 12px rgba(3,110,184, 0.3); border:none;}
-        .marker-wrap { position: absolute; bottom: 3px; display: flex; gap: 3px; }
+        .marker-wrap { position: absolute; bottom: 4px; display: flex; gap: 3px; }
         .marker { width: 5px; height: 5px; border-radius: 50%; background-color: var(--brand-color); }
         .marker.marker-red { background-color: var(--red-color); } .marker.marker-yellow { background-color: var(--yellow-color); }
         .calendar-cell.selected .marker { background-color: white; }
@@ -173,12 +178,12 @@
         .store-sub-view { display: none; animation: fadeIn 0.3s ease; flex-direction: column; height: 100%; width: 100%;}
         .store-sub-view.active { display: flex; }
         
-        .store-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;}
+        .store-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; width: 100%;}
         .store-menu-card { background-color: var(--gray-50); border: 1px solid var(--gray-100); border-radius: 24px; padding: 24px 16px; text-align: center; font-size: 15px; font-weight: 700; color: var(--text-main); cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; gap: 12px; }
         .store-menu-card:active { transform: scale(0.97); background-color: var(--gray-100); }
         .store-menu-card svg { width: 32px; height: 32px; fill: var(--brand-color); }
 
-        .back-nav { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: var(--gray-800); cursor: pointer; background: var(--gray-50); padding: 10px 16px 10px 12px; border-radius: 20px; transition: background 0.2s;}
+        .back-nav { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: var(--gray-800); cursor: pointer; background: var(--gray-50); padding: 10px 16px 10px 12px; border-radius: 20px; transition: background 0.2s; margin-bottom: 20px;}
         .back-nav:active { background: var(--gray-100); }
         .back-nav svg { width: 20px; height: 20px; fill: currentColor; }
         
@@ -196,7 +201,7 @@
         .btn-action { background-color: var(--gray-800); margin-top: 0;}
 
         /* 매장 리스트 카드 */
-        .store-list-wrap { display: flex; flex-direction: column; gap: 16px; }
+        .store-list-wrap { display: flex; flex-direction: column; gap: 16px; width: 100%;}
         .store-card { background-color: white; border: 1px solid var(--gray-100); border-radius: 24px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); position: relative; cursor: pointer; transition: transform 0.2s;}
         .store-card:active { transform: scale(0.98); }
         .store-card h3 { font-size: 17px; font-weight: 800; margin-bottom: 12px; color: var(--text-main); display: flex; justify-content: space-between; align-items: center;}
@@ -231,7 +236,7 @@
         .map-tabs { display: flex; background: var(--gray-50); border-radius: 16px; padding: 6px; margin-bottom: 20px; }
         .map-tab { flex: 1; text-align: center; padding: 12px; border-radius: 12px; font-size: 15px; font-weight: 700; color: var(--gray-600); cursor: pointer; transition: all 0.2s; }
         .map-tab.active { background: white; color: var(--brand-color); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .block-map-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding-bottom: 24px;}
+        .block-map-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding-bottom: 24px; width: 100%;}
         .map-block {
             background: white; border: 1px solid var(--gray-100); border-radius: 14px; padding: 16px 4px; text-align: center;
             font-size: 13px; font-weight: 700; color: var(--gray-600); cursor: pointer; position: relative; transition: all 0.2s;
@@ -248,7 +253,7 @@
         #top-sheet {
             position: fixed; top: 0; left: 0; width: 100%; background: white; border-radius: 0 0 32px 32px;
             padding: 24px; padding-top: calc(24px + env(safe-area-inset-top)); transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-            z-index: 1501; box-shadow: 0 10px 40px rgba(0,0,0,0.15); max-height: 75vh; display: flex; flex-direction: column;
+            z-index: 1501; box-shadow: 0 10px 40px rgba(0,0,0,0.15); max-height: 75vh; display: flex; flex-direction: column; box-sizing: border-box;
         }
         #top-sheet.active { transform: translateY(0); }
         .ts-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0;}
@@ -286,7 +291,7 @@
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
             border-top: 1px solid var(--gray-100); padding: 16px 24px;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 200; border-radius: 32px 32px 0 0;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 200; border-radius: 32px 32px 0 0; box-sizing: border-box;
         }
         .score-bar .total-box { display: flex; flex-direction: column; gap: 4px;}
         .score-bar .total { font-size: 15px; font-weight: 800; color: var(--gray-800); display:flex; align-items:center; gap:8px;}
@@ -294,13 +299,13 @@
         .score-bar .breakdown { font-size: 13px; color: var(--gray-600); font-weight: 600;}
         .score-bar button { padding: 16px 32px; border-radius: 16px; font-size: 16px; font-weight: 800; background: var(--brand-color); color: white; border: none; cursor: pointer;}
 
-        /* 모달 공통 (메모, 물품, 서류, 비밀번호) */
+        /* 모달 공통 (메모, 물품, 서류) */
         .bottom-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
             display: none; align-items: flex-end; z-index: 2000;
         }
         .bottom-modal.active { display: flex; }
-        .modal-bottom-content { background: white; width: 100%; padding: 32px 24px; padding-bottom: calc(32px + env(safe-area-inset-bottom)); border-radius: 32px 32px 0 0; animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); max-height: 85vh; display: flex; flex-direction: column;}
+        .modal-bottom-content { background: white; width: 100%; padding: 32px 24px; padding-bottom: calc(32px + env(safe-area-inset-bottom)); border-radius: 32px 32px 0 0; animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); max-height: 85vh; display: flex; flex-direction: column; box-sizing: border-box;}
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         
         .modal-bottom-content h3 { font-size: 19px; font-weight: 800; margin-bottom: 20px; flex-shrink:0; color: var(--text-main);}
@@ -318,7 +323,7 @@
         .doc-desc { font-size:13px; color:var(--gray-500); text-align:center; margin-top:20px; font-weight:600;}
 
         /* --- 설정 탭 메뉴 스타일 --- */
-        .settings-menu { display: flex; flex-direction: column; gap: 12px; margin-top: 10px;}
+        .settings-menu { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; width: 100%;}
         .settings-item {
             background: white; padding: 24px 20px; border-radius: 20px; font-size: 16px; font-weight: 700; 
             display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid var(--gray-100); transition: all 0.2s; color: var(--text-main); box-shadow: 0 8px 24px rgba(0,0,0,0.02);
@@ -335,7 +340,7 @@
             position: fixed; bottom: 0; left: 0; width: 100%; height: calc(var(--nav-height) + env(safe-area-inset-bottom));
             background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
             border-top: 1px solid var(--gray-100); display: flex; justify-content: space-around; align-items: center;
-            padding-bottom: env(safe-area-inset-bottom); z-index: 1000;
+            padding-bottom: env(safe-area-inset-bottom); z-index: 1000; box-sizing: border-box;
         }
         body.golden-theme .bottom-nav { background-color: rgba(255, 255, 255, 0.95); } 
         
@@ -347,7 +352,7 @@
         /* 중앙 팝업 모달 (연도, 비밀번호 토스 스타일) */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); display: none; align-items: center; justify-content: center; z-index: 4000; opacity: 0; transition: opacity 0.2s ease; }
         .modal-overlay.show { display: flex !important; opacity: 1; pointer-events: auto;}
-        .modal-content { background: white; width: 80%; max-width: 340px; border-radius: 24px; padding: 32px 24px; text-align: center; transform: scale(0.95); transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: 0 20px 40px rgba(0,0,0,0.1);}
+        .modal-content { background: white; width: 80%; max-width: 340px; border-radius: 24px; padding: 32px 24px; text-align: center; transform: scale(0.95); transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: 0 20px 40px rgba(0,0,0,0.1); box-sizing: border-box;}
         .modal-overlay.show .modal-content { transform: scale(1); }
         .modal-content h3 { margin-bottom: 24px; font-size: 19px; font-weight: 800; color: var(--text-main);}
         .modal-content input { width: 100%; padding: 18px; font-size: 20px; font-weight: 700; text-align: center; border: 1px solid var(--gray-200); border-radius: 16px; margin-bottom: 24px; outline: none; box-sizing: border-box; letter-spacing: 2px; background: var(--gray-50); transition: 0.2s;}
@@ -361,13 +366,14 @@
 <body>
     <canvas id="fx-canvas"></canvas>
     
-    <div id="splash-screen"><img src="logo2.png" alt="로고" onerror="this.alt='로고 준비중'"></div>
+    <div id="splash-screen"><img src="logo2.png" alt="카다로스" onerror="this.alt=''"></div>
+    
     <div id="toast" class="toast">알림 메시지</div>
 
-    <div id="view-login" style="display:none;">
+    <div id="view-login">
         <div class="login-box">
             <img src="logo.png" alt="카다로스" onerror="this.alt='카다로스'">
-            <h2 style="font-size:22px; font-weight:800; margin-bottom:16px; color:var(--text-main);">업무 도우미 로그인</h2>
+            <h2 style="font-size:22px; font-weight:800; margin-bottom:24px; color:var(--text-main);">업무 도우미 로그인</h2>
             <button class="btn-google-login" onclick="handleLogin()">
                 <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
                 Google로 시작하기
@@ -631,13 +637,18 @@
         </nav>
     </div>
 
+    <div id="selection-bar" class="selection-bottom-bar">
+        <span id="selection-count" class="selection-count">0개 선택됨</span>
+        <div class="selection-actions"><button class="btn-cancel-sel" onclick="cancelSelectionMode()">취소</button><button class="btn-delete-sel" onclick="openDeletePwModal()">삭제</button></div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
         // ==============================================================
-        // [중요] 파이어베이스 설정 정보 (대표님 프로젝트 설정값으로 변경하세요!)
+        // [중요] 파이어베이스 설정 정보 (여기에 본인의 키 값을 넣으세요)
         // ==============================================================
 const firebaseConfig = {
   apiKey: "AIzaSyCoIdXuPX_FAm6crm5yQmRPlIKMVNICVtw",
@@ -649,21 +660,73 @@ const firebaseConfig = {
   measurementId: "G-3Y61WBHX26"
 };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
+        let app, db, auth, provider;
 
-        let storesData = [];
-        let adminPw = '0000';
-
+        // UI 동작 유지를 위한 전역 함수 등록
         window.showToast = function(msg) {
             const toast = document.getElementById('toast');
             toast.textContent = msg; toast.classList.add('show');
             setTimeout(() => { toast.classList.remove('show'); }, 2500);
         };
 
-        // 데이터 및 세팅 불러오기/저장하기 함수
+        // 데이터 저장소
+        let storesData = [];
+        let adminPw = '0000';
+
+        // Firebase를 안전하게 초기화 시도 (오류가 나도 UI는 동작하도록 Try-Catch 처리)
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            provider = new GoogleAuthProvider();
+
+            // Firebase 로그인 상태 리스너
+            onAuthStateChanged(auth, async (user) => {
+                const splash = document.getElementById('splash-screen');
+                const appContainer = document.getElementById('app-container');
+                const loginView = document.getElementById('view-login');
+                const nav = document.getElementById('main-bottom-nav');
+
+                if (user) {
+                    await loadStores();
+                    await loadSettings(); 
+                    
+                    splash.style.opacity = '0';
+                    setTimeout(() => splash.style.display = 'none', 400);
+
+                    loginView.style.display = 'none';
+                    appContainer.style.display = 'flex';
+                    nav.style.display = 'flex';
+                    
+                    setTimeout(() => { appContainer.style.opacity = '1'; }, 50);
+                    initApp();
+                } else {
+                    splash.style.opacity = '0';
+                    setTimeout(() => splash.style.display = 'none', 400);
+
+                    appContainer.style.display = 'none';
+                    nav.style.display = 'none';
+                    loginView.style.display = 'flex';
+                    setTimeout(() => { loginView.style.opacity = '1'; }, 50);
+                }
+            });
+
+        } catch (error) {
+            console.error("Firebase 초기화 에러:", error);
+            // Firebase 키가 없을 경우, 에러를 내지 않고 테스트용 뷰를 띄움
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.display = 'none';
+                document.getElementById('view-login').style.display = 'flex';
+                document.querySelector('.login-box').innerHTML = `
+                    <h2 style="color:var(--red-color); font-size:20px; font-weight:800;">파이어베이스 연결 오류</h2>
+                    <p style="font-size:14px; font-weight:600; color:var(--gray-600); margin-top:16px;">
+                        소스코드 하단의 firebaseConfig에<br>대표님의 API 키를 올바르게 입력해주세요.
+                    </p>
+                `;
+            }, 1000);
+        }
+
+        // 데이터 로드/저장 비동기 래퍼
         async function loadStores() {
             try {
                 const docRef = doc(db, "kadaros", "stores");
@@ -672,10 +735,10 @@ const firebaseConfig = {
                 else { storesData = []; }
             } catch(e) { console.error(e); storesData = []; }
         }
+        
         window.saveStores = async function() {
             try {
-                const docRef = doc(db, "kadaros", "stores");
-                await setDoc(docRef, { list: storesData }, { merge: true });
+                if(db) await setDoc(doc(db, "kadaros", "stores"), { list: storesData }, { merge: true });
             } catch(e) { console.error(e); }
         }
         
@@ -694,8 +757,7 @@ const firebaseConfig = {
         
         window.saveSettings = async function(pw) {
             try {
-                const docRef = doc(db, "kadaros", "settings");
-                await setDoc(docRef, { adminPw: pw }, { merge: true });
+                if(db) await setDoc(doc(db, "kadaros", "settings"), { adminPw: pw }, { merge: true });
             } catch(e) { console.error(e); }
         }
 
@@ -707,7 +769,7 @@ const firebaseConfig = {
                 btn.innerHTML = "로그인 중..."; btn.style.opacity = 0.7;
                 
                 await signInWithPopup(auth, provider);
-                // onAuthStateChanged가 화면 전환을 처리합니다.
+                // onAuthStateChanged가 화면 전환 처리
             } catch (error) {
                 showToast("로그인에 실패했습니다.");
                 const btn = document.querySelector('.btn-google-login');
@@ -716,51 +778,17 @@ const firebaseConfig = {
             }
         };
 
+        // 로그아웃 처리
         window.handleLogout = async function() {
             if(confirm("로그아웃 하시겠습니까?")) {
-                await signOut(auth);
+                if(auth) await signOut(auth);
                 location.reload();
             }
         };
 
-        // Firebase 로그인 상태 리스너 (자동 세션 처리)
-        onAuthStateChanged(auth, async (user) => {
-            const splash = document.getElementById('splash-screen');
-            const appContainer = document.getElementById('app-container');
-            const loginView = document.getElementById('view-login');
-            const nav = document.getElementById('main-bottom-nav');
-
-            if (user) {
-                // 로그인 됨
-                await loadStores();
-                await loadSettings(); // 관리자 비번 로드
-                
-                splash.style.opacity = '0';
-                setTimeout(() => splash.style.display = 'none', 400);
-
-                loginView.style.display = 'none';
-                appContainer.style.display = 'flex';
-                nav.style.display = 'flex';
-                
-                setTimeout(() => { appContainer.style.opacity = '1'; }, 50);
-                initApp();
-            } else {
-                // 로그인 안 됨
-                splash.style.opacity = '0';
-                setTimeout(() => splash.style.display = 'none', 400);
-
-                appContainer.style.display = 'none';
-                nav.style.display = 'none';
-                loginView.style.display = 'flex';
-                setTimeout(() => { loginView.style.opacity = '1'; }, 50);
-            }
-        });
-
-
         // ==========================================
-        // 이하 공통 로직
+        // 앱 UI 로직
         // ==========================================
-
         const regionData = {
             "서울특별시": ["강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구", "성동구", "성북구", "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"],
             "경기도": ["수원시", "성남시", "고양시", "용인시", "부천시", "안산시", "안양시", "남양주시", "화성시", "평택시", "의정부시", "시흥시", "파주시", "광명시", "김포시", "군포시", "광주시", "이천시", "양주시", "오산시", "구리시", "안성시", "포천시", "의왕시", "하남시", "여주시", "양평군", "동두천시", "과천시", "가평군", "연천군"]
@@ -816,94 +844,90 @@ const firebaseConfig = {
             }
         ];
 
-        // 이스터에그 모션
-        const helperChar = document.getElementById('helper-char');
-        const motions = ['motion-jump', 'motion-spin', 'motion-squish', 'motion-wiggle']; const faces = ['face-happy', 'face-surprised', 'face-wink'];
-        let isGolden = false; let isTransitioning = false; let pressTimer = null; let isPressing = false;
-
-        function playMotionGraphicWipe(isToGolden) {
-            const canvas = document.getElementById('fx-canvas'); const ctx = canvas.getContext('2d');
-            canvas.style.display = 'block'; 
-            let start = null; const duration = 2000;
-            const particles = Array.from({length: 100}, () => ({ x: Math.random() * window.innerWidth, y: -Math.random()*window.innerHeight, size: Math.random() * 4 + 1.5, speedY: Math.random() * 15 + 10, speedX: Math.random() * 4 - 2, opacity: Math.random() * 0.8 + 0.2 }));
-
-            function render(time) {
-                if (!start) start = time; const elapsed = time - start; const progress = Math.min(elapsed / duration, 1);
-                ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-
-                let overlayAlpha = 0;
-                if (progress < 0.4) overlayAlpha = progress / 0.4;
-                else if (progress < 0.6) { overlayAlpha = 1; if (!canvas.dataset.swapped) { toggleThemeDOM(isToGolden); canvas.dataset.swapped = 'true'; if(navigator.vibrate) navigator.vibrate([100, 50, 100]); } }
-                else overlayAlpha = 1 - ((progress - 0.6) / 0.4);
-
-                const gradient = ctx.createLinearGradient(0, 0, 0, window.innerHeight);
-                if (isToGolden) { gradient.addColorStop(0, `rgba(255, 223, 0, ${overlayAlpha})`); gradient.addColorStop(1, `rgba(212, 175, 55, ${overlayAlpha})`); }
-                else { gradient.addColorStop(0, `rgba(3, 110, 184, ${overlayAlpha})`); gradient.addColorStop(1, `rgba(0, 80, 150, ${overlayAlpha})`); }
-                ctx.fillStyle = gradient; ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
-
-                particles.forEach(p => { p.y += p.speedY * (progress * 2); p.x += Math.sin(progress * 10 + p.speedX) * 2; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fillStyle = isToGolden ? `rgba(255, 255, 255, ${p.opacity})` : `rgba(150, 200, 255, ${p.opacity})`; ctx.shadowBlur = 10; ctx.shadowColor = isToGolden ? "#FFF" : "#00FFFF"; ctx.fill(); });
-
-                if (progress < 1) requestAnimationFrame(render);
-                else { canvas.style.display = 'none'; canvas.dataset.swapped = ''; isTransitioning = false; }
-            }
-            requestAnimationFrame(render);
-        }
-
-        function toggleThemeDOM(toGolden) {
-            const greeting = document.getElementById('main-greeting');
-            if (toGolden) { document.body.classList.add('golden-theme'); helperChar.classList.add('golden'); greeting.innerHTML = "✨ 앗! 황금이 발견! ✨<br>오늘 하루 대박나실 거예요!"; }
-            else { document.body.classList.remove('golden-theme'); helperChar.classList.remove('golden'); greeting.innerHTML = "카다로스 업무 도우미입니다.<br>무엇을 도와드릴까요?"; }
-        }
-
-        helperChar.addEventListener('click', () => {
-            if(isPressing || isTransitioning) return; 
-            if (!isGolden && Math.random() < 0.03) { isTransitioning = true; isGolden = true; playMotionGraphicWipe(true); return; }
-            helperChar.classList.remove(...motions, ...faces); void helperChar.offsetWidth; 
-            const rm = motions[Math.floor(Math.random() * motions.length)]; const rf = faces[Math.floor(Math.random() * faces.length)];
-            helperChar.classList.add(rm, rf); setTimeout(() => { helperChar.classList.remove(rm, rf); }, 600);
-        });
-
-        const startPress = () => { if (!isGolden || isTransitioning) return; isPressing = true; helperChar.classList.add('shake'); pressTimer = setTimeout(() => { isTransitioning = true; isGolden = false; helperChar.classList.remove('shake'); isPressing = false; playMotionGraphicWipe(false); }, 2000); };
-        const cancelPress = () => { if(pressTimer) clearTimeout(pressTimer); helperChar.classList.remove('shake'); setTimeout(() => { isPressing = false; }, 100); };
-        helperChar.addEventListener('mousedown', startPress); helperChar.addEventListener('touchstart', startPress, {passive: true});
-        helperChar.addEventListener('mouseup', cancelPress); helperChar.addEventListener('mouseleave', cancelPress);
-        helperChar.addEventListener('touchend', cancelPress); helperChar.addEventListener('touchcancel', cancelPress);
-
-        // 네비게이션
-        const navItems = document.querySelectorAll('.nav-item');
-        const viewSections = document.querySelectorAll('.view-section');
-        navItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                navItems.forEach(nav => nav.classList.remove('active')); this.classList.add('active');
-                const targetId = this.getAttribute('data-target');
-                viewSections.forEach(section => { section.classList.remove('active'); });
-                document.getElementById(targetId).classList.add('active');
-                
-                if(targetId === 'view-calendar') renderCalendar();
-                if(targetId === 'view-store') { openStoreView('main'); renderBlockMap(); } 
-                if(targetId === 'view-consulting') renderConsultingList();
+        // 이벤트 위임 처리 (DOM 조작 전에 선언되어 안 깨짐)
+        document.addEventListener("DOMContentLoaded", () => {
+            // 네비게이션
+            const navItems = document.querySelectorAll('.nav-item');
+            const viewSections = document.querySelectorAll('.view-section');
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navItems.forEach(nav => nav.classList.remove('active')); this.classList.add('active');
+                    const targetId = this.getAttribute('data-target');
+                    viewSections.forEach(section => { section.classList.remove('active'); });
+                    document.getElementById(targetId).classList.add('active');
+                    
+                    if(targetId === 'view-calendar') renderCalendar();
+                    if(targetId === 'view-store') { openStoreView('main'); renderBlockMap(); } 
+                    if(targetId === 'view-consulting') renderConsultingList();
+                });
             });
-        });
 
-        // 검색 & 대시보드
-        document.getElementById('home-search-input').addEventListener('input', function(e) {
-            const query = e.target.value.trim().toLowerCase();
-            const dash = document.getElementById('dashboard'); const dashHeader = document.getElementById('home-dash-header'); const resWrap = document.getElementById('home-search-results');
-            if (query) {
-                dash.style.display = 'none'; dashHeader.style.display = 'none'; resWrap.style.display = 'flex'; resWrap.innerHTML = '';
-                const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
-                const matched = storesData.filter(s => s.name.toLowerCase().includes(query)).sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
-                if (matched.length === 0) resWrap.innerHTML = '<div class="store-empty">검색 결과가 없습니다.</div>';
-                else {
-                    matched.forEach(store => {
-                        const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`;
-                        card.onclick = () => { document.querySelector('.nav-item[data-target="view-store"]').click(); openStoreView('manage', [store.status]); openEditStore(store.id); };
-                        card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>지역</span> <strong>${store.region}</strong></div>`;
-                        resWrap.appendChild(card);
-                    });
+            // 검색 & 대시보드
+            document.getElementById('home-search-input').addEventListener('input', function(e) {
+                const query = e.target.value.trim().toLowerCase();
+                const dash = document.getElementById('dashboard'); const dashHeader = document.getElementById('home-dash-header'); const resWrap = document.getElementById('home-search-results');
+                if (query) {
+                    dash.style.display = 'none'; dashHeader.style.display = 'none'; resWrap.style.display = 'flex'; resWrap.innerHTML = '';
+                    const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
+                    const matched = storesData.filter(s => s.name.toLowerCase().includes(query)).sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
+                    if (matched.length === 0) resWrap.innerHTML = '<div class="store-empty">검색 결과가 없습니다.</div>';
+                    else {
+                        matched.forEach(store => {
+                            const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`;
+                            card.onclick = () => { document.querySelector('.nav-item[data-target="view-store"]').click(); openStoreView('manage', [store.status]); openEditStore(store.id); };
+                            card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>지역</span> <strong>${store.region}</strong></div>`;
+                            resWrap.appendChild(card);
+                        });
+                    }
+                } else { dash.style.display = 'grid'; dashHeader.style.display = 'block'; resWrap.style.display = 'none'; }
+            });
+
+            // 지역 선택 로직
+            const provSelect = document.getElementById('region-province'); const citySelect = document.getElementById('region-city');
+            provSelect.addEventListener('change', function() {
+                const selected = this.value; citySelect.innerHTML = '<option value="" disabled selected>시/군/구</option>';
+                if(regionData[selected]) { regionData[selected].forEach(city => { const option = document.createElement('option'); option.value = city; option.textContent = city; citySelect.appendChild(option); }); citySelect.disabled = false; } else citySelect.disabled = true;
+            });
+
+            // 매장 폼 제출
+            document.getElementById('new-store-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const price = Number(document.getElementById('store-price').value) || 0;
+                const deposit = Number(document.getElementById('store-deposit').value) || 0;
+                
+                const newStore = {
+                    id: Date.now(), name: document.getElementById('store-name').value, status: '진행중', 
+                    region: `${document.getElementById('region-province').value} ${document.getElementById('region-city').value}`,
+                    priceTotal: price, priceDeposit: deposit, vat: document.querySelector('input[name="vat"]:checked').value,
+                    applyDate: document.getElementById('date-apply').value, consult1: "", consult2: "", inspect: "",
+                    checklistData: null, memo: "", providedItems: {}, documents: {}
+                };
+                storesData.unshift(newStore); 
+                await saveStores(); 
+                updateDashboard(); renderBlockMap();
+                showToast(`[${newStore.name}] 등록되었습니다.`);
+                this.reset(); document.getElementById('region-city').innerHTML = '<option value="" disabled selected>시/군/구</option>'; document.getElementById('region-city').disabled = true;
+                openStoreView('manage', ['진행중']); 
+            });
+
+            document.getElementById('edit-store-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const store = storesData.find(s => s.id === parseInt(document.getElementById('edit-store-id').value));
+                if(store) {
+                    store.status = document.getElementById('edit-store-status').value; 
+                    store.name = document.getElementById('edit-store-name').value; 
+                    store.priceTotal = Number(document.getElementById('edit-store-price').value) || 0;
+                    store.priceDeposit = Number(document.getElementById('edit-store-deposit').value) || 0;
+                    store.applyDate = document.getElementById('edit-date-apply').value; 
+                    store.consult1 = document.getElementById('edit-date-consult1').value; 
+                    store.consult2 = document.getElementById('edit-date-consult2').value; 
+                    store.inspect = document.getElementById('edit-date-inspect').value;
+                    
+                    await saveStores(); 
+                    updateDashboard(); renderBlockMap(); showToast("저장되었습니다."); goBackToStoreManage(); renderCalendar(); 
                 }
-            } else { dash.style.display = 'grid'; dashHeader.style.display = 'block'; resWrap.style.display = 'none'; }
+            });
         });
 
         function getWeekRanges() {
@@ -965,32 +989,6 @@ const firebaseConfig = {
             }
         };
 
-        const provSelect = document.getElementById('region-province'); const citySelect = document.getElementById('region-city');
-        provSelect.addEventListener('change', function() {
-            const selected = this.value; citySelect.innerHTML = '<option value="" disabled selected>시/군/구</option>';
-            if(regionData[selected]) { regionData[selected].forEach(city => { const option = document.createElement('option'); option.value = city; option.textContent = city; citySelect.appendChild(option); }); citySelect.disabled = false; } else citySelect.disabled = true;
-        });
-
-        document.getElementById('new-store-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const price = Number(document.getElementById('store-price').value) || 0;
-            const deposit = Number(document.getElementById('store-deposit').value) || 0;
-            
-            const newStore = {
-                id: Date.now(), name: document.getElementById('store-name').value, status: '진행중', 
-                region: `${document.getElementById('region-province').value} ${document.getElementById('region-city').value}`,
-                priceTotal: price, priceDeposit: deposit, vat: document.querySelector('input[name="vat"]:checked').value,
-                applyDate: document.getElementById('date-apply').value, consult1: "", consult2: "", inspect: "",
-                checklistData: null, memo: "", providedItems: {}, documents: {}
-            };
-            storesData.unshift(newStore); 
-            await window.saveStores(); 
-            updateDashboard(); renderBlockMap();
-            showToast(`[${newStore.name}] 등록되었습니다.`);
-            this.reset(); document.getElementById('region-city').innerHTML = '<option value="" disabled selected>시/군/구</option>'; document.getElementById('region-city').disabled = true;
-            openStoreView('manage', ['진행중']); 
-        });
-
         window.getStatusClass = function(status) {
             if(status === '합격') return 'status-pass'; if(status === '불합격') return 'status-fail'; if(status === '보류') return 'status-pending'; return 'status-progress';
         }
@@ -1018,7 +1016,7 @@ const firebaseConfig = {
             if(inputPw === adminPw) {
                 storesData = storesData.filter(s => !selectedStoreIds.has(s.id));
                 cancelSelectionMode(); 
-                await window.saveStores();
+                await saveStores();
                 updateDashboard(); renderCalendar(); renderBlockMap();
                 closePwModal(); showToast("성공적으로 삭제되었습니다.");
             } else {
@@ -1081,24 +1079,6 @@ const firebaseConfig = {
             document.querySelectorAll('.store-sub-view').forEach(s => s.classList.remove('active')); document.getElementById('store-edit').classList.add('active');
         };
 
-        document.getElementById('edit-store-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const store = storesData.find(s => s.id === parseInt(document.getElementById('edit-store-id').value));
-            if(store) {
-                store.status = document.getElementById('edit-store-status').value; 
-                store.name = document.getElementById('edit-store-name').value; 
-                store.priceTotal = Number(document.getElementById('edit-store-price').value) || 0;
-                store.priceDeposit = Number(document.getElementById('edit-store-deposit').value) || 0;
-                store.applyDate = document.getElementById('edit-date-apply').value; 
-                store.consult1 = document.getElementById('edit-date-consult1').value; 
-                store.consult2 = document.getElementById('edit-date-consult2').value; 
-                store.inspect = document.getElementById('edit-date-inspect').value;
-                
-                await window.saveStores(); 
-                updateDashboard(); renderBlockMap(); showToast("저장되었습니다."); goBackToStoreManage(); renderCalendar(); 
-            }
-        });
-
         // 설정 - 비밀번호 변경 모달 로직
         window.openChangePwModal = function() {
             document.getElementById('current-pw-input').value = ''; document.getElementById('new-pw-input').value = '';
@@ -1110,7 +1090,7 @@ const firebaseConfig = {
             if(current === adminPw) {
                 if(newPw.length < 4) { showToast("새 비밀번호는 4자리 이상 입력해주세요."); return; }
                 adminPw = newPw; 
-                await api.saveSettings(adminPw); 
+                await saveSettings(adminPw); 
                 closeChangePwModal(); showToast("비밀번호가 변경되었습니다.");
             } else { showToast("현재 비밀번호가 틀립니다."); }
         };
@@ -1150,7 +1130,6 @@ const firebaseConfig = {
             drawBlocks('block-map-seoul', regionData["서울특별시"]); drawBlocks('block-map-gyeonggi', regionData["경기도"]);
         }
         window.closeMapOverlay = function() { document.querySelectorAll('.map-block').forEach(b => b.classList.remove('popped')); document.getElementById('dimmer').classList.remove('active'); document.getElementById('top-sheet').classList.remove('active'); };
-
 
         // 캘린더 (좌우 스와이프)
         let currentDate = new Date(); let selectedDateStr = null;
@@ -1335,8 +1314,8 @@ const firebaseConfig = {
                 else if(chk.dataset.type === 'basic') newData[chk.dataset.id] = chk.checked ? 'O' : 'X';
                 else newData[chk.dataset.id] = chk.checked ? chk.value : '0';
             });
-            store.checklistData = newData; store.memo = document.getElementById('memo-textarea').value;
-            await window.saveStores(); 
+            store.checklistData = newData; 
+            await saveStores(); 
             showToast("평가 결과가 저장되었습니다."); closeChecklist();
         };
 
@@ -1345,7 +1324,7 @@ const firebaseConfig = {
         window.closeMemo = function() { document.getElementById('memo-modal').classList.remove('active'); };
         window.saveMemo = async function() { 
             const store = storesData.find(s => s.id === currentChecklistStoreId);
-            if(store) { store.memo = document.getElementById('memo-textarea').value; await window.saveStores(); }
+            if(store) { store.memo = document.getElementById('memo-textarea').value; await saveStores(); }
             closeMemo(); showToast("메모가 임시 저장되었습니다."); 
         };
 
@@ -1362,7 +1341,7 @@ const firebaseConfig = {
             const pItems = {};
             document.querySelectorAll('.item-chk').forEach(chk => { pItems[chk.value] = chk.checked; });
             store.providedItems = pItems;
-            await window.saveStores(); closeItemsModal(); showToast("제공물품 기록이 저장되었습니다.");
+            await saveStores(); closeItemsModal(); showToast("제공물품 기록이 저장되었습니다.");
         };
 
         // 서류 모달
@@ -1378,7 +1357,7 @@ const firebaseConfig = {
             const docs = {};
             document.querySelectorAll('.doc-chk').forEach(chk => { docs[chk.value] = chk.checked; });
             store.documents = docs;
-            await window.saveStores(); closeDocModal(); showToast("서류 체크가 저장되었습니다.");
+            await saveStores(); closeDocModal(); showToast("서류 체크가 저장되었습니다.");
         };
 
         window.initApp = function() {
