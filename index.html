@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>카다로스 업무 도우미</title>
+    
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+
+    <style>
+        :root {
+            /* 기본 블루 테마 변수 */
+            --brand-color: #036eb8; 
+            --bg-color: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f2f4f6;
+            --gray-200: #e5e8eb;
+            --gray-300: #d1d6db;
+            --gray-600: #8b95a1;
+            --gray-800: #333d4b;
+            --text-main: #191f28;
+            --nav-height: 65px;
+            
+            /* 포인트 컬러 */
+            --red-color: #E53E3E;
+            --red-bg: #FFF5F5;
+            --red-border: #FED7D7;
+            
+            --yellow-color: #D97706;
+            --yellow-bg: #FFFBEB;
+            --yellow-border: #FDE68A;
+            
+            --blue-bg: #E8F3FF;
+            --dark-gray-bg: #333D4B;
+        }
+
+        /* ✨ 황금이 당첨 시 골드 테마 */
+        body.golden-theme {
+            --brand-color: #D4AF37;
+            --bg-color: #FCFBF5; 
+            --gray-50: #F8F6EB;
+            --gray-100: #F0EAD6;
+            --gray-200: #E6D8B8;
+            --gray-300: #C2AF82;
+            --gray-600: #9E8548;
+            --text-main: #4A3C00; 
+            --dark-gray-bg: #4A3C00; 
+        }
+
+        * {
+            box-sizing: border-box; margin: 0; padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color); color: var(--text-main);
+            overflow-x: hidden; overscroll-behavior-y: none; 
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* 토스트 알림창 */
+        .toast {
+            position: fixed; bottom: calc(var(--nav-height) + 20px); left: 50%; transform: translateX(-50%) translateY(100px);
+            background: rgba(25, 31, 40, 0.9); color: white; padding: 14px 24px; border-radius: 30px;
+            font-size: 15px; font-weight: 600; opacity: 0; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 9999; pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        /* 모션그래픽 효과 캔버스 */
+        #fx-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 10000; pointer-events: none; display: none; }
+
+        /* 스플래시 스크린 */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: var(--bg-color); display: flex; align-items: center; justify-content: center;
+            z-index: 9999; transition: opacity 0.5s ease-out;
+        }
+        #splash-screen img { width: 300px; height: auto; }
+
+        /* 메인 앱 컨테이너 */
+        #app-container {
+            display: none; padding-bottom: calc(var(--nav-height) + 40px);
+            opacity: 0; transition: opacity 0.5s ease-in;
+        }
+
+        /* 뷰 관리 */
+        .view-section { display: none; padding: 60px 24px 32px 24px; animation: fadeIn 0.4s ease; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- 홈 화면 & 캐릭터 스타일 --- */
+        .helper-container { display: flex; justify-content: center; margin-bottom: 24px; position: relative; }
+        .helper-character {
+            width: 70px; height: 70px; background-color: var(--brand-color); border-radius: 30px 30px 20px 20px; position: relative;
+            animation: float 2.5s ease-in-out infinite; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); cursor: pointer; transition: all 0.5s ease; z-index: 10;
+        }
+        .helper-character::before, .helper-character::after { content: ''; position: absolute; background: #fff; width: 8px; height: 12px; border-radius: 50%; top: 24px; transition: all 0.2s ease; }
+        .helper-character::before { left: 18px; } .helper-character::after { right: 18px; }
+        .smile { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); width: 16px; height: 8px; border-bottom: 3px solid #fff; border-radius: 0 0 20px 20px; transition: all 0.2s ease; }
+
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+
+        .helper-character.golden {
+            background: linear-gradient(135deg, #FFDF00, #D4AF37, #DAA520); background-size: 200% 200%;
+            animation: float 2.5s ease-in-out infinite, shimmer 2s infinite linear;
+            box-shadow: 0 0 25px rgba(255, 223, 0, 0.6), 0 10px 20px rgba(212, 175, 55, 0.4);
+        }
+        @keyframes shimmer { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .shake { animation: shake 0.3s ease-in-out infinite !important; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px) rotate(-3deg); } 75% { transform: translateX(3px) rotate(3deg); } }
+        @keyframes jump { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-30px) scale(0.9, 1.1); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes squish { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.2, 0.8) translateY(10px); } }
+        @keyframes wiggle { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-15deg); } 75% { transform: rotate(15deg); } }
+
+        .motion-jump { animation: jump 0.6s ease !important; } .motion-spin { animation: spin 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; } .motion-squish { animation: squish 0.5s ease !important; } .motion-wiggle { animation: wiggle 0.5s ease !important; }
+        .face-surprised::before, .face-surprised::after { height: 14px; width: 14px; top: 22px; } .face-surprised .smile { width: 10px; height: 10px; border: 3px solid #fff; border-radius: 50%; bottom: 12px; background: transparent; }
+        .face-wink::before { transform: scaleY(0.2); } .face-wink .smile { transform: translateX(-50%) scale(1.2) rotate(-5deg); }
+        .face-happy::before, .face-happy::after { border-top: 3px solid #fff; background: transparent; height: 8px; width: 12px; border-radius: 50% 50% 0 0; top: 26px; } .face-happy .smile { width: 20px; height: 12px; bottom: 14px; }
+
+        .greeting { font-size: 26px; font-weight: 700; line-height: 1.4; margin-bottom: 32px; text-align: center; word-break: keep-all; letter-spacing: -0.5px; transition: color 0.4s ease; }
+
+        /* --- 검색 & 대시보드 --- */
+        .search-container { position: relative; margin-bottom: 32px; }
+        .search-container input { width: 100%; padding: 18px 20px 18px 52px; border: none; border-radius: 20px; background-color: var(--gray-100); font-size: 16px; color: var(--text-main); outline: none; transition: all 0.2s; }
+        .search-container input:focus { background-color: var(--gray-50); box-shadow: 0 0 0 2px var(--brand-color) inset; }
+        .search-container input::placeholder { color: var(--gray-600); }
+        .search-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; fill: var(--gray-600); }
+        
+        .dashboard-header { font-size: 19px; font-weight: 700; margin-bottom: 16px; color: var(--text-main); transition: color 0.4s ease;}
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .dash-card { background: var(--gray-50); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; border: 1px solid var(--gray-100); transition: all 0.4s ease; }
+        .dash-card.full { grid-column: 1 / -1; }
+        .dash-title { font-size: 14px; font-weight: 600; color: var(--gray-600); }
+        .dash-value { font-size: 16px; font-weight: 500; color: var(--text-main); line-height: 1.4; word-break: keep-all;}
+        .dash-value b { color: var(--brand-color); font-size: 22px; font-weight: 800; margin-right: 2px;}
+
+        /* --- 캘린더 화면 스타일 --- */
+        .calendar-header { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 32px; }
+        .calendar-month { font-size: 26px; font-weight: 800; }
+        .calendar-year { font-size: 20px; font-weight: 600; color: var(--gray-600); cursor: pointer; padding: 6px 10px; border-radius: 12px; transition: background 0.2s, color 0.4s ease; }
+        .calendar-year:active { background-color: var(--gray-100); }
+        .calendar-wrapper { background-color: var(--bg-color); border-radius: 24px; padding: 20px 16px; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04); border: 1px solid var(--gray-100); touch-action: pan-x; transition: background-color 0.4s ease, border-color 0.4s ease; }
+        .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: 600; color: var(--gray-600); font-size: 15px; margin-bottom: 16px; transition: color 0.4s ease; }
+        .calendar-days div:first-child { color: var(--red-color); } .calendar-days div:last-child { color: #3182ce; } 
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px 8px; }
+        .calendar-cell { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; position: relative; font-size: 16px; font-weight: 500; border-radius: 14px; cursor: pointer; transition: all 0.2s; }
+        .calendar-cell.empty { pointer-events: none; }
+        .calendar-cell.today { background-color: var(--gray-100); color: var(--brand-color); font-weight: 700; }
+        .calendar-cell.selected { background-color: var(--brand-color); color: white; font-weight: 700; box-shadow: 0 4px 12px rgba(var(--brand-color), 0.3); }
+        
+        .marker-wrap { position: absolute; bottom: 4px; display: flex; gap: 3px; }
+        .marker { width: 5px; height: 5px; border-radius: 50%; background-color: var(--brand-color); }
+        .marker.marker-red { background-color: var(--red-color); } .marker.marker-yellow { background-color: var(--yellow-color); }
+        .calendar-cell.selected .marker { background-color: white; }
+        .gesture-hint { text-align: center; font-size: 13px; color: var(--gray-600); margin-top: 20px; }
+        .schedule-summary { margin-top: 32px; padding: 8px 0; }
+        .schedule-summary h4 { font-size: 16px; margin-bottom: 16px; color: var(--text-main); font-weight: 700; padding: 0 8px; }
+        
+        .schedule-box { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; border-radius: 16px; margin-bottom: 12px; background-color: var(--gray-50); border: 1px solid var(--gray-100); transition: all 0.3s ease; }
+        .schedule-box .sch-name { font-size: 16px; font-weight: 700; color: var(--text-main); }
+        .schedule-box .sch-type { font-size: 14px; font-weight: 600; color: var(--brand-color); background-color: var(--bg-color); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--gray-200); }
+        .schedule-box.type-inspect { background-color: var(--red-bg); border-color: var(--red-border); }
+        .schedule-box.type-inspect .sch-name { color: var(--red-color); } .schedule-box.type-inspect .sch-type { color: var(--red-color); background-color: #fff; border-color: var(--red-border); }
+        .schedule-box.type-apply { background-color: var(--yellow-bg); border-color: var(--yellow-border); }
+        .schedule-box.type-apply .sch-name { color: var(--yellow-color); } .schedule-box.type-apply .sch-type { color: var(--yellow-color); background-color: #fff; border-color: var(--yellow-border); }
+        .schedule-empty { text-align: center; color: var(--gray-300); padding: 20px; font-size: 14px; }
+
+
+        /* --- 매장관리 탭 메인 뷰 --- */
+        .store-main-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .store-menu-card {
+            background-color: var(--gray-50); border: 1px solid var(--gray-100); border-radius: 24px; padding: 28px 16px; text-align: center;
+            font-size: 15px; font-weight: 700; color: var(--text-main); cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; gap: 10px;
+        }
+        .store-menu-card:active { transform: scale(0.97); background-color: var(--gray-100); }
+        .store-menu-card svg { width: 32px; height: 32px; fill: var(--brand-color); }
+
+        /* 토스 스타일 데이터 인포그래픽 블록 맵 */
+        .map-section-title { font-size: 18px; font-weight: 700; margin: 40px 0 16px 0; color: var(--text-main); display: flex; justify-content: space-between; align-items: flex-end;}
+        .map-section-desc { font-size: 13px; font-weight: 500; color: var(--gray-600); }
+        
+        .map-tabs { display: flex; background: var(--gray-100); border-radius: 14px; padding: 4px; margin-bottom: 20px; }
+        .map-tab { flex: 1; text-align: center; padding: 12px; border-radius: 12px; font-size: 15px; font-weight: 700; color: var(--gray-600); cursor: pointer; transition: all 0.2s; }
+        .map-tab.active { background: white; color: var(--brand-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+        .block-map-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+            /* 5칸 넘어가면 자동으로 다음 줄로 떨어짐 */
+        }
+        .map-block {
+            background: var(--gray-50); border: 1px solid var(--gray-100);
+            border-radius: 14px; padding: 14px 4px; text-align: center;
+            font-size: 13px; font-weight: 600; color: var(--gray-600);
+            cursor: pointer; position: relative; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            word-break: keep-all; line-height: 1.2;
+        }
+        /* 매장이 있는 지역 스타일 */
+        .map-block.has-store { background: var(--blue-bg); color: var(--brand-color); border-color: rgba(3,110,184,0.15); }
+        .map-block.has-store-dense { background: rgba(3,110,184,0.25); color: var(--brand-color); border-color: transparent; }
+        
+        .map-block .badge {
+            position: absolute; top: -6px; right: -6px;
+            background: var(--brand-color); color: white;
+            font-size: 11px; font-weight: 700; min-width: 22px; height: 22px; padding: 0 4px;
+            border-radius: 11px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        
+        /* 맵 블록 클릭 시 튀어오르는 모션 (z-index 관리) */
+        .map-block.popped {
+            transform: translateY(-8px) scale(1.05);
+            background: var(--brand-color); color: white;
+            box-shadow: 0 12px 24px rgba(3,110,184,0.4);
+            z-index: 1502; border-color: transparent;
+        }
+        .map-block.popped .badge { background: white; color: var(--brand-color); }
+
+        /* 화면 어두워지는 딤 오버레이 */
+        #dimmer {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
+            z-index: 1500; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        #dimmer.active { opacity: 1; pointer-events: all; }
+
+        /* 상단에서 스르륵 내려오는 탑 시트 (Top-sheet) */
+        #top-sheet {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: white; border-radius: 0 0 28px 28px;
+            padding: 24px; padding-top: calc(24px + env(safe-area-inset-top));
+            transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 1501; box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            max-height: 70vh; display: flex; flex-direction: column;
+        }
+        #top-sheet.active { transform: translateY(0); }
+        .ts-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .ts-header h3 { font-size: 20px; font-weight: 700; color: var(--brand-color); }
+        .btn-ts-close { background: var(--gray-100); color: var(--gray-800); border: none; padding: 10px 14px; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 14px;}
+        .ts-content { overflow-y: auto; flex: 1; padding-bottom: 10px;}
+
+        /* 매장 서브 뷰 */
+        .store-sub-view { display: none; animation: fadeIn 0.3s ease; }
+        .store-sub-view.active { display: block; }
+        .back-nav { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; color: var(--gray-600); margin-bottom: 24px; cursor: pointer; }
+        .back-nav svg { width: 20px; height: 20px; fill: currentColor; }
+        
+        /* 폼 요소 */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-600); margin-bottom: 8px; }
+        .form-input { width: 100%; padding: 16px 20px; border: 1px solid var(--gray-200); border-radius: 16px; background-color: var(--gray-50); font-size: 16px; color: var(--text-main); outline: none; transition: all 0.2s; }
+        .form-input:focus { border-color: var(--brand-color); background-color: var(--bg-color); }
+        .row-group { display: flex; gap: 12px; } .row-group > div { flex: 1; }
+        .radio-group { display: flex; gap: 16px; align-items: center; margin-top: 8px; }
+        .radio-label { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; color: var(--text-main); cursor: pointer; }
+        .radio-label input[type="radio"] { accent-color: var(--brand-color); width: 16px; height: 16px; }
+        .btn-submit { width: 100%; padding: 18px; background-color: var(--brand-color); color: white; border: none; border-radius: 16px; font-size: 17px; font-weight: 700; margin-top: 10px; cursor: pointer; transition: background-color 0.2s; }
+        .btn-submit:active { opacity: 0.8; transform: scale(0.98); }
+
+        /* 매장 리스트 & 상태 컬러 */
+        .store-list-wrap { display: flex; flex-direction: column; gap: 12px; }
+        .store-card { background-color: var(--bg-color); border: 1px solid var(--gray-200); border-radius: 20px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); transition: all 0.3s ease; position: relative; cursor: pointer; }
+        .store-card:active { transform: scale(0.98); opacity: 0.9; }
+        .store-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; color: var(--text-main); display: flex; justify-content: space-between; align-items: center;}
+        .store-card .status-badge { font-size: 12px; padding: 4px 8px; border-radius: 8px; font-weight: 600; }
+        .store-info-line { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; color: var(--gray-600); }
+        .store-info-line strong { color: var(--text-main); font-weight: 600; }
+        .store-empty { text-align: center; padding: 40px 20px; color: var(--gray-600); font-size: 15px; background: var(--gray-50); border-radius: 16px; }
+
+        /* 상태별 카드 컬러 */
+        .store-card.status-progress { background-color: var(--blue-bg); border-color: transparent; }
+        .store-card.status-progress h3 { color: var(--brand-color); } .store-card.status-progress .status-badge { background: #fff; color: var(--brand-color); }
+        .store-card.status-fail { background-color: var(--red-bg); border-color: transparent; }
+        .store-card.status-fail h3 { color: var(--red-color); } .store-card.status-fail .status-badge { background: #fff; color: var(--red-color); }
+        .store-card.status-pending { background-color: var(--yellow-bg); border-color: transparent; }
+        .store-card.status-pending h3 { color: var(--yellow-color); } .store-card.status-pending .status-badge { background: #fff; color: var(--yellow-color); }
+        .store-card.status-pass { background-color: var(--dark-gray-bg); border-color: transparent; color: #F9FAFB;}
+        .store-card.status-pass h3 { color: #FFFFFF; } .store-card.status-pass .status-badge { background: rgba(255,255,255,0.2); color: #fff; }
+        .store-card.status-pass .store-info-line { color: #D1D6DB; } .store-card.status-pass .store-info-line strong { color: #FFFFFF; }
+
+        /* 다중 선택 UI */
+        .select-indicator { position: absolute; top: 50%; right: 24px; transform: translateY(-50%); width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--gray-300); display: none; align-items: center; justify-content: center; background-color: var(--bg-color); }
+        .selection-mode-active .store-card { padding-right: 60px; }
+        .selection-mode-active .select-indicator { display: flex; }
+        .store-card.is-selected .select-indicator { background-color: var(--brand-color); border-color: var(--brand-color); }
+        .store-card.is-selected .select-indicator::after { content: ''; width: 6px; height: 10px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-bottom: 2px; }
+
+        .selection-bottom-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--gray-200); padding: 16px 24px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); display: flex; justify-content: space-between; align-items: center; transform: translateY(100%); transition: transform 0.3s ease; z-index: 1100; box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+        }
+        .selection-bottom-bar.active { transform: translateY(0); }
+        .selection-count { font-size: 16px; font-weight: 700; color: var(--text-main); }
+        .selection-actions { display: flex; gap: 8px; }
+        .selection-actions button { padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; }
+        .btn-cancel-sel { background-color: var(--gray-100); color: var(--gray-800); }
+        .btn-delete-sel { background-color: var(--red-color); color: white; }
+
+        /* --- 하단 고정 메뉴바 --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height);
+            background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            border-top: 1px solid var(--gray-100); display: flex; justify-content: space-around; align-items: center;
+            padding-bottom: env(safe-area-inset-bottom); z-index: 1000; transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+        body.golden-theme .bottom-nav { background-color: rgba(252, 251, 245, 0.95); }
+        
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; text-decoration: none; color: var(--gray-300); gap: 5px; transition: color 0.4s ease; }
+        .nav-item.active { color: var(--text-main); }
+        .nav-item svg { width: 24px; height: 24px; fill: currentColor; }
+        .nav-item span { font-size: 11px; font-weight: 700; }
+
+        /* 연도 모달 */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 4000; opacity: 0; transition: opacity 0.2s ease; }
+        .modal-overlay.show { display: flex; opacity: 1; }
+        .modal-content { background: white; width: 80%; max-width: 320px; border-radius: 24px; padding: 28px 24px; text-align: center; transform: scale(0.95); transition: transform 0.2s ease; }
+        .modal-overlay.show .modal-content { transform: scale(1); }
+        .modal-content h3 { margin-bottom: 24px; font-size: 20px; font-weight: 700; }
+        .modal-content input { width: 100%; padding: 18px; font-size: 22px; font-weight: 600; text-align: center; border: 1px solid var(--gray-300); border-radius: 16px; margin-bottom: 28px; outline: none; }
+        .modal-actions { display: flex; gap: 12px; }
+        .modal-actions button { flex: 1; padding: 16px; border-radius: 16px; border: none; font-size: 16px; font-weight: 700; cursor: pointer; }
+        .btn-cancel { background-color: var(--gray-100); color: var(--gray-800); }
+        .btn-confirm { background-color: var(--brand-color); color: white; }
+    </style>
+</head>
+<body>
+
+    <canvas id="fx-canvas"></canvas>
+
+    <div id="splash-screen">
+        <img src="logo2.png" alt="카다로스 로고" onerror="this.alt='로고 (logo2.png) 준비중'">
+    </div>
+
+    <div id="toast" class="toast">알림 메시지</div>
+
+    <div id="dimmer" onclick="closeMapOverlay()"></div>
+
+    <div id="top-sheet">
+        <div class="ts-header">
+            <h3 id="ts-title">지역명</h3>
+            <button class="btn-ts-close" onclick="closeMapOverlay()">닫기</button>
+        </div>
+        <div id="ts-content" class="ts-content store-list-wrap"></div>
+    </div>
+
+
+    <div id="app-container">
+        <div id="view-home" class="view-section active">
+            <div class="helper-container" id="helper-wrap">
+                <div class="helper-character" id="helper-char"><div class="smile"></div></div>
+            </div>
+            <h1 class="greeting" id="main-greeting">카다로스 업무 도우미입니다.<br>무엇을 도와드릴까요?</h1>
+            
+            <div class="search-container">
+                <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                <input type="text" id="home-search-input" placeholder="매장명을 검색하세요">
+            </div>
+            
+            <div id="home-dash-header" class="dashboard-header">현황 대시보드</div>
+            <div class="dash-grid" id="dashboard">
+                <div class="dash-card full">
+                    <span class="dash-title">진행중</span>
+                    <span class="dash-value" id="dash-inprogress"><b>0</b>개의 매장을 진행중이에요.</span>
+                </div>
+                <div class="dash-card">
+                    <span class="dash-title">완료</span>
+                    <span class="dash-value" id="dash-completed">지금까지<br><b>0</b>개의 매장을<br>완료했어요.</span>
+                </div>
+                <div class="dash-card">
+                    <span class="dash-title">성공률</span>
+                    <span class="dash-value" id="dash-success">컨설팅 성공률은<br><b>0</b>%에요.</span>
+                </div>
+                <div class="dash-card">
+                    <span class="dash-title">이번주 일정</span>
+                    <span class="dash-value" id="dash-this-week"><b>0</b>번의 방문<br>일정이 있어요!</span>
+                </div>
+                <div class="dash-card">
+                    <span class="dash-title">다음주 일정</span>
+                    <span class="dash-value" id="dash-next-week"><b>0</b>번의 방문<br>일정이 있어요!</span>
+                </div>
+            </div>
+
+            <div id="home-search-results" class="store-list-wrap" style="display:none; margin-top: 16px;"></div>
+        </div>
+
+        <div id="view-calendar" class="view-section">
+            <div class="calendar-header">
+                <span class="calendar-month" id="cal-month"></span>
+                <span class="calendar-year" id="cal-year" onclick="openYearModal()"></span>
+            </div>
+            <div class="calendar-wrapper" id="calendar-wrapper">
+                <div class="calendar-days"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
+                <div class="calendar-grid" id="calendar-grid"></div>
+            </div>
+            <p class="gesture-hint">두 손가락으로 위아래로 쓸어넘겨 월을 이동해보세요.</p>
+            <div class="schedule-summary">
+                <h4 id="selected-date-title">날짜를 선택하세요</h4>
+                <div class="schedule-list" id="schedule-list"></div>
+            </div>
+        </div>
+
+        <div id="view-store" class="view-section">
+            <h2 class="greeting">매장관리</h2>
+            
+            <div id="store-main-menu" class="store-sub-view active">
+                <div class="store-main-menu">
+                    <div class="store-menu-card" onclick="openStoreView('register')">
+                        <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> 신규 등록
+                    </div>
+                    <div class="store-menu-card" onclick="openStoreView('manage', ['진행중'])">
+                        <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg> 진행 매장
+                    </div>
+                    <div class="store-menu-card" onclick="openStoreView('manage', ['보류'])">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> 보류 매장
+                    </div>
+                    <div class="store-menu-card" onclick="openStoreView('manage', ['합격', '불합격'])">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg> 완료 매장
+                    </div>
+                </div>
+
+                <div class="map-section-title">
+                    지역별 매장 현황 <span class="map-section-desc">블록을 눌러보세요</span>
+                </div>
+                <div class="map-tabs">
+                    <div class="map-tab active" data-target="seoul" onclick="switchMapTab('seoul')">서울</div>
+                    <div class="map-tab" data-target="gyeonggi" onclick="switchMapTab('gyeonggi')">경기</div>
+                </div>
+                
+                <div id="block-map-seoul" class="block-map-grid"></div>
+                <div id="block-map-gyeonggi" class="block-map-grid" style="display:none;"></div>
+
+            </div>
+
+            <div id="store-register" class="store-sub-view">
+                <div class="back-nav" onclick="openStoreView('main')">
+                    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 메인으로
+                </div>
+                <form id="new-store-form">
+                    <div class="form-group"><label>매장명</label><input type="text" id="store-name" class="form-input" placeholder="매장명을 입력하세요" required></div>
+                    <div class="form-group">
+                        <label>지역 선택</label>
+                        <div class="row-group">
+                            <select id="region-province" class="form-input" required>
+                                <option value="" disabled selected>시/도</option>
+                                <option value="서울특별시">서울특별시</option><option value="경기도">경기도</option>
+                            </select>
+                            <select id="region-city" class="form-input" required disabled><option value="" disabled selected>시/군/구</option></select>
+                        </div>
+                    </div>
+                    <div class="form-group"><label>신청일</label><input type="date" id="date-apply" class="form-input" required></div>
+                    <div class="form-group">
+                        <label>진행 금액 (원)</label>
+                        <input type="number" id="store-price" class="form-input" placeholder="예: 500000" required>
+                        <div class="radio-group">
+                            <label class="radio-label"><input type="radio" name="vat" value="included" checked> VAT 포함</label>
+                            <label class="radio-label"><input type="radio" name="vat" value="excluded"> VAT 별도</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit">등록하기</button>
+                </form>
+            </div>
+
+            <div id="store-manage" class="store-sub-view">
+                <div class="back-nav" onclick="openStoreView('main')">
+                    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 메인으로
+                </div>
+                <h3 id="store-list-title" style="margin-bottom:16px; font-size:18px;">매장 목록</h3>
+                <div id="store-list-container" class="store-list-wrap"></div>
+            </div>
+
+            <div id="store-edit" class="store-sub-view">
+                <div class="back-nav" onclick="openStoreView('manage', currentListFilters)">
+                    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 목록으로
+                </div>
+                <form id="edit-store-form">
+                    <input type="hidden" id="edit-store-id">
+                    <div class="form-group">
+                        <label>심사 결과 (매장 상태)</label>
+                        <select id="edit-store-status" class="form-input" style="font-weight:700;">
+                            <option value="진행중">진행중</option><option value="보류">보류</option>
+                            <option value="합격">합격</option><option value="불합격">불합격</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>매장명</label><input type="text" id="edit-store-name" class="form-input" required></div>
+                    <div class="form-group"><label>진행 금액 / 지역</label><input type="text" id="edit-store-price-view" class="form-input" readonly style="color:var(--gray-600); background:transparent; border:none; padding:0;"></div>
+                    <div class="row-group">
+                        <div class="form-group"><label>신청일</label><input type="date" id="edit-date-apply" class="form-input" required></div>
+                        <div class="form-group"><label>심사일</label><input type="date" id="edit-date-inspect" class="form-input"></div>
+                    </div>
+                    <div class="row-group">
+                        <div class="form-group"><label>1차 컨설팅</label><input type="date" id="edit-date-consult1" class="form-input"></div>
+                        <div class="form-group"><label>2차 컨설팅</label><input type="date" id="edit-date-consult2" class="form-input"></div>
+                    </div>
+                    <button type="submit" class="btn-submit">저장하기</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="view-consulting" class="view-section"><h2 class="greeting">컨설팅 (체크리스트)</h2></div>
+        
+        <div id="view-settings" class="view-section">
+            <h2 class="greeting">설정</h2>
+            <div style="text-align: center; padding: 40px 20px; color: var(--gray-600); background: var(--gray-50); border-radius: 20px;">
+                위생등급제 평가표가 이곳에 연동될 예정입니다.
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active" data-target="view-home"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>홈</span></a>
+            <a href="#" class="nav-item" data-target="view-calendar"><svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg><span>캘린더</span></a>
+            <a href="#" class="nav-item" data-target="view-consulting"><svg viewBox="0 0 24 24"><path d="M14 6V4h-4v2h4zM4 8v11h16V8H4zm16-2c1.11 0 2 .89 2 2v11c0 1.11-.89 2-2 2H4c-1.11 0-2-.89-2-2V8c0-1.11.89-2 2-2h4V4c0-1.11.89-2 2-2h8c1.11 0 2 .89 2 2v2h4z"/></svg><span>컨설팅</span></a>
+            <a href="#" class="nav-item" data-target="view-store"><svg viewBox="0 0 24 24"><path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"/></svg><span>매장관리</span></a>
+            <a href="#" class="nav-item" data-target="view-settings"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.49-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg><span>설정</span></a>
+        </nav>
+    </div>
+
+    <div id="selection-bar" class="selection-bottom-bar">
+        <span id="selection-count" class="selection-count">0개 선택됨</span>
+        <div class="selection-actions">
+            <button class="btn-cancel-sel" onclick="cancelSelectionMode()">취소</button>
+            <button class="btn-delete-sel" onclick="deleteSelectedStores()">삭제</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="year-modal">
+        <div class="modal-content">
+            <h3>연도 이동</h3>
+            <input type="number" id="year-input" pattern="[0-9]*" inputmode="numeric">
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeYearModal()">취소</button>
+                <button class="btn-confirm" onclick="applyYear()">이동</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 전역 데이터베이스
+        let storesData = [];
+
+        // 지역 데이터
+        const regionData = {
+            "서울특별시": ["강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구", "성동구", "성북구", "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"],
+            "경기도": ["수원시", "성남시", "고양시", "용인시", "부천시", "안산시", "안양시", "남양주시", "화성시", "평택시", "의정부시", "시흥시", "파주시", "광명시", "김포시", "군포시", "광주시", "이천시", "양주시", "오산시", "구리시", "안성시", "포천시", "의왕시", "하남시", "여주시", "양평군", "동두천시", "과천시", "가평군", "연천군"]
+        };
+
+        // 토스트 알림 함수
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg; toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 2500);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // 1. 스플래시
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen'); const app = document.getElementById('app-container');
+                splash.style.opacity = '0'; setTimeout(() => { splash.style.display = 'none'; app.style.display = 'block'; app.offsetHeight; app.style.opacity = '1'; }, 500);
+            }, 1500);
+
+            // ==========================================
+            // 모션그래픽 캔버스 & 이스터에그 (2초 단축)
+            // ==========================================
+            const canvas = document.getElementById('fx-canvas'); const ctx = canvas.getContext('2d');
+            let animationFrameId;
+            function resizeCanvas() {
+                const dpr = window.devicePixelRatio || 1; canvas.width = window.innerWidth * dpr; canvas.height = window.innerHeight * dpr;
+                ctx.scale(dpr, dpr); canvas.style.width = window.innerWidth + 'px'; canvas.style.height = window.innerHeight + 'px';
+            }
+            window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+            function playMotionGraphicWipe(isToGolden) {
+                canvas.style.display = 'block'; resizeCanvas();
+                let start = null; const duration = 2500;
+                const particles = Array.from({length: 150}, () => ({ x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight - window.innerHeight, size: Math.random() * 4 + 1.5, speedY: Math.random() * 15 + 10, speedX: Math.random() * 4 - 2, opacity: Math.random() * 0.8 + 0.2 }));
+
+                function render(time) {
+                    if (!start) start = time; const elapsed = time - start; const progress = Math.min(elapsed / duration, 1);
+                    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+                    let overlayAlpha = 0;
+                    if (progress < 0.4) overlayAlpha = progress / 0.4;
+                    else if (progress < 0.6) { overlayAlpha = 1; if (!canvas.dataset.swapped) { toggleThemeDOM(isToGolden); canvas.dataset.swapped = 'true'; if(navigator.vibrate) navigator.vibrate([100, 50, 100]); } }
+                    else overlayAlpha = 1 - ((progress - 0.6) / 0.4);
+
+                    const gradient = ctx.createLinearGradient(0, 0, 0, window.innerHeight);
+                    if (isToGolden) { gradient.addColorStop(0, `rgba(255, 223, 0, ${overlayAlpha})`); gradient.addColorStop(1, `rgba(212, 175, 55, ${overlayAlpha})`); }
+                    else { gradient.addColorStop(0, `rgba(3, 110, 184, ${overlayAlpha})`); gradient.addColorStop(1, `rgba(0, 80, 150, ${overlayAlpha})`); }
+                    ctx.fillStyle = gradient; ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+                    particles.forEach(p => { p.y += p.speedY * (progress * 2); p.x += Math.sin(progress * 10 + p.speedX) * 2; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fillStyle = isToGolden ? `rgba(255, 255, 255, ${p.opacity})` : `rgba(150, 200, 255, ${p.opacity})`; ctx.shadowBlur = 10; ctx.shadowColor = isToGolden ? "#FFF" : "#00FFFF"; ctx.fill(); });
+
+                    if (progress < 1) animationFrameId = requestAnimationFrame(render);
+                    else { canvas.style.display = 'none'; canvas.dataset.swapped = ''; isTransitioning = false; }
+                }
+                animationFrameId = requestAnimationFrame(render);
+            }
+
+            function toggleThemeDOM(toGolden) {
+                const greeting = document.getElementById('main-greeting'); const helperChar = document.getElementById('helper-char');
+                if (toGolden) { document.body.classList.add('golden-theme'); helperChar.classList.add('golden'); greeting.innerHTML = "✨ 앗! 황금이 발견! ✨<br>오늘 하루 대박나실 거예요!"; }
+                else { document.body.classList.remove('golden-theme'); helperChar.classList.remove('golden'); greeting.innerHTML = "카다로스 업무 도우미입니다.<br>무엇을 도와드릴까요?"; }
+            }
+
+            const helperChar = document.getElementById('helper-char');
+            const motions = ['motion-jump', 'motion-spin', 'motion-squish', 'motion-wiggle']; const faces = ['face-happy', 'face-surprised', 'face-wink'];
+            let isGolden = false; let isTransitioning = false; let pressTimer = null; let isPressing = false;
+
+            helperChar.addEventListener('click', () => {
+                if(isPressing || isTransitioning) return; 
+                if (!isGolden && Math.random() < 0.03) { isTransitioning = true; isGolden = true; playMotionGraphicWipe(true); return; }
+                helperChar.classList.remove(...motions, ...faces); void helperChar.offsetWidth; 
+                const rm = motions[Math.floor(Math.random() * motions.length)]; const rf = faces[Math.floor(Math.random() * faces.length)];
+                helperChar.classList.add(rm, rf); setTimeout(() => { helperChar.classList.remove(rm, rf); }, 600);
+            });
+
+            // 2초 단축
+            const startPress = () => { if (!isGolden || isTransitioning) return; isPressing = true; helperChar.classList.add('shake'); pressTimer = setTimeout(() => { isTransitioning = true; isGolden = false; helperChar.classList.remove('shake'); isPressing = false; playMotionGraphicWipe(false); }, 2000); };
+            const cancelPress = () => { if(pressTimer) clearTimeout(pressTimer); helperChar.classList.remove('shake'); setTimeout(() => { isPressing = false; }, 100); };
+            helperChar.addEventListener('mousedown', startPress); helperChar.addEventListener('touchstart', startPress, {passive: true});
+            helperChar.addEventListener('mouseup', cancelPress); helperChar.addEventListener('mouseleave', cancelPress);
+            helperChar.addEventListener('touchend', cancelPress); helperChar.addEventListener('touchcancel', cancelPress);
+
+
+            // ==========================================
+            // 홈 검색 & 대시보드 자동 연동
+            // ==========================================
+            document.getElementById('home-search-input').addEventListener('input', function(e) {
+                const query = e.target.value.trim().toLowerCase();
+                const dash = document.getElementById('dashboard'); const dashHeader = document.getElementById('home-dash-header'); const resWrap = document.getElementById('home-search-results');
+                if (query) {
+                    dash.style.display = 'none'; dashHeader.style.display = 'none'; resWrap.style.display = 'flex'; resWrap.innerHTML = '';
+                    const matched = storesData.filter(s => s.name.toLowerCase().includes(query));
+                    if (matched.length === 0) resWrap.innerHTML = '<div class="store-empty">검색 결과가 없습니다.</div>';
+                    else {
+                        matched.forEach(store => {
+                            const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`;
+                            card.onclick = () => { document.querySelector('.nav-item[data-target="view-store"]').click(); openStoreView('manage', [store.status]); openEditStore(store.id); };
+                            card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>지역</span> <strong>${store.region}</strong></div>`;
+                            resWrap.appendChild(card);
+                        });
+                    }
+                } else { dash.style.display = 'grid'; dashHeader.style.display = 'block'; resWrap.style.display = 'none'; }
+            });
+
+            function getWeekRanges() {
+                const now = new Date(); now.setHours(0,0,0,0);
+                const endOfWeek = new Date(now); const diff = now.getDay() === 0 ? 0 : 7 - now.getDay(); endOfWeek.setDate(now.getDate() + diff); endOfWeek.setHours(23,59,59,999);
+                const nextWeekStart = new Date(endOfWeek); nextWeekStart.setDate(nextWeekStart.getDate() + 1); nextWeekStart.setHours(0,0,0,0);
+                const nextWeekEnd = new Date(nextWeekStart); nextWeekEnd.setDate(nextWeekStart.getDate() + 6); nextWeekEnd.setHours(23,59,59,999);
+                return { now, endOfWeek, nextWeekStart, nextWeekEnd };
+            }
+
+            function updateDashboard() {
+                let inProgressCount = 0; let passedCount = 0; let failedCount = 0; let thisWeekCount = 0; let nextWeekCount = 0;
+                const ranges = getWeekRanges();
+
+                storesData.forEach(store => {
+                    if (store.status === '진행중' || store.status === '보류') inProgressCount++;
+                    if (store.status === '합격') passedCount++;
+                    if (store.status === '불합격') failedCount++;
+                    
+                    const dates = [store.consult1, store.consult2].filter(d => d);
+                    dates.forEach(dStr => {
+                        const d = new Date(dStr);
+                        if(d >= ranges.now && d <= ranges.endOfWeek) thisWeekCount++;
+                        if(d >= ranges.nextWeekStart && d <= ranges.nextWeekEnd) nextWeekCount++;
+                    });
+                });
+
+                const completedCount = passedCount + failedCount;
+                const successRate = completedCount === 0 ? 0 : Math.round((passedCount / completedCount) * 100);
+
+                document.getElementById('dash-inprogress').innerHTML = `<b>${inProgressCount}</b>개의 매장을 진행중이에요.`;
+                document.getElementById('dash-completed').innerHTML = `지금까지<br><b>${completedCount}</b>개의 매장을<br>완료했어요.`;
+                document.getElementById('dash-success').innerHTML = `컨설팅 성공률은<br><b>${successRate}</b>%에요.`;
+                document.getElementById('dash-this-week').innerHTML = `<b>${thisWeekCount}</b>번의 방문<br>일정이 있어요!`;
+                document.getElementById('dash-next-week').innerHTML = `<b>${nextWeekCount}</b>번의 방문<br>일정이 있어요!`;
+            }
+
+
+            // ==========================================
+            // 메인 탭 네비게이션
+            // ==========================================
+            const navItems = document.querySelectorAll('.nav-item');
+            const viewSections = document.querySelectorAll('.view-section');
+
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navItems.forEach(nav => nav.classList.remove('active')); this.classList.add('active');
+                    const targetId = this.getAttribute('data-target');
+                    viewSections.forEach(section => { section.classList.remove('active'); });
+                    document.getElementById(targetId).classList.add('active');
+                    if(targetId === 'view-calendar') renderCalendar();
+                    if(targetId === 'view-store') renderBlockMap();
+                });
+            });
+
+
+            // ==========================================
+            // 매장관리(등록/다중삭제/블록맵 연동)
+            // ==========================================
+            let currentListFilters = [];
+            let isSelectionMode = false; let selectedStoreIds = new Set();
+
+            window.openStoreView = function(viewName, filters = null) {
+                const subs = document.querySelectorAll('.store-sub-view');
+                subs.forEach(s => s.classList.remove('active')); cancelSelectionMode();
+                
+                if (viewName === 'main') { document.getElementById('store-main-menu').classList.add('active'); renderBlockMap(); }
+                if (viewName === 'register') document.getElementById('store-register').classList.add('active');
+                if (viewName === 'manage') {
+                    currentListFilters = filters || ['진행중', '보류', '합격', '불합격']; 
+                    document.getElementById('store-manage').classList.add('active');
+                    let titleStr = "매장 목록";
+                    if(filters.includes('진행중') && filters.length===1) titleStr = "진행 매장 관리";
+                    if(filters.includes('보류') && filters.length===1) titleStr = "보류 매장 관리";
+                    if(filters.includes('합격')) titleStr = "완료 매장 관리";
+                    document.getElementById('store-list-title').textContent = titleStr;
+                    renderStoreList();
+                }
+            };
+
+            const provSelect = document.getElementById('region-province'); const citySelect = document.getElementById('region-city');
+            provSelect.addEventListener('change', function() {
+                const selected = this.value; citySelect.innerHTML = '<option value="" disabled selected>시/군/구</option>';
+                if(regionData[selected]) { regionData[selected].forEach(city => { const option = document.createElement('option'); option.value = city; option.textContent = city; citySelect.appendChild(option); }); citySelect.disabled = false; } else citySelect.disabled = true;
+            });
+
+            document.getElementById('new-store-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const newStore = {
+                    id: Date.now(), name: document.getElementById('store-name').value, status: '진행중', 
+                    region: `${document.getElementById('region-province').value} ${document.getElementById('region-city').value}`,
+                    price: Number(document.getElementById('store-price').value).toLocaleString() + '원 (' + (document.querySelector('input[name="vat"]:checked').value === 'included' ? 'VAT포함' : 'VAT별도') + ')',
+                    applyDate: document.getElementById('date-apply').value, consult1: "", consult2: "", inspect: "" 
+                };
+                storesData.unshift(newStore); updateDashboard(); renderBlockMap();
+                showToast(`[${newStore.name}] 등록이 완료되었습니다.`); // 토스트 알림!
+                this.reset(); citySelect.innerHTML = '<option value="" disabled selected>시/군/구</option>'; citySelect.disabled = true;
+            });
+
+            function getStatusClass(status) {
+                if(status === '합격') return 'status-pass'; if(status === '불합격') return 'status-fail'; if(status === '보류') return 'status-pending'; return 'status-progress';
+            }
+
+            window.activateSelectionMode = function(firstId) { isSelectionMode = true; selectedStoreIds.add(firstId); renderStoreList(); updateSelectionBar(); };
+            window.cancelSelectionMode = function() { isSelectionMode = false; selectedStoreIds.clear(); document.getElementById('selection-bar').classList.remove('active'); renderStoreList(); };
+            window.updateSelectionBar = function() {
+                const bar = document.getElementById('selection-bar');
+                if(isSelectionMode) { bar.classList.add('active'); document.getElementById('selection-count').textContent = `${selectedStoreIds.size}개 선택됨`; } else bar.classList.remove('active');
+            };
+            window.deleteSelectedStores = function() {
+                if(selectedStoreIds.size === 0) return;
+                const pw = prompt("삭제를 위해 관리자 비밀번호를 입력하세요.\n(테스트용: 0000)");
+                if(pw === "0000") {
+                    storesData = storesData.filter(s => !selectedStoreIds.has(s.id));
+                    cancelSelectionMode(); updateDashboard(); renderCalendar(); renderBlockMap(); showToast("성공적으로 삭제되었습니다.");
+                } else if(pw !== null) alert("비밀번호가 일치하지 않습니다.");
+            };
+
+            function renderStoreList() {
+                const container = document.getElementById('store-list-container');
+                container.innerHTML = ''; container.classList.toggle('selection-mode-active', isSelectionMode);
+
+                const filtered = storesData.filter(s => currentListFilters.includes(s.status));
+                if(filtered.length === 0) { container.innerHTML = '<div class="store-empty">해당되는 매장이 없습니다.</div>'; return; }
+                
+                filtered.forEach(store => {
+                    const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`;
+                    if (selectedStoreIds.has(store.id)) card.classList.add('is-selected');
+                    card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>지역</span> <strong>${store.region}</strong></div><div class="store-info-line"><span>신청일</span> <strong>${store.applyDate || '-'}</strong></div><div class="store-info-line"><span>심사일</span> <strong>${store.inspect || '미정'}</strong></div><div class="select-indicator"></div>`;
+
+                    let pressTimer; let isPressing = false; let startY = 0;
+                    const startPress = (e) => { if(isSelectionMode) return; isPressing = true; startY = e.touches ? e.touches[0].clientY : e.clientY; pressTimer = setTimeout(() => { isPressing = false; activateSelectionMode(store.id); if(navigator.vibrate) navigator.vibrate(50); }, 2000); };
+                    const cancelPress = () => { clearTimeout(pressTimer); isPressing = false; };
+                    const movePress = (e) => { const currentY = e.touches ? e.touches[0].clientY : e.clientY; if(Math.abs(currentY - startY) > 10) cancelPress(); };
+
+                    card.addEventListener('mousedown', startPress); card.addEventListener('touchstart', startPress, {passive:true});
+                    card.addEventListener('mousemove', movePress); card.addEventListener('touchmove', movePress, {passive:true});
+                    card.addEventListener('mouseup', cancelPress); card.addEventListener('mouseleave', cancelPress); card.addEventListener('touchend', cancelPress);
+
+                    card.addEventListener('click', () => {
+                        if (isSelectionMode) { if (selectedStoreIds.has(store.id)) selectedStoreIds.delete(store.id); else selectedStoreIds.add(store.id); renderStoreList(); updateSelectionBar(); }
+                        else openEditStore(store.id);
+                    }); container.appendChild(card);
+                });
+            }
+
+            window.openEditStore = function(id) {
+                const store = storesData.find(s => s.id === id); if(!store) return;
+                document.getElementById('edit-store-id').value = store.id; document.getElementById('edit-store-status').value = store.status; document.getElementById('edit-store-name').value = store.name; document.getElementById('edit-store-price-view').value = store.price + " / " + store.region; document.getElementById('edit-date-apply').value = store.applyDate; document.getElementById('edit-date-consult1').value = store.consult1; document.getElementById('edit-date-consult2').value = store.consult2; document.getElementById('edit-date-inspect').value = store.inspect;
+                document.querySelectorAll('.store-sub-view').forEach(s => s.classList.remove('active')); document.getElementById('store-edit').classList.add('active');
+            };
+
+            document.getElementById('edit-store-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const store = storesData.find(s => s.id === parseInt(document.getElementById('edit-store-id').value));
+                if(store) {
+                    store.status = document.getElementById('edit-store-status').value; store.name = document.getElementById('edit-store-name').value; store.applyDate = document.getElementById('edit-date-apply').value; store.consult1 = document.getElementById('edit-date-consult1').value; store.consult2 = document.getElementById('edit-date-consult2').value; store.inspect = document.getElementById('edit-date-inspect').value;
+                    updateDashboard(); renderBlockMap(); showToast("저장되었습니다."); openStoreView('manage', currentListFilters); renderCalendar(); 
+                }
+            });
+
+
+            // ==========================================
+            // 토스 스타일 블록 맵 & 상단 오버레이 로직
+            // ==========================================
+            window.switchMapTab = function(regionKey) {
+                document.querySelectorAll('.map-tab').forEach(t => t.classList.remove('active'));
+                document.querySelector(`.map-tab[data-target="${regionKey}"]`).classList.add('active');
+                document.getElementById('block-map-seoul').style.display = regionKey === 'seoul' ? 'grid' : 'none';
+                document.getElementById('block-map-gyeonggi').style.display = regionKey === 'gyeonggi' ? 'grid' : 'none';
+            };
+
+            function renderBlockMap() {
+                const drawBlocks = (targetId, dataArr) => {
+                    const grid = document.getElementById(targetId); grid.innerHTML = '';
+                    dataArr.forEach(cityName => {
+                        const count = storesData.filter(s => s.region.includes(cityName)).length;
+                        const block = document.createElement('div');
+                        block.className = `map-block ${count > 0 ? (count > 2 ? 'has-store-dense' : 'has-store') : ''}`;
+                        block.innerHTML = cityName + (count > 0 ? `<div class="badge">${count}</div>` : '');
+                        
+                        block.onclick = (e) => {
+                            // 블록 떠오르기 애니메이션
+                            document.querySelectorAll('.map-block').forEach(b => b.classList.remove('popped'));
+                            block.classList.add('popped');
+                            document.getElementById('dimmer').classList.add('active');
+                            
+                            // 탑 시트 오버레이 데이터 연동
+                            document.getElementById('ts-title').textContent = cityName + " 현황";
+                            const list = document.getElementById('ts-content'); list.innerHTML = '';
+                            const matched = storesData.filter(s => s.region.includes(cityName));
+                            
+                            if(matched.length === 0) list.innerHTML = '<div class="store-empty" style="margin-top:20px;">등록된 매장이 없습니다.</div>';
+                            else {
+                                matched.forEach(store => {
+                                    const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`;
+                                    card.style.marginBottom = '12px';
+                                    card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>진행 금액</span> <strong>${store.price.split(' ')[0]}</strong></div>`;
+                                    list.appendChild(card);
+                                });
+                            }
+                            document.getElementById('top-sheet').classList.add('active');
+                        };
+                        grid.appendChild(block);
+                    });
+                };
+                drawBlocks('block-map-seoul', regionData["서울특별시"]);
+                drawBlocks('block-map-gyeonggi', regionData["경기도"]);
+            }
+
+            window.closeMapOverlay = function() {
+                document.querySelectorAll('.map-block').forEach(b => b.classList.remove('popped'));
+                document.getElementById('dimmer').classList.remove('active');
+                document.getElementById('top-sheet').classList.remove('active');
+            };
+
+
+            // ==========================================
+            // 캘린더 엔진
+            // ==========================================
+            let currentDate = new Date(); let selectedDateStr = null;
+            function getSchedulesForDate(dateStr) {
+                let results = [];
+                storesData.forEach(store => {
+                    if(store.applyDate === dateStr) results.push({ name: store.name, type: "신청일", typeClass: "type-apply" });
+                    if(store.consult1 === dateStr) results.push({ name: store.name, type: "1차 컨설팅", typeClass: "" });
+                    if(store.consult2 === dateStr) results.push({ name: store.name, type: "2차 컨설팅", typeClass: "" });
+                    if(store.inspect === dateStr) results.push({ name: store.name, type: "심사일", typeClass: "type-inspect" });
+                }); return results;
+            }
+
+            function renderCalendar() {
+                const year = currentDate.getFullYear(); const month = currentDate.getMonth(); const today = new Date();
+                document.getElementById('cal-year').textContent = year; document.getElementById('cal-month').textContent = (month + 1) + '월';
+                const grid = document.getElementById('calendar-grid'); grid.innerHTML = '';
+                const firstDay = new Date(year, month, 1).getDay(); const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                for (let i = 0; i < firstDay; i++) { const emptyCell = document.createElement('div'); emptyCell.className = 'calendar-cell empty'; grid.appendChild(emptyCell); }
+                for (let i = 1; i <= daysInMonth; i++) {
+                    const cell = document.createElement('div'); cell.className = 'calendar-cell'; cell.textContent = i;
+                    const cellDateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`; cell.dataset.date = cellDateStr;
+                    if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) { cell.classList.add('today'); if(!selectedDateStr) selectDate(cellDateStr, cell); }
+                    
+                    const schedules = getSchedulesForDate(cellDateStr);
+                    if (schedules.length > 0) {
+                        const markerWrap = document.createElement('div'); markerWrap.className = 'marker-wrap';
+                        schedules.slice(0, 3).forEach(sch => {
+                            const marker = document.createElement('div'); marker.className = 'marker';
+                            if(sch.type === '심사일') marker.classList.add('marker-red'); if(sch.type === '신청일') marker.classList.add('marker-yellow');
+                            markerWrap.appendChild(marker);
+                        }); cell.appendChild(markerWrap);
+                    }
+                    cell.addEventListener('click', function() { document.querySelectorAll('.calendar-cell').forEach(c => c.classList.remove('selected')); this.classList.add('selected'); selectDate(cellDateStr, this); });
+                    grid.appendChild(cell);
+                }
+            }
+
+            function selectDate(dateStr, cellElement) {
+                selectedDateStr = dateStr; const dateObj = new Date(dateStr);
+                document.getElementById('selected-date-title').textContent = `${dateObj.getMonth()+1}월 ${dateObj.getDate()}일 일정`;
+                const listEl = document.getElementById('schedule-list'); listEl.innerHTML = '';
+                const schedules = getSchedulesForDate(dateStr);
+                if (schedules.length > 0) schedules.forEach(item => { listEl.innerHTML += `<div class="schedule-box ${item.typeClass}"><span class="sch-name">${item.name}</span><span class="sch-type">${item.type}</span></div>`; });
+                else listEl.innerHTML = '<div class="schedule-empty">등록된 일정이 없습니다.</div>';
+            }
+
+            const calWrap = document.getElementById('calendar-wrapper'); let isTwoFing = false; let sY = 0; let cY = 0;
+            calWrap.addEventListener('touchstart', (e) => { if (e.touches.length === 2) { isTwoFing = true; sY = (e.touches[0].clientY + e.touches[1].clientY) / 2; e.preventDefault(); } }, {passive: false});
+            calWrap.addEventListener('touchmove', (e) => { if (isTwoFing && e.touches.length === 2) { cY = (e.touches[0].clientY + e.touches[1].clientY) / 2; e.preventDefault(); } }, {passive: false});
+            calWrap.addEventListener('touchend', (e) => { if (isTwoFing) { let dY = sY - cY; if (Math.abs(dY) > 50 && cY !== 0) { if (dY > 0) currentDate.setMonth(currentDate.getMonth() + 1); else currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); } isTwoFing = false; sY = 0; cY = 0; } });
+
+            window.openYearModal = function() { document.getElementById('year-input').value = currentDate.getFullYear(); document.getElementById('year-modal').classList.add('show'); };
+            window.closeYearModal = function() { document.getElementById('year-modal').classList.remove('show'); };
+            window.applyYear = function() { const newYear = document.getElementById('year-input').value; if (newYear && !isNaN(newYear)) { currentDate.setFullYear(parseInt(newYear)); renderCalendar(); closeYearModal(); } };
+
+            // 초기화
+            updateDashboard(); renderCalendar(); renderBlockMap();
+        });
+    </script>
+</body>
+</html>
