@@ -31,12 +31,10 @@
             --blue-bg: #E8F3FF; --dark-gray-bg: #333D4B;
         }
 
-        /* ✨ 황금 테마 */
         body.golden-theme { --brand-color: #D4AF37; --blue-bg: #FFF9E6; }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
 
-        /* 바디 스크롤 차단 */
         body, html { 
             width: 100vw; height: 100dvh; background-color: var(--bg-color); color: var(--text-main); 
             overflow: hidden; touch-action: none; transition: background-color 0.4s ease, color 0.4s ease; 
@@ -50,7 +48,12 @@
         }
         .login-box { width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 16px; text-align: center;}
         .login-box img { width: 180px; margin: 0 auto 32px auto; }
-        .login-box .form-input { text-align: left; letter-spacing: normal;}
+        
+        .btn-google-login {
+            width: 100%; padding: 16px; background-color: white; color: #3c4043; border: 1px solid #dadce0; border-radius: 16px; font-size: 16px; font-weight: 700; margin-top: 12px; cursor: pointer; transition: transform 0.2s, background-color 0.2s; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .btn-google-login:active { transform: scale(0.98); background-color: #f8f9fa;}
+        .btn-google-login svg { width: 22px; height: 22px; }
 
         /* 메인 앱 컨테이너 */
         #app-container { 
@@ -152,7 +155,7 @@
         .calendar-cell.empty { pointer-events: none; }
         .calendar-cell.today { background-color: var(--gray-50); color: var(--brand-color); font-weight: 800; border: 1px solid var(--brand-color);}
         .calendar-cell.selected { background-color: var(--brand-color); color: white; font-weight: 800; box-shadow: 0 4px 12px rgba(3,110,184, 0.3); border:none;}
-        .marker-wrap { position: absolute; bottom: 4px; display: flex; gap: 3px; }
+        .marker-wrap { position: absolute; bottom: 3px; display: flex; gap: 3px; }
         .marker { width: 5px; height: 5px; border-radius: 50%; background-color: var(--brand-color); }
         .marker.marker-red { background-color: var(--red-color); } .marker.marker-yellow { background-color: var(--yellow-color); }
         .calendar-cell.selected .marker { background-color: white; }
@@ -277,7 +280,7 @@
         .hygiene-check:checked + .custom-chk::after { content: ''; width: 6px; height: 12px; border: solid white; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); margin-bottom: 2px; }
         .hygiene-check:disabled + .custom-chk { background-color: var(--gray-100); border-color: var(--gray-200); opacity: 0.5; }
 
-        /* 하단 고정 점수 & 저장 바 */
+        /* 하단 고정 점수 & 저장 바 (레이아웃 완벽 고정) */
         .score-bar {
             position: absolute; bottom: 0; left: 0; width: 100%;
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
@@ -364,11 +367,11 @@
     <div id="view-login" style="display:none;">
         <div class="login-box">
             <img src="logo.png" alt="카다로스" onerror="this.alt='카다로스'">
-            <h2 style="font-size:22px; font-weight:800; margin-bottom:8px; color:var(--text-main);">업무 도우미 로그인</h2>
-            <p style="font-size:14px; font-weight:600; color:var(--gray-600); margin-bottom:24px;">테스트 계정: admin / 0000</p>
-            <input type="text" id="login-id" class="form-input" placeholder="아이디를 입력하세요">
-            <input type="password" id="login-pw" class="form-input" placeholder="비밀번호를 입력하세요">
-            <button class="btn-submit" onclick="handleLogin()" style="margin-top:8px;">로그인</button>
+            <h2 style="font-size:22px; font-weight:800; margin-bottom:16px; color:var(--text-main);">업무 도우미 로그인</h2>
+            <button class="btn-google-login" onclick="handleLogin()">
+                <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                Google로 시작하기
+            </button>
         </div>
     </div>
 
@@ -607,6 +610,11 @@
                         </div>
                         <svg style="width:20px;height:20px;fill:var(--gray-400);" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
                     </div>
+                    
+                    <div class="settings-item" style="cursor:default;">
+                        <span style="padding-left:10px;">앱 버전</span>
+                        <span class="version">1.2.0</span>
+                    </div>
                     <div class="settings-item logout-btn" onclick="handleLogout()">
                         <span>로그아웃</span>
                     </div>
@@ -626,8 +634,11 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
-        // [중요] 파이어베이스 콘솔에서 발급받은 본인의 설정값으로 반드시 교체하세요!
+        // ==============================================================
+        // [중요] 파이어베이스 설정 정보 (대표님 프로젝트 설정값으로 변경하세요!)
+        // ==============================================================
 const firebaseConfig = {
   apiKey: "AIzaSyCoIdXuPX_FAm6crm5yQmRPlIKMVNICVtw",
   authDomain: "katharos-kr.firebaseapp.com",
@@ -640,63 +651,8 @@ const firebaseConfig = {
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-
-        // 비동기 통신 API 객체 (실제 서버 통신 모듈)
-        const api = {
-            async login(id, pw) {
-                try {
-                    const docRef = doc(db, "kadaros", "settings");
-                    const docSnap = await getDoc(docRef);
-                    let currentPw = "0000"; 
-                    if (docSnap.exists() && docSnap.data().adminPw) {
-                        currentPw = docSnap.data().adminPw;
-                    } else {
-                        await setDoc(docRef, { adminPw: "0000" }, { merge: true });
-                    }
-                    return { success: (id === 'admin' && pw === currentPw) };
-                } catch(e) {
-                    console.error("Login Error:", e);
-                    return { success: false };
-                }
-            },
-            async fetchStores() {
-                try {
-                    const docRef = doc(db, "kadaros", "stores");
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) return docSnap.data().list || [];
-                    return [];
-                } catch(e) {
-                    console.error("Fetch Stores Error:", e);
-                    return [];
-                }
-            },
-            async saveStores(data) {
-                try {
-                    const docRef = doc(db, "kadaros", "stores");
-                    await setDoc(docRef, { list: data }, { merge: true });
-                } catch(e) {
-                    console.error("Save Stores Error:", e);
-                }
-            },
-            async fetchSettings() {
-                try {
-                    const docRef = doc(db, "kadaros", "settings");
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) return docSnap.data().adminPw || '0000';
-                    return '0000';
-                } catch(e) {
-                    return '0000';
-                }
-            },
-            async saveSettings(pw) {
-                try {
-                    const docRef = doc(db, "kadaros", "settings");
-                    await setDoc(docRef, { adminPw: pw }, { merge: true });
-                } catch(e) {
-                    console.error("Save Settings Error:", e);
-                }
-            }
-        };
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
 
         let storesData = [];
         let adminPw = '0000';
@@ -707,168 +663,247 @@ const firebaseConfig = {
             setTimeout(() => { toast.classList.remove('show'); }, 2500);
         };
 
+        // 데이터 및 세팅 불러오기/저장하기 함수
+        async function loadStores() {
+            try {
+                const docRef = doc(db, "kadaros", "stores");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) { storesData = docSnap.data().list || []; } 
+                else { storesData = []; }
+            } catch(e) { console.error(e); storesData = []; }
+        }
+        window.saveStores = async function() {
+            try {
+                const docRef = doc(db, "kadaros", "stores");
+                await setDoc(docRef, { list: storesData }, { merge: true });
+            } catch(e) { console.error(e); }
+        }
+        
+        async function loadSettings() {
+            try {
+                const docRef = doc(db, "kadaros", "settings");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists() && docSnap.data().adminPw) {
+                    adminPw = docSnap.data().adminPw;
+                } else {
+                    await setDoc(docRef, { adminPw: "0000" }, { merge: true });
+                    adminPw = "0000";
+                }
+            } catch(e) { console.error(e); adminPw = "0000"; }
+        }
+        
+        window.saveSettings = async function(pw) {
+            try {
+                const docRef = doc(db, "kadaros", "settings");
+                await setDoc(docRef, { adminPw: pw }, { merge: true });
+            } catch(e) { console.error(e); }
+        }
+
         // 로그인 처리
         window.handleLogin = async function() {
-            const id = document.getElementById('login-id').value;
-            const pw = document.getElementById('login-pw').value;
-            if(!id || !pw) { showToast("아이디와 비밀번호를 입력해주세요."); return; }
-
-            const btn = document.querySelector('.login-box .btn-submit');
-            const originalText = btn.textContent;
-            btn.textContent = "로그인 중...";
-            btn.style.opacity = 0.7;
-
-            const res = await api.login(id, pw);
-            
-            if(res.success) {
-                localStorage.setItem('kadarosSession', 'true');
-                document.getElementById('view-login').style.opacity = '0';
-                setTimeout(async () => {
-                    document.getElementById('view-login').style.display = 'none';
-                    document.getElementById('app-container').style.display = 'flex';
-                    
-                    storesData = await api.fetchStores();
-                    adminPw = await api.fetchSettings();
-                    
-                    document.getElementById('app-container').offsetHeight;
-                    document.getElementById('app-container').style.opacity = '1';
-                    initApp();
-                }, 400);
-            } else {
-                btn.textContent = originalText;
+            try {
+                const btn = document.querySelector('.btn-google-login');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = "로그인 중..."; btn.style.opacity = 0.7;
+                
+                await signInWithPopup(auth, provider);
+                // onAuthStateChanged가 화면 전환을 처리합니다.
+            } catch (error) {
+                showToast("로그인에 실패했습니다.");
+                const btn = document.querySelector('.btn-google-login');
+                btn.innerHTML = `<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Google로 시작하기`;
                 btn.style.opacity = 1;
-                showToast("아이디 또는 비밀번호가 틀립니다.");
             }
         };
 
-        // 로그아웃 처리
-        window.handleLogout = function() {
+        window.handleLogout = async function() {
             if(confirm("로그아웃 하시겠습니까?")) {
-                localStorage.removeItem('kadarosSession');
+                await signOut(auth);
                 location.reload();
             }
         };
 
-        document.addEventListener("DOMContentLoaded", async () => {
+        // Firebase 로그인 상태 리스너 (자동 세션 처리)
+        onAuthStateChanged(auth, async (user) => {
             const splash = document.getElementById('splash-screen');
-            const app = document.getElementById('app-container');
-            const login = document.getElementById('view-login');
+            const appContainer = document.getElementById('app-container');
+            const loginView = document.getElementById('view-login');
+            const nav = document.getElementById('main-bottom-nav');
 
-            setTimeout(async () => {
+            if (user) {
+                // 로그인 됨
+                await loadStores();
+                await loadSettings(); // 관리자 비번 로드
+                
                 splash.style.opacity = '0';
                 setTimeout(() => splash.style.display = 'none', 400);
 
-                if(localStorage.getItem('kadarosSession')) {
-                    storesData = await api.fetchStores();
-                    adminPw = await api.fetchSettings();
-                    
-                    app.style.display = 'flex';
-                    app.offsetHeight; 
-                    app.style.opacity = '1';
-                    initApp();
-                } else {
-                    login.style.display = 'flex';
-                }
-            }, 1200);
+                loginView.style.display = 'none';
+                appContainer.style.display = 'flex';
+                nav.style.display = 'flex';
+                
+                setTimeout(() => { appContainer.style.opacity = '1'; }, 50);
+                initApp();
+            } else {
+                // 로그인 안 됨
+                splash.style.opacity = '0';
+                setTimeout(() => splash.style.display = 'none', 400);
 
-            // ==========================================
-            // 캐릭터 모션 및 파티클 엔진
-            // ==========================================
+                appContainer.style.display = 'none';
+                nav.style.display = 'none';
+                loginView.style.display = 'flex';
+                setTimeout(() => { loginView.style.opacity = '1'; }, 50);
+            }
+        });
+
+
+        // ==========================================
+        // 이하 공통 로직
+        // ==========================================
+
+        const regionData = {
+            "서울특별시": ["강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구", "성동구", "성북구", "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"],
+            "경기도": ["수원시", "성남시", "고양시", "용인시", "부천시", "안산시", "안양시", "남양주시", "화성시", "평택시", "의정부시", "시흥시", "파주시", "광명시", "김포시", "군포시", "광주시", "이천시", "양주시", "오산시", "구리시", "안성시", "포천시", "의왕시", "하남시", "여주시", "양평군", "동두천시", "과천시", "가평군", "연천군"]
+        };
+
+        const hygieneChecklistMaster = [
+            {
+                cat: "기본분야 (미준수 시 부적합)", items: [
+                    {id:"b1", txt:"종사자 건강검진 일자 준수", max:0, type:"basic"}, {id:"b2", txt:"위생모 및 마스크 착용", max:0, type:"basic"}, {id:"b3", txt:"영업자 위생교육 이수", max:0, type:"basic"},
+                    {id:"b4", txt:"표시사항 있는 식재료 사용", max:0, type:"basic"}, {id:"b5", txt:"소비기한 경과 원료 금지", max:0, type:"basic"}, {id:"b6", txt:"음식물 재사용 금지", max:0, type:"basic"},
+                    {id:"b7", txt:"식품용 적합 기구/용기 사용", max:0, type:"basic"}, {id:"b8", txt:"튀김용 유지 산가 3.0 이하", max:0, type:"basic"}
+                ]
+            },
+            {
+                cat: "객석 및 객실 (34점)", items: [
+                    {id:"g1_1", txt:"천장 및 조명 청결 (파손, 누수 없음) [2점]", max:2, type:"general"}, {id:"g1_2", txt:"벽면 파손, 끈적임 없이 청결 [2점]", max:2, type:"general"}, {id:"g1_3", txt:"바닥 파손, 끈적임 없이 청결 [2점]", max:2, type:"general"},
+                    {id:"g1_4", txt:"창문, 커튼 파손 및 이물 없이 청결 [3점]", max:3, type:"general"}, {id:"g1_5", txt:"환기시설(선풍기 등) 정상작동 [1점]", max:1, type:"general"}, {id:"g1_6", txt:"환기시설 내부 먼지 없이 청결 [3점]", max:3, type:"general"},
+                    {id:"g1_7", txt:"방충·방서 서식 흔적 없음 [2점]", max:2, type:"general"}, {id:"g1_8", txt:"방충·방서 설비 정상작동 및 청결 [3점]", max:3, type:"general"}, {id:"g1_9", txt:"식탁, 의자 장식품 청결 [2점]", max:2, type:"general"},
+                    {id:"g1_10", txt:"냅킨통, 소스통 청결 [2점]", max:2, type:"general"}, {id:"g1_11", txt:"객석 쓰레기통 덮개 및 청결 [1점]", max:1, type:"general"}, {id:"g1_12", txt:"수저통 덮개 구비 및 청결 [2점]", max:2, type:"general"},
+                    {id:"g1_13", txt:"손님용 앞치마 청결 [2점]", max:2, type:"general"}, {id:"g1_14", txt:"음용수 시설 정기 점검/정비 [1점]", max:1, type:"general"}, {id:"g1_15", txt:"정수기 추출구 이물 없이 청결 [1점]", max:1, type:"general"},
+                    {id:"g1_16", txt:"지하수 잔류염소/소독 입증 [2점]", max:2, type:"general"}, {id:"g1_17", txt:"객석용/주방용 행주 구분 보관 [1점]", max:1, type:"general"}, {id:"g1_18", txt:"행주 청결유지 [1점]", max:1, type:"general"},
+                    {id:"g1_19", txt:"키오스크, 샐러드바 덮개/청결 [1점]", max:1, type:"general"}
+                ]
+            },
+            {
+                cat: "조리장 관리 (72점)", items: [
+                    {id:"g2_1", txt:"천장 빗물/파손 없음 [1점]", max:1, type:"general"}, {id:"g2_2", txt:"천장/조명 거미줄, 곰팡이 없음 [2점]", max:2, type:"general"}, {id:"g2_3", txt:"벽/창문 파손 및 방충망 정상 [2점]", max:2, type:"general"},
+                    {id:"g2_4", txt:"벽/창문 곰팡이/빗물 없음 [3점]", max:3, type:"general"}, {id:"g2_5", txt:"환풍/후드 정상작동 및 청결 [4점]", max:4, type:"general"}, {id:"g2_6", txt:"배수시설 덮개 및 바닥 마름 [4점]", max:4, type:"general"},
+                    {id:"g2_7", txt:"식재료 바닥 이격 보관 [1점]", max:1, type:"general"}, {id:"g2_8", txt:"식재료 보관공간 청결/정돈 [3점]", max:3, type:"general"}, {id:"g2_9", txt:"기기/도구 소독방법 실시 [2점]", max:2, type:"general"},
+                    {id:"g2_10", txt:"도구 교차오염 방지 보관 [2점]", max:2, type:"general"}, {id:"g2_11", txt:"칼/도마 용도별 구분 사용 [2점]", max:2, type:"general"}, {id:"g2_12", txt:"기기/식기 청결유지 [4점]", max:4, type:"general"},
+                    {id:"g2_13", txt:"냉장·냉동고 청결 및 온도 [3점]", max:3, type:"general"}, {id:"g2_14", txt:"익힌음식 상단, 날음식 하단 보관 [2점]", max:2, type:"general"}, {id:"g2_15", txt:"외포장 제거 구분 보관 [2점]", max:2, type:"general"},
+                    {id:"g2_16", txt:"반조리 식품 밀폐 보관 [2점]", max:2, type:"general"}, {id:"g2_17", txt:"올바른 해동방법 준수 및 표시 [4점]", max:4, type:"general"}, {id:"g2_18", txt:"생채소 철저한 세척/소독 [2점]", max:2, type:"general"},
+                    {id:"g2_19", txt:"세척/소독제 규정적합 및 구분보관 [5점]", max:5, type:"general"}, {id:"g2_20", txt:"소분용기 청결/소비기한 [3점]", max:3, type:"general"}, {id:"g2_21", txt:"수족관 청결 관리 [2점]", max:2, type:"general"},
+                    {id:"g2_22", txt:"잔반/일반 쓰레기통 구분 및 청결 [4점]", max:4, type:"general"}, {id:"g2_23", txt:"손세척 시설 및 청결 [2점]", max:2, type:"general"}, {id:"g2_24", txt:"달걀/생선 등 온도 준수 보관 [5점]", max:5, type:"general"}
+                ]
+            },
+            {
+                cat: "종사자 및 화장실 관리 (12점)", items: [
+                    {id:"g3_1", txt:"위생교육 분기 1회 실시 [1점]", max:1, type:"general"}, {id:"g3_2", txt:"교육내용 주기적 확인 [2점]", max:2, type:"general"}, {id:"g3_3", txt:"두발/손톱 청결, 장신구 미착용 [1점]", max:1, type:"general"},
+                    {id:"g3_4", txt:"위생복/마스크 청결, 구분착용 [3점]", max:3, type:"general"}, {id:"g3_5", txt:"화장실 청결 및 환기 [2점]", max:2, type:"general"}, {id:"g3_6", txt:"손세척/건조 용품 구비 [3점]", max:3, type:"general"}
+                ]
+            },
+            {
+                cat: "공통분야 (가점)", items: [
+                    {id:"b_1", txt:"CCTV 주방 내부 실시간 공개 [2점]", max:2, type:"bonus"},
+                    {id:"b_2", txt:"식품관련 및 국가기관 자격증 소지자 [1점]", max:1, type:"bonus"},
+                    {id:"b_3", txt:"5년 이상 장기 근속자 [1점]", max:1, type:"bonus"},
+                    {id:"b_4", txt:"나트륨/당류 저감 메뉴 개발·판매 [1점]", max:1, type:"bonus"},
+                    {id:"b_5", txt:"알레르기, 영양성분 표시 등 [1점]", max:1, type:"bonus"},
+                    {id:"b_6", txt:"위생등급 유효기간 연장 이력 [3점]", max:3, type:"bonus"},
+                    {id:"b_7", txt:"모범음식점 등 지정업소 [2점]", max:2, type:"bonus"}
+                ]
+            }
+        ];
+
+        // 이스터에그 모션
+        const helperChar = document.getElementById('helper-char');
+        const motions = ['motion-jump', 'motion-spin', 'motion-squish', 'motion-wiggle']; const faces = ['face-happy', 'face-surprised', 'face-wink'];
+        let isGolden = false; let isTransitioning = false; let pressTimer = null; let isPressing = false;
+
+        function playMotionGraphicWipe(isToGolden) {
             const canvas = document.getElementById('fx-canvas'); const ctx = canvas.getContext('2d');
-            let animationFrameId;
-            function resizeCanvas() {
-                const dpr = window.devicePixelRatio || 1; canvas.width = window.innerWidth * dpr; canvas.height = window.innerHeight * dpr;
-                ctx.scale(dpr, dpr); canvas.style.width = window.innerWidth + 'px'; canvas.style.height = window.innerHeight + 'px';
+            canvas.style.display = 'block'; 
+            let start = null; const duration = 2000;
+            const particles = Array.from({length: 100}, () => ({ x: Math.random() * window.innerWidth, y: -Math.random()*window.innerHeight, size: Math.random() * 4 + 1.5, speedY: Math.random() * 15 + 10, speedX: Math.random() * 4 - 2, opacity: Math.random() * 0.8 + 0.2 }));
+
+            function render(time) {
+                if (!start) start = time; const elapsed = time - start; const progress = Math.min(elapsed / duration, 1);
+                ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+                let overlayAlpha = 0;
+                if (progress < 0.4) overlayAlpha = progress / 0.4;
+                else if (progress < 0.6) { overlayAlpha = 1; if (!canvas.dataset.swapped) { toggleThemeDOM(isToGolden); canvas.dataset.swapped = 'true'; if(navigator.vibrate) navigator.vibrate([100, 50, 100]); } }
+                else overlayAlpha = 1 - ((progress - 0.6) / 0.4);
+
+                const gradient = ctx.createLinearGradient(0, 0, 0, window.innerHeight);
+                if (isToGolden) { gradient.addColorStop(0, `rgba(255, 223, 0, ${overlayAlpha})`); gradient.addColorStop(1, `rgba(212, 175, 55, ${overlayAlpha})`); }
+                else { gradient.addColorStop(0, `rgba(3, 110, 184, ${overlayAlpha})`); gradient.addColorStop(1, `rgba(0, 80, 150, ${overlayAlpha})`); }
+                ctx.fillStyle = gradient; ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+                particles.forEach(p => { p.y += p.speedY * (progress * 2); p.x += Math.sin(progress * 10 + p.speedX) * 2; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fillStyle = isToGolden ? `rgba(255, 255, 255, ${p.opacity})` : `rgba(150, 200, 255, ${p.opacity})`; ctx.shadowBlur = 10; ctx.shadowColor = isToGolden ? "#FFF" : "#00FFFF"; ctx.fill(); });
+
+                if (progress < 1) requestAnimationFrame(render);
+                else { canvas.style.display = 'none'; canvas.dataset.swapped = ''; isTransitioning = false; }
             }
-            window.addEventListener('resize', resizeCanvas); resizeCanvas();
+            requestAnimationFrame(render);
+        }
 
-            function playMotionGraphicWipe(isToGolden) {
-                canvas.style.display = 'block'; resizeCanvas();
-                let start = null; const duration = 2000;
-                const particles = Array.from({length: 100}, () => ({ x: Math.random() * window.innerWidth, y: -Math.random()*window.innerHeight, size: Math.random() * 4 + 1.5, speedY: Math.random() * 15 + 10, speedX: Math.random() * 4 - 2, opacity: Math.random() * 0.8 + 0.2 }));
+        function toggleThemeDOM(toGolden) {
+            const greeting = document.getElementById('main-greeting');
+            if (toGolden) { document.body.classList.add('golden-theme'); helperChar.classList.add('golden'); greeting.innerHTML = "✨ 앗! 황금이 발견! ✨<br>오늘 하루 대박나실 거예요!"; }
+            else { document.body.classList.remove('golden-theme'); helperChar.classList.remove('golden'); greeting.innerHTML = "카다로스 업무 도우미입니다.<br>무엇을 도와드릴까요?"; }
+        }
 
-                function render(time) {
-                    if (!start) start = time; const elapsed = time - start; const progress = Math.min(elapsed / duration, 1);
-                    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        helperChar.addEventListener('click', () => {
+            if(isPressing || isTransitioning) return; 
+            if (!isGolden && Math.random() < 0.03) { isTransitioning = true; isGolden = true; playMotionGraphicWipe(true); return; }
+            helperChar.classList.remove(...motions, ...faces); void helperChar.offsetWidth; 
+            const rm = motions[Math.floor(Math.random() * motions.length)]; const rf = faces[Math.floor(Math.random() * faces.length)];
+            helperChar.classList.add(rm, rf); setTimeout(() => { helperChar.classList.remove(rm, rf); }, 600);
+        });
 
-                    let overlayAlpha = 0;
-                    if (progress < 0.4) overlayAlpha = progress / 0.4;
-                    else if (progress < 0.6) { overlayAlpha = 1; if (!canvas.dataset.swapped) { toggleThemeDOM(isToGolden); canvas.dataset.swapped = 'true'; if(navigator.vibrate) navigator.vibrate([100, 50, 100]); } }
-                    else overlayAlpha = 1 - ((progress - 0.6) / 0.4);
+        const startPress = () => { if (!isGolden || isTransitioning) return; isPressing = true; helperChar.classList.add('shake'); pressTimer = setTimeout(() => { isTransitioning = true; isGolden = false; helperChar.classList.remove('shake'); isPressing = false; playMotionGraphicWipe(false); }, 2000); };
+        const cancelPress = () => { if(pressTimer) clearTimeout(pressTimer); helperChar.classList.remove('shake'); setTimeout(() => { isPressing = false; }, 100); };
+        helperChar.addEventListener('mousedown', startPress); helperChar.addEventListener('touchstart', startPress, {passive: true});
+        helperChar.addEventListener('mouseup', cancelPress); helperChar.addEventListener('mouseleave', cancelPress);
+        helperChar.addEventListener('touchend', cancelPress); helperChar.addEventListener('touchcancel', cancelPress);
 
-                    const gradient = ctx.createLinearGradient(0, 0, 0, window.innerHeight);
-                    if (isToGolden) { gradient.addColorStop(0, `rgba(255, 223, 0, ${overlayAlpha})`); gradient.addColorStop(1, `rgba(212, 175, 55, ${overlayAlpha})`); }
-                    else { gradient.addColorStop(0, `rgba(3, 110, 184, ${overlayAlpha})`); gradient.addColorStop(1, `rgba(0, 80, 150, ${overlayAlpha})`); }
-                    ctx.fillStyle = gradient; ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+        // 네비게이션
+        const navItems = document.querySelectorAll('.nav-item');
+        const viewSections = document.querySelectorAll('.view-section');
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                navItems.forEach(nav => nav.classList.remove('active')); this.classList.add('active');
+                const targetId = this.getAttribute('data-target');
+                viewSections.forEach(section => { section.classList.remove('active'); });
+                document.getElementById(targetId).classList.add('active');
+                
+                if(targetId === 'view-calendar') renderCalendar();
+                if(targetId === 'view-store') { openStoreView('main'); renderBlockMap(); } 
+                if(targetId === 'view-consulting') renderConsultingList();
+            });
+        });
 
-                    particles.forEach(p => { p.y += p.speedY * (progress * 2); p.x += Math.sin(progress * 10 + p.speedX) * 2; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fillStyle = isToGolden ? `rgba(255, 255, 255, ${p.opacity})` : `rgba(150, 200, 255, ${p.opacity})`; ctx.shadowBlur = 10; ctx.shadowColor = isToGolden ? "#FFF" : "#00FFFF"; ctx.fill(); });
-
-                    if (progress < 1) requestAnimationFrame(render);
-                    else { canvas.style.display = 'none'; canvas.dataset.swapped = ''; isTransitioning = false; }
+        // 검색 & 대시보드
+        document.getElementById('home-search-input').addEventListener('input', function(e) {
+            const query = e.target.value.trim().toLowerCase();
+            const dash = document.getElementById('dashboard'); const dashHeader = document.getElementById('home-dash-header'); const resWrap = document.getElementById('home-search-results');
+            if (query) {
+                dash.style.display = 'none'; dashHeader.style.display = 'none'; resWrap.style.display = 'flex'; resWrap.innerHTML = '';
+                const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
+                const matched = storesData.filter(s => s.name.toLowerCase().includes(query)).sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
+                if (matched.length === 0) resWrap.innerHTML = '<div class="store-empty">검색 결과가 없습니다.</div>';
+                else {
+                    matched.forEach(store => {
+                        const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`;
+                        card.onclick = () => { document.querySelector('.nav-item[data-target="view-store"]').click(); openStoreView('manage', [store.status]); openEditStore(store.id); };
+                        card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>지역</span> <strong>${store.region}</strong></div>`;
+                        resWrap.appendChild(card);
+                    });
                 }
-                requestAnimationFrame(render);
-            }
-
-            function toggleThemeDOM(toGolden) {
-                const greeting = document.getElementById('main-greeting');
-                if (toGolden) { document.body.classList.add('golden-theme'); helperChar.classList.add('golden'); greeting.innerHTML = "✨ 앗! 황금이 발견! ✨<br>오늘 하루 대박나실 거예요!"; }
-                else { document.body.classList.remove('golden-theme'); helperChar.classList.remove('golden'); greeting.innerHTML = "카다로스 업무 도우미입니다.<br>무엇을 도와드릴까요?"; }
-            }
-
-            const helperChar = document.getElementById('helper-char');
-            const motions = ['motion-jump', 'motion-spin', 'motion-squish', 'motion-wiggle']; const faces = ['face-happy', 'face-surprised', 'face-wink'];
-            let isGolden = false; let isTransitioning = false; let pressTimer = null; let isPressing = false;
-
-            helperChar.addEventListener('click', () => {
-                if(isPressing || isTransitioning) return; 
-                if (!isGolden && Math.random() < 0.03) { isTransitioning = true; isGolden = true; playMotionGraphicWipe(true); return; }
-                helperChar.classList.remove(...motions, ...faces); void helperChar.offsetWidth; 
-                const rm = motions[Math.floor(Math.random() * motions.length)]; const rf = faces[Math.floor(Math.random() * faces.length)];
-                helperChar.classList.add(rm, rf); setTimeout(() => { helperChar.classList.remove(rm, rf); }, 600);
-            });
-
-            const startPress = () => { if (!isGolden || isTransitioning) return; isPressing = true; helperChar.classList.add('shake'); pressTimer = setTimeout(() => { isTransitioning = true; isGolden = false; helperChar.classList.remove('shake'); isPressing = false; playMotionGraphicWipe(false); }, 2000); };
-            const cancelPress = () => { if(pressTimer) clearTimeout(pressTimer); helperChar.classList.remove('shake'); setTimeout(() => { isPressing = false; }, 100); };
-            helperChar.addEventListener('mousedown', startPress); helperChar.addEventListener('touchstart', startPress, {passive: true});
-            helperChar.addEventListener('mouseup', cancelPress); helperChar.addEventListener('mouseleave', cancelPress);
-            helperChar.addEventListener('touchend', cancelPress); helperChar.addEventListener('touchcancel', cancelPress);
-
-            // 네비게이션
-            const navItems = document.querySelectorAll('.nav-item');
-            const viewSections = document.querySelectorAll('.view-section');
-            navItems.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    navItems.forEach(nav => nav.classList.remove('active')); this.classList.add('active');
-                    const targetId = this.getAttribute('data-target');
-                    viewSections.forEach(section => { section.classList.remove('active'); });
-                    document.getElementById(targetId).classList.add('active');
-                    
-                    if(targetId === 'view-calendar') renderCalendar();
-                    if(targetId === 'view-store') { openStoreView('main'); renderBlockMap(); } 
-                    if(targetId === 'view-consulting') renderConsultingList();
-                });
-            });
-
-            // 검색 & 대시보드
-            document.getElementById('home-search-input').addEventListener('input', function(e) {
-                const query = e.target.value.trim().toLowerCase();
-                const dash = document.getElementById('dashboard'); const dashHeader = document.getElementById('home-dash-header'); const resWrap = document.getElementById('home-search-results');
-                if (query) {
-                    dash.style.display = 'none'; dashHeader.style.display = 'none'; resWrap.style.display = 'flex'; resWrap.innerHTML = '';
-                    const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
-                    const matched = storesData.filter(s => s.name.toLowerCase().includes(query)).sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
-                    if (matched.length === 0) resWrap.innerHTML = '<div class="store-empty">검색 결과가 없습니다.</div>';
-                    else {
-                        matched.forEach(store => {
-                            const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`;
-                            card.onclick = () => { document.querySelector('.nav-item[data-target="view-store"]').click(); openStoreView('manage', [store.status]); openEditStore(store.id); };
-                            card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>지역</span> <strong>${store.region}</strong></div>`;
-                            resWrap.appendChild(card);
-                        });
-                    }
-                } else { dash.style.display = 'grid'; dashHeader.style.display = 'block'; resWrap.style.display = 'none'; }
-            });
+            } else { dash.style.display = 'grid'; dashHeader.style.display = 'block'; resWrap.style.display = 'none'; }
         });
 
         function getWeekRanges() {
@@ -949,7 +984,7 @@ const firebaseConfig = {
                 checklistData: null, memo: "", providedItems: {}, documents: {}
             };
             storesData.unshift(newStore); 
-            await api.saveStores(storesData); 
+            await window.saveStores(); 
             updateDashboard(); renderBlockMap();
             showToast(`[${newStore.name}] 등록되었습니다.`);
             this.reset(); document.getElementById('region-city').innerHTML = '<option value="" disabled selected>시/군/구</option>'; document.getElementById('region-city').disabled = true;
@@ -983,7 +1018,7 @@ const firebaseConfig = {
             if(inputPw === adminPw) {
                 storesData = storesData.filter(s => !selectedStoreIds.has(s.id));
                 cancelSelectionMode(); 
-                await api.saveStores(storesData);
+                await window.saveStores();
                 updateDashboard(); renderCalendar(); renderBlockMap();
                 closePwModal(); showToast("성공적으로 삭제되었습니다.");
             } else {
@@ -1059,12 +1094,12 @@ const firebaseConfig = {
                 store.consult2 = document.getElementById('edit-date-consult2').value; 
                 store.inspect = document.getElementById('edit-date-inspect').value;
                 
-                await api.saveStores(storesData); 
+                await window.saveStores(); 
                 updateDashboard(); renderBlockMap(); showToast("저장되었습니다."); goBackToStoreManage(); renderCalendar(); 
             }
         });
 
-        // 설정 - 비밀번호 변경
+        // 설정 - 비밀번호 변경 모달 로직
         window.openChangePwModal = function() {
             document.getElementById('current-pw-input').value = ''; document.getElementById('new-pw-input').value = '';
             document.getElementById('change-pw-modal').style.display = 'flex'; void document.getElementById('change-pw-modal').offsetWidth; document.getElementById('change-pw-modal').classList.add('show');
@@ -1301,7 +1336,7 @@ const firebaseConfig = {
                 else newData[chk.dataset.id] = chk.checked ? chk.value : '0';
             });
             store.checklistData = newData; store.memo = document.getElementById('memo-textarea').value;
-            await api.saveStores(storesData); 
+            await window.saveStores(); 
             showToast("평가 결과가 저장되었습니다."); closeChecklist();
         };
 
@@ -1310,8 +1345,8 @@ const firebaseConfig = {
         window.closeMemo = function() { document.getElementById('memo-modal').classList.remove('active'); };
         window.saveMemo = async function() { 
             const store = storesData.find(s => s.id === currentChecklistStoreId);
-            if(store) { store.memo = document.getElementById('memo-textarea').value; await api.saveStores(storesData); }
-            closeMemo(); showToast("메모가 저장되었습니다."); 
+            if(store) { store.memo = document.getElementById('memo-textarea').value; await window.saveStores(); }
+            closeMemo(); showToast("메모가 임시 저장되었습니다."); 
         };
 
         // 제공물품 모달
@@ -1327,7 +1362,7 @@ const firebaseConfig = {
             const pItems = {};
             document.querySelectorAll('.item-chk').forEach(chk => { pItems[chk.value] = chk.checked; });
             store.providedItems = pItems;
-            await api.saveStores(storesData); closeItemsModal(); showToast("제공물품 기록이 저장되었습니다.");
+            await window.saveStores(); closeItemsModal(); showToast("제공물품 기록이 저장되었습니다.");
         };
 
         // 서류 모달
@@ -1343,7 +1378,7 @@ const firebaseConfig = {
             const docs = {};
             document.querySelectorAll('.doc-chk').forEach(chk => { docs[chk.value] = chk.checked; });
             store.documents = docs;
-            await api.saveStores(storesData); closeDocModal(); showToast("서류 체크가 저장되었습니다.");
+            await window.saveStores(); closeDocModal(); showToast("서류 체크가 저장되었습니다.");
         };
 
         window.initApp = function() {
