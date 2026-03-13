@@ -34,17 +34,9 @@
             --dark-gray-bg: #333D4B;
         }
 
-        /* ✨ 황금이 당첨 시 골드 테마 */
+        /* ✨ 황금이 당첨 시 골드 테마 (포인트 컬러만 골드로, 배경은 화이트 유지) */
         body.golden-theme {
             --brand-color: #D4AF37;
-            --bg-color: #FCFBF5; 
-            --gray-50: #F8F6EB;
-            --gray-100: #F0EAD6;
-            --gray-200: #E6D8B8;
-            --gray-300: #C2AF82;
-            --gray-600: #9E8548;
-            --text-main: #4A3C00; 
-            --dark-gray-bg: #4A3C00; 
         }
 
         * {
@@ -63,8 +55,8 @@
         .toast {
             position: fixed; bottom: calc(var(--nav-height) + 20px); left: 50%; transform: translateX(-50%) translateY(100px);
             background: rgba(25, 31, 40, 0.9); color: white; padding: 14px 24px; border-radius: 30px;
-            font-size: 15px; font-weight: 600; opacity: 0; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-            z-index: 9999; pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 14px; font-weight: 600; opacity: 0; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 9999; pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); width: max-content;
         }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
@@ -81,195 +73,172 @@
 
         /* 메인 앱 컨테이너 */
         #app-container {
-            display: none; padding-bottom: calc(var(--nav-height) + 40px);
+            display: none; padding-bottom: calc(var(--nav-height) + 30px);
             opacity: 0; transition: opacity 0.5s ease-in;
         }
 
-        /* 뷰 관리 */
-        .view-section { display: none; padding: 60px 24px 32px 24px; animation: fadeIn 0.4s ease; }
+        /* 뷰 관리 (Z플립 대응: 좌우 여백 및 상단 여백 축소) */
+        .view-section { display: none; padding: 30px 16px 30px 16px; animation: fadeIn 0.4s ease; }
         .view-section.active { display: block; }
+        #view-home { padding-top: 60px; } /* 홈화면만 상단 여백 유지 */
+        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- 홈 화면 & 캐릭터 스타일 --- */
         .helper-container { display: flex; justify-content: center; margin-bottom: 24px; position: relative; }
         .helper-character {
-            width: 70px; height: 70px; background-color: var(--brand-color); border-radius: 30px 30px 20px 20px; position: relative;
+            width: 65px; height: 65px; background-color: var(--brand-color); border-radius: 28px 28px 18px 18px; position: relative;
             animation: float 2.5s ease-in-out infinite; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); cursor: pointer; transition: all 0.5s ease; z-index: 10;
         }
-        .helper-character::before, .helper-character::after { content: ''; position: absolute; background: #fff; width: 8px; height: 12px; border-radius: 50%; top: 24px; transition: all 0.2s ease; }
-        .helper-character::before { left: 18px; } .helper-character::after { right: 18px; }
-        .smile { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); width: 16px; height: 8px; border-bottom: 3px solid #fff; border-radius: 0 0 20px 20px; transition: all 0.2s ease; }
+        .helper-character::before, .helper-character::after { content: ''; position: absolute; background: #fff; width: 7px; height: 11px; border-radius: 50%; top: 22px; transition: all 0.2s ease; }
+        .helper-character::before { left: 16px; } .helper-character::after { right: 16px; }
+        .smile { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); width: 14px; height: 7px; border-bottom: 2.5px solid #fff; border-radius: 0 0 20px 20px; transition: all 0.2s ease; }
 
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
 
         .helper-character.golden {
             background: linear-gradient(135deg, #FFDF00, #D4AF37, #DAA520); background-size: 200% 200%;
             animation: float 2.5s ease-in-out infinite, shimmer 2s infinite linear;
-            box-shadow: 0 0 25px rgba(255, 223, 0, 0.6), 0 10px 20px rgba(212, 175, 55, 0.4);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
         }
         @keyframes shimmer { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        
         .shake { animation: shake 0.3s ease-in-out infinite !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px) rotate(-3deg); } 75% { transform: translateX(3px) rotate(3deg); } }
-        @keyframes jump { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-30px) scale(0.9, 1.1); } }
+        @keyframes jump { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-25px) scale(0.9, 1.1); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes squish { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.2, 0.8) translateY(10px); } }
         @keyframes wiggle { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-15deg); } 75% { transform: rotate(15deg); } }
 
         .motion-jump { animation: jump 0.6s ease !important; } .motion-spin { animation: spin 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; } .motion-squish { animation: squish 0.5s ease !important; } .motion-wiggle { animation: wiggle 0.5s ease !important; }
-        .face-surprised::before, .face-surprised::after { height: 14px; width: 14px; top: 22px; } .face-surprised .smile { width: 10px; height: 10px; border: 3px solid #fff; border-radius: 50%; bottom: 12px; background: transparent; }
+        .face-surprised::before, .face-surprised::after { height: 12px; width: 12px; top: 20px; } .face-surprised .smile { width: 8px; height: 8px; border: 2.5px solid #fff; border-radius: 50%; bottom: 10px; background: transparent; }
         .face-wink::before { transform: scaleY(0.2); } .face-wink .smile { transform: translateX(-50%) scale(1.2) rotate(-5deg); }
-        .face-happy::before, .face-happy::after { border-top: 3px solid #fff; background: transparent; height: 8px; width: 12px; border-radius: 50% 50% 0 0; top: 26px; } .face-happy .smile { width: 20px; height: 12px; bottom: 14px; }
+        .face-happy::before, .face-happy::after { border-top: 2.5px solid #fff; background: transparent; height: 7px; width: 10px; border-radius: 50% 50% 0 0; top: 24px; } .face-happy .smile { width: 18px; height: 10px; bottom: 12px; }
 
-        .greeting { font-size: 26px; font-weight: 700; line-height: 1.4; margin-bottom: 32px; text-align: center; word-break: keep-all; letter-spacing: -0.5px; transition: color 0.4s ease; }
+        .greeting { font-size: 24px; font-weight: 700; line-height: 1.4; margin-bottom: 28px; text-align: center; word-break: keep-all; letter-spacing: -0.5px; transition: color 0.4s ease; }
 
         /* --- 검색 & 대시보드 --- */
-        .search-container { position: relative; margin-bottom: 32px; }
-        .search-container input { width: 100%; padding: 18px 20px 18px 52px; border: none; border-radius: 20px; background-color: var(--gray-100); font-size: 16px; color: var(--text-main); outline: none; transition: all 0.2s; }
+        .search-container { position: relative; margin-bottom: 28px; }
+        .search-container input { width: 100%; padding: 16px 18px 16px 48px; border: none; border-radius: 18px; background-color: var(--gray-100); font-size: 15px; color: var(--text-main); outline: none; transition: all 0.2s; }
         .search-container input:focus { background-color: var(--gray-50); box-shadow: 0 0 0 2px var(--brand-color) inset; }
         .search-container input::placeholder { color: var(--gray-600); }
-        .search-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; fill: var(--gray-600); }
+        .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; fill: var(--gray-600); }
         
-        .dashboard-header { font-size: 19px; font-weight: 700; margin-bottom: 16px; color: var(--text-main); transition: color 0.4s ease;}
-        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .dash-card { background: var(--gray-50); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; border: 1px solid var(--gray-100); transition: all 0.4s ease; }
+        .dashboard-header { font-size: 18px; font-weight: 700; margin-bottom: 12px; color: var(--text-main); transition: color 0.4s ease;}
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .dash-card { background: var(--gray-50); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; border: 1px solid var(--gray-100); transition: all 0.4s ease; }
         .dash-card.full { grid-column: 1 / -1; }
-        .dash-title { font-size: 14px; font-weight: 600; color: var(--gray-600); }
-        .dash-value { font-size: 16px; font-weight: 500; color: var(--text-main); line-height: 1.4; word-break: keep-all;}
-        .dash-value b { color: var(--brand-color); font-size: 22px; font-weight: 800; margin-right: 2px;}
+        .dash-title { font-size: 13px; font-weight: 600; color: var(--gray-600); }
+        .dash-value { font-size: 14px; font-weight: 500; color: var(--text-main); line-height: 1.4; word-break: keep-all;}
+        .dash-value b { color: var(--brand-color); font-size: 20px; font-weight: 800; margin-right: 2px;}
 
         /* --- 캘린더 화면 스타일 --- */
-        .calendar-header { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 32px; }
-        .calendar-month { font-size: 26px; font-weight: 800; }
-        .calendar-year { font-size: 20px; font-weight: 600; color: var(--gray-600); cursor: pointer; padding: 6px 10px; border-radius: 12px; transition: background 0.2s, color 0.4s ease; }
+        .calendar-header { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px; }
+        .calendar-month { font-size: 24px; font-weight: 800; }
+        .calendar-year { font-size: 18px; font-weight: 600; color: var(--gray-600); cursor: pointer; padding: 6px 10px; border-radius: 12px; transition: background 0.2s, color 0.4s ease; }
         .calendar-year:active { background-color: var(--gray-100); }
-        .calendar-wrapper { background-color: var(--bg-color); border-radius: 24px; padding: 20px 16px; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04); border: 1px solid var(--gray-100); touch-action: pan-x; transition: background-color 0.4s ease, border-color 0.4s ease; }
-        .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: 600; color: var(--gray-600); font-size: 15px; margin-bottom: 16px; transition: color 0.4s ease; }
+        .calendar-wrapper { background-color: var(--bg-color); border-radius: 20px; padding: 16px 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); border: 1px solid var(--gray-100); touch-action: pan-y; transition: background-color 0.4s ease, border-color 0.4s ease; }
+        .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: 600; color: var(--gray-600); font-size: 14px; margin-bottom: 12px; transition: color 0.4s ease; }
         .calendar-days div:first-child { color: var(--red-color); } .calendar-days div:last-child { color: #3182ce; } 
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px 8px; }
-        .calendar-cell { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; position: relative; font-size: 16px; font-weight: 500; border-radius: 14px; cursor: pointer; transition: all 0.2s; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px 6px; }
+        .calendar-cell { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; position: relative; font-size: 15px; font-weight: 500; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
         .calendar-cell.empty { pointer-events: none; }
         .calendar-cell.today { background-color: var(--gray-100); color: var(--brand-color); font-weight: 700; }
         .calendar-cell.selected { background-color: var(--brand-color); color: white; font-weight: 700; box-shadow: 0 4px 12px rgba(var(--brand-color), 0.3); }
         
-        .marker-wrap { position: absolute; bottom: 4px; display: flex; gap: 3px; }
-        .marker { width: 5px; height: 5px; border-radius: 50%; background-color: var(--brand-color); }
+        .marker-wrap { position: absolute; bottom: 3px; display: flex; gap: 3px; }
+        .marker { width: 4px; height: 4px; border-radius: 50%; background-color: var(--brand-color); }
         .marker.marker-red { background-color: var(--red-color); } .marker.marker-yellow { background-color: var(--yellow-color); }
         .calendar-cell.selected .marker { background-color: white; }
-        .gesture-hint { text-align: center; font-size: 13px; color: var(--gray-600); margin-top: 20px; }
-        .schedule-summary { margin-top: 32px; padding: 8px 0; }
-        .schedule-summary h4 { font-size: 16px; margin-bottom: 16px; color: var(--text-main); font-weight: 700; padding: 0 8px; }
+        .gesture-hint { text-align: center; font-size: 12px; color: var(--gray-600); margin-top: 16px; }
+        .schedule-summary { margin-top: 24px; padding: 8px 0; }
+        .schedule-summary h4 { font-size: 15px; margin-bottom: 12px; color: var(--text-main); font-weight: 700; padding: 0 8px; }
         
-        .schedule-box { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; border-radius: 16px; margin-bottom: 12px; background-color: var(--gray-50); border: 1px solid var(--gray-100); transition: all 0.3s ease; }
-        .schedule-box .sch-name { font-size: 16px; font-weight: 700; color: var(--text-main); }
-        .schedule-box .sch-type { font-size: 14px; font-weight: 600; color: var(--brand-color); background-color: var(--bg-color); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--gray-200); }
+        .schedule-box { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-radius: 16px; margin-bottom: 10px; background-color: var(--gray-50); border: 1px solid var(--gray-100); transition: all 0.3s ease; }
+        .schedule-box .sch-name { font-size: 15px; font-weight: 700; color: var(--text-main); }
+        .schedule-box .sch-type { font-size: 13px; font-weight: 600; color: var(--brand-color); background-color: var(--bg-color); padding: 6px 10px; border-radius: 10px; border: 1px solid var(--gray-200); }
         .schedule-box.type-inspect { background-color: var(--red-bg); border-color: var(--red-border); }
         .schedule-box.type-inspect .sch-name { color: var(--red-color); } .schedule-box.type-inspect .sch-type { color: var(--red-color); background-color: #fff; border-color: var(--red-border); }
         .schedule-box.type-apply { background-color: var(--yellow-bg); border-color: var(--yellow-border); }
         .schedule-box.type-apply .sch-name { color: var(--yellow-color); } .schedule-box.type-apply .sch-type { color: var(--yellow-color); background-color: #fff; border-color: var(--yellow-border); }
-        .schedule-empty { text-align: center; color: var(--gray-300); padding: 20px; font-size: 14px; }
+        .schedule-empty { text-align: center; color: var(--gray-300); padding: 20px; font-size: 13px; }
 
 
         /* --- 매장관리 탭 메인 뷰 --- */
-        .store-main-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .store-main-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .store-menu-card {
-            background-color: var(--gray-50); border: 1px solid var(--gray-100); border-radius: 24px; padding: 28px 16px; text-align: center;
-            font-size: 15px; font-weight: 700; color: var(--text-main); cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; gap: 10px;
+            background-color: var(--gray-50); border: 1px solid var(--gray-100); border-radius: 20px; padding: 24px 12px; text-align: center;
+            font-size: 14px; font-weight: 700; color: var(--text-main); cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; gap: 8px;
         }
         .store-menu-card:active { transform: scale(0.97); background-color: var(--gray-100); }
-        .store-menu-card svg { width: 32px; height: 32px; fill: var(--brand-color); }
+        .store-menu-card svg { width: 28px; height: 28px; fill: var(--brand-color); }
 
-        /* 토스 스타일 데이터 인포그래픽 블록 맵 */
-        .map-section-title { font-size: 18px; font-weight: 700; margin: 40px 0 16px 0; color: var(--text-main); display: flex; justify-content: space-between; align-items: flex-end;}
-        .map-section-desc { font-size: 13px; font-weight: 500; color: var(--gray-600); }
+        /* 인포그래픽 블록 맵 */
+        .map-section-title { font-size: 17px; font-weight: 700; margin: 32px 0 12px 0; color: var(--text-main); display: flex; justify-content: space-between; align-items: flex-end;}
+        .map-section-desc { font-size: 12px; font-weight: 500; color: var(--gray-600); }
         
-        .map-tabs { display: flex; background: var(--gray-100); border-radius: 14px; padding: 4px; margin-bottom: 20px; }
-        .map-tab { flex: 1; text-align: center; padding: 12px; border-radius: 12px; font-size: 15px; font-weight: 700; color: var(--gray-600); cursor: pointer; transition: all 0.2s; }
+        .map-tabs { display: flex; background: var(--gray-100); border-radius: 12px; padding: 4px; margin-bottom: 16px; }
+        .map-tab { flex: 1; text-align: center; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 700; color: var(--gray-600); cursor: pointer; transition: all 0.2s; }
         .map-tab.active { background: white; color: var(--brand-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
-        .block-map-grid {
-            display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
-            /* 5칸 넘어가면 자동으로 다음 줄로 떨어짐 */
-        }
+        .block-map-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
         .map-block {
-            background: var(--gray-50); border: 1px solid var(--gray-100);
-            border-radius: 14px; padding: 14px 4px; text-align: center;
-            font-size: 13px; font-weight: 600; color: var(--gray-600);
-            cursor: pointer; position: relative; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            background: var(--gray-50); border: 1px solid var(--gray-100); border-radius: 12px; padding: 10px 2px; text-align: center;
+            font-size: 11px; font-weight: 600; color: var(--gray-600); cursor: pointer; position: relative; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
             word-break: keep-all; line-height: 1.2;
         }
-        /* 매장이 있는 지역 스타일 */
         .map-block.has-store { background: var(--blue-bg); color: var(--brand-color); border-color: rgba(3,110,184,0.15); }
         .map-block.has-store-dense { background: rgba(3,110,184,0.25); color: var(--brand-color); border-color: transparent; }
         
         .map-block .badge {
-            position: absolute; top: -6px; right: -6px;
-            background: var(--brand-color); color: white;
-            font-size: 11px; font-weight: 700; min-width: 22px; height: 22px; padding: 0 4px;
-            border-radius: 11px; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            position: absolute; top: -5px; right: -5px; background: var(--brand-color); color: white;
+            font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; padding: 0 3px;
+            border-radius: 9px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
-        
-        /* 맵 블록 클릭 시 튀어오르는 모션 (z-index 관리) */
-        .map-block.popped {
-            transform: translateY(-8px) scale(1.05);
-            background: var(--brand-color); color: white;
-            box-shadow: 0 12px 24px rgba(3,110,184,0.4);
-            z-index: 1502; border-color: transparent;
-        }
+        .map-block.popped { transform: translateY(-6px) scale(1.05); background: var(--brand-color); color: white; box-shadow: 0 10px 20px rgba(3,110,184,0.3); z-index: 1502; border-color: transparent; }
         .map-block.popped .badge { background: white; color: var(--brand-color); }
 
-        /* 화면 어두워지는 딤 오버레이 */
-        #dimmer {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
-            z-index: 1500; opacity: 0; pointer-events: none; transition: opacity 0.3s;
-        }
+        #dimmer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 1500; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         #dimmer.active { opacity: 1; pointer-events: all; }
 
-        /* 상단에서 스르륵 내려오는 탑 시트 (Top-sheet) */
         #top-sheet {
-            position: fixed; top: 0; left: 0; width: 100%;
-            background: white; border-radius: 0 0 28px 28px;
-            padding: 24px; padding-top: calc(24px + env(safe-area-inset-top));
-            transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-            z-index: 1501; box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            max-height: 70vh; display: flex; flex-direction: column;
+            position: fixed; top: 0; left: 0; width: 100%; background: white; border-radius: 0 0 24px 24px;
+            padding: 20px; padding-top: calc(20px + env(safe-area-inset-top)); transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 1501; box-shadow: 0 10px 30px rgba(0,0,0,0.15); max-height: 70vh; display: flex; flex-direction: column;
         }
         #top-sheet.active { transform: translateY(0); }
-        .ts-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .ts-header h3 { font-size: 20px; font-weight: 700; color: var(--brand-color); }
-        .btn-ts-close { background: var(--gray-100); color: var(--gray-800); border: none; padding: 10px 14px; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 14px;}
+        .ts-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .ts-header h3 { font-size: 18px; font-weight: 700; color: var(--brand-color); }
+        .btn-ts-close { background: var(--gray-100); color: var(--gray-800); border: none; padding: 8px 12px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 13px;}
         .ts-content { overflow-y: auto; flex: 1; padding-bottom: 10px;}
 
-        /* 매장 서브 뷰 */
+        /* 서브 뷰 & 폼 (Z플립 대응 사이즈 축소) */
         .store-sub-view { display: none; animation: fadeIn 0.3s ease; }
         .store-sub-view.active { display: block; }
-        .back-nav { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; color: var(--gray-600); margin-bottom: 24px; cursor: pointer; }
-        .back-nav svg { width: 20px; height: 20px; fill: currentColor; }
+        .back-nav { display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; color: var(--gray-600); margin-bottom: 20px; cursor: pointer; }
+        .back-nav svg { width: 18px; height: 18px; fill: currentColor; }
         
-        /* 폼 요소 */
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-600); margin-bottom: 8px; }
-        .form-input { width: 100%; padding: 16px 20px; border: 1px solid var(--gray-200); border-radius: 16px; background-color: var(--gray-50); font-size: 16px; color: var(--text-main); outline: none; transition: all 0.2s; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--gray-600); margin-bottom: 6px; }
+        .form-input { width: 100%; padding: 14px 16px; border: 1px solid var(--gray-200); border-radius: 14px; background-color: var(--gray-50); font-size: 15px; color: var(--text-main); outline: none; transition: all 0.2s; box-sizing: border-box; }
         .form-input:focus { border-color: var(--brand-color); background-color: var(--bg-color); }
-        .row-group { display: flex; gap: 12px; } .row-group > div { flex: 1; }
-        .radio-group { display: flex; gap: 16px; align-items: center; margin-top: 8px; }
-        .radio-label { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; color: var(--text-main); cursor: pointer; }
-        .radio-label input[type="radio"] { accent-color: var(--brand-color); width: 16px; height: 16px; }
-        .btn-submit { width: 100%; padding: 18px; background-color: var(--brand-color); color: white; border: none; border-radius: 16px; font-size: 17px; font-weight: 700; margin-top: 10px; cursor: pointer; transition: background-color 0.2s; }
+        .row-group { display: flex; gap: 8px; flex-wrap: wrap; } .row-group > div { flex: 1; min-width: 100px; }
+        .radio-group { display: flex; gap: 12px; align-items: center; margin-top: 6px; flex-wrap: wrap;}
+        .radio-label { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 500; color: var(--text-main); cursor: pointer; }
+        .radio-label input[type="radio"] { accent-color: var(--brand-color); width: 14px; height: 14px; }
+        .btn-submit { width: 100%; padding: 16px; background-color: var(--brand-color); color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; margin-top: 10px; cursor: pointer; transition: background-color 0.2s; }
         .btn-submit:active { opacity: 0.8; transform: scale(0.98); }
 
         /* 매장 리스트 & 상태 컬러 */
-        .store-list-wrap { display: flex; flex-direction: column; gap: 12px; }
-        .store-card { background-color: var(--bg-color); border: 1px solid var(--gray-200); border-radius: 20px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); transition: all 0.3s ease; position: relative; cursor: pointer; }
+        .store-list-wrap { display: flex; flex-direction: column; gap: 10px; }
+        .store-card { background-color: var(--bg-color); border: 1px solid var(--gray-200); border-radius: 18px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: all 0.3s ease; position: relative; cursor: pointer; }
         .store-card:active { transform: scale(0.98); opacity: 0.9; }
-        .store-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; color: var(--text-main); display: flex; justify-content: space-between; align-items: center;}
-        .store-card .status-badge { font-size: 12px; padding: 4px 8px; border-radius: 8px; font-weight: 600; }
-        .store-info-line { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; color: var(--gray-600); }
+        .store-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 10px; color: var(--text-main); display: flex; justify-content: space-between; align-items: center;}
+        .store-card .status-badge { font-size: 11px; padding: 4px 8px; border-radius: 8px; font-weight: 600; }
+        .store-info-line { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; color: var(--gray-600); }
         .store-info-line strong { color: var(--text-main); font-weight: 600; }
-        .store-empty { text-align: center; padding: 40px 20px; color: var(--gray-600); font-size: 15px; background: var(--gray-50); border-radius: 16px; }
+        .store-empty { text-align: center; padding: 30px 20px; color: var(--gray-600); font-size: 14px; background: var(--gray-50); border-radius: 16px; }
 
-        /* 상태별 카드 컬러 */
         .store-card.status-progress { background-color: var(--blue-bg); border-color: transparent; }
         .store-card.status-progress h3 { color: var(--brand-color); } .store-card.status-progress .status-badge { background: #fff; color: var(--brand-color); }
         .store-card.status-fail { background-color: var(--red-bg); border-color: transparent; }
@@ -281,19 +250,19 @@
         .store-card.status-pass .store-info-line { color: #D1D6DB; } .store-card.status-pass .store-info-line strong { color: #FFFFFF; }
 
         /* 다중 선택 UI */
-        .select-indicator { position: absolute; top: 50%; right: 24px; transform: translateY(-50%); width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--gray-300); display: none; align-items: center; justify-content: center; background-color: var(--bg-color); }
-        .selection-mode-active .store-card { padding-right: 60px; }
+        .select-indicator { position: absolute; top: 50%; right: 20px; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--gray-300); display: none; align-items: center; justify-content: center; background-color: var(--bg-color); }
+        .selection-mode-active .store-card { padding-right: 50px; }
         .selection-mode-active .select-indicator { display: flex; }
         .store-card.is-selected .select-indicator { background-color: var(--brand-color); border-color: var(--brand-color); }
-        .store-card.is-selected .select-indicator::after { content: ''; width: 6px; height: 10px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-bottom: 2px; }
+        .store-card.is-selected .select-indicator::after { content: ''; width: 5px; height: 9px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-bottom: 2px; }
 
         .selection-bottom-bar {
-            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--gray-200); padding: 16px 24px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); display: flex; justify-content: space-between; align-items: center; transform: translateY(100%); transition: transform 0.3s ease; z-index: 1100; box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--gray-200); padding: 14px 20px; padding-bottom: calc(14px + env(safe-area-inset-bottom)); display: flex; justify-content: space-between; align-items: center; transform: translateY(100%); transition: transform 0.3s ease; z-index: 1100; box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
         }
         .selection-bottom-bar.active { transform: translateY(0); }
-        .selection-count { font-size: 16px; font-weight: 700; color: var(--text-main); }
+        .selection-count { font-size: 15px; font-weight: 700; color: var(--text-main); }
         .selection-actions { display: flex; gap: 8px; }
-        .selection-actions button { padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; }
+        .selection-actions button { padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; }
         .btn-cancel-sel { background-color: var(--gray-100); color: var(--gray-800); }
         .btn-delete-sel { background-color: var(--red-color); color: white; }
 
@@ -304,22 +273,22 @@
             border-top: 1px solid var(--gray-100); display: flex; justify-content: space-around; align-items: center;
             padding-bottom: env(safe-area-inset-bottom); z-index: 1000; transition: background-color 0.4s ease, border-color 0.4s ease;
         }
-        body.golden-theme .bottom-nav { background-color: rgba(252, 251, 245, 0.95); }
+        body.golden-theme .bottom-nav { background-color: rgba(255, 255, 255, 0.95); } /* 골드테마 하단바 화이트 유지 */
         
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; text-decoration: none; color: var(--gray-300); gap: 5px; transition: color 0.4s ease; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; text-decoration: none; color: var(--gray-300); gap: 4px; transition: color 0.4s ease; }
         .nav-item.active { color: var(--text-main); }
-        .nav-item svg { width: 24px; height: 24px; fill: currentColor; }
-        .nav-item span { font-size: 11px; font-weight: 700; }
+        .nav-item svg { width: 22px; height: 22px; fill: currentColor; }
+        .nav-item span { font-size: 10px; font-weight: 700; }
 
         /* 연도 모달 */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 4000; opacity: 0; transition: opacity 0.2s ease; }
         .modal-overlay.show { display: flex; opacity: 1; }
-        .modal-content { background: white; width: 80%; max-width: 320px; border-radius: 24px; padding: 28px 24px; text-align: center; transform: scale(0.95); transition: transform 0.2s ease; }
+        .modal-content { background: white; width: 80%; max-width: 300px; border-radius: 20px; padding: 24px; text-align: center; transform: scale(0.95); transition: transform 0.2s ease; }
         .modal-overlay.show .modal-content { transform: scale(1); }
-        .modal-content h3 { margin-bottom: 24px; font-size: 20px; font-weight: 700; }
-        .modal-content input { width: 100%; padding: 18px; font-size: 22px; font-weight: 600; text-align: center; border: 1px solid var(--gray-300); border-radius: 16px; margin-bottom: 28px; outline: none; }
-        .modal-actions { display: flex; gap: 12px; }
-        .modal-actions button { flex: 1; padding: 16px; border-radius: 16px; border: none; font-size: 16px; font-weight: 700; cursor: pointer; }
+        .modal-content h3 { margin-bottom: 20px; font-size: 18px; font-weight: 700; }
+        .modal-content input { width: 100%; padding: 16px; font-size: 20px; font-weight: 600; text-align: center; border: 1px solid var(--gray-300); border-radius: 14px; margin-bottom: 24px; outline: none; box-sizing: border-box;}
+        .modal-actions { display: flex; gap: 10px; }
+        .modal-actions button { flex: 1; padding: 14px; border-radius: 12px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; }
         .btn-cancel { background-color: var(--gray-100); color: var(--gray-800); }
         .btn-confirm { background-color: var(--brand-color); color: white; }
     </style>
@@ -365,7 +334,7 @@
                 </div>
                 <div class="dash-card">
                     <span class="dash-title">완료</span>
-                    <span class="dash-value" id="dash-completed">지금까지<br><b>0</b>개의 매장을<br>완료했어요.</span>
+                    <span class="dash-value" id="dash-completed"><b>0</b>개의 매장을<br>완료했어요.</span>
                 </div>
                 <div class="dash-card">
                     <span class="dash-title">성공률</span>
@@ -393,7 +362,7 @@
                 <div class="calendar-days"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
                 <div class="calendar-grid" id="calendar-grid"></div>
             </div>
-            <p class="gesture-hint">두 손가락으로 위아래로 쓸어넘겨 월을 이동해보세요.</p>
+            <p class="gesture-hint">좌우로 쓸어넘겨 월을 이동해보세요.</p>
             <div class="schedule-summary">
                 <h4 id="selected-date-title">날짜를 선택하세요</h4>
                 <div class="schedule-list" id="schedule-list"></div>
@@ -401,7 +370,6 @@
         </div>
 
         <div id="view-store" class="view-section">
-            <h2 class="greeting">매장관리</h2>
             
             <div id="store-main-menu" class="store-sub-view active">
                 <div class="store-main-menu">
@@ -441,11 +409,15 @@
                     <div class="form-group">
                         <label>지역 선택</label>
                         <div class="row-group">
-                            <select id="region-province" class="form-input" required>
-                                <option value="" disabled selected>시/도</option>
-                                <option value="서울특별시">서울특별시</option><option value="경기도">경기도</option>
-                            </select>
-                            <select id="region-city" class="form-input" required disabled><option value="" disabled selected>시/군/구</option></select>
+                            <div>
+                                <select id="region-province" class="form-input" required>
+                                    <option value="" disabled selected>시/도</option>
+                                    <option value="서울특별시">서울특별시</option><option value="경기도">경기도</option>
+                                </select>
+                            </div>
+                            <div>
+                                <select id="region-city" class="form-input" required disabled><option value="" disabled selected>시/군/구</option></select>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group"><label>신청일</label><input type="date" id="date-apply" class="form-input" required></div>
@@ -465,12 +437,12 @@
                 <div class="back-nav" onclick="openStoreView('main')">
                     <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 메인으로
                 </div>
-                <h3 id="store-list-title" style="margin-bottom:16px; font-size:18px;">매장 목록</h3>
+                <h3 id="store-list-title" style="margin-bottom:12px; font-size:17px;">매장 목록</h3>
                 <div id="store-list-container" class="store-list-wrap"></div>
             </div>
 
             <div id="store-edit" class="store-sub-view">
-                <div class="back-nav" onclick="openStoreView('manage', currentListFilters)">
+                <div class="back-nav" onclick="openStoreView('manage')">
                     <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 목록으로
                 </div>
                 <form id="edit-store-form">
@@ -485,12 +457,12 @@
                     <div class="form-group"><label>매장명</label><input type="text" id="edit-store-name" class="form-input" required></div>
                     <div class="form-group"><label>진행 금액 / 지역</label><input type="text" id="edit-store-price-view" class="form-input" readonly style="color:var(--gray-600); background:transparent; border:none; padding:0;"></div>
                     <div class="row-group">
-                        <div class="form-group"><label>신청일</label><input type="date" id="edit-date-apply" class="form-input" required></div>
-                        <div class="form-group"><label>심사일</label><input type="date" id="edit-date-inspect" class="form-input"></div>
+                        <div><div class="form-group"><label>신청일</label><input type="date" id="edit-date-apply" class="form-input" required></div></div>
+                        <div><div class="form-group"><label>심사일</label><input type="date" id="edit-date-inspect" class="form-input"></div></div>
                     </div>
                     <div class="row-group">
-                        <div class="form-group"><label>1차 컨설팅</label><input type="date" id="edit-date-consult1" class="form-input"></div>
-                        <div class="form-group"><label>2차 컨설팅</label><input type="date" id="edit-date-consult2" class="form-input"></div>
+                        <div><div class="form-group"><label>1차 컨설팅</label><input type="date" id="edit-date-consult1" class="form-input"></div></div>
+                        <div><div class="form-group"><label>2차 컨설팅</label><input type="date" id="edit-date-consult2" class="form-input"></div></div>
                     </div>
                     <button type="submit" class="btn-submit">저장하기</button>
                 </form>
@@ -501,7 +473,7 @@
         
         <div id="view-settings" class="view-section">
             <h2 class="greeting">설정</h2>
-            <div style="text-align: center; padding: 40px 20px; color: var(--gray-600); background: var(--gray-50); border-radius: 20px;">
+            <div style="text-align: center; padding: 40px 20px; color: var(--gray-600); background: var(--gray-50); border-radius: 20px; font-size:14px;">
                 위생등급제 평가표가 이곳에 연동될 예정입니다.
             </div>
         </div>
@@ -614,7 +586,6 @@
                 helperChar.classList.add(rm, rf); setTimeout(() => { helperChar.classList.remove(rm, rf); }, 600);
             });
 
-            // 2초 단축
             const startPress = () => { if (!isGolden || isTransitioning) return; isPressing = true; helperChar.classList.add('shake'); pressTimer = setTimeout(() => { isTransitioning = true; isGolden = false; helperChar.classList.remove('shake'); isPressing = false; playMotionGraphicWipe(false); }, 2000); };
             const cancelPress = () => { if(pressTimer) clearTimeout(pressTimer); helperChar.classList.remove('shake'); setTimeout(() => { isPressing = false; }, 100); };
             helperChar.addEventListener('mousedown', startPress); helperChar.addEventListener('touchstart', startPress, {passive: true});
@@ -630,7 +601,11 @@
                 const dash = document.getElementById('dashboard'); const dashHeader = document.getElementById('home-dash-header'); const resWrap = document.getElementById('home-search-results');
                 if (query) {
                     dash.style.display = 'none'; dashHeader.style.display = 'none'; resWrap.style.display = 'flex'; resWrap.innerHTML = '';
-                    const matched = storesData.filter(s => s.name.toLowerCase().includes(query));
+                    
+                    const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
+                    const matched = storesData.filter(s => s.name.toLowerCase().includes(query))
+                                              .sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
+
                     if (matched.length === 0) resWrap.innerHTML = '<div class="store-empty">검색 결과가 없습니다.</div>';
                     else {
                         matched.forEach(store => {
@@ -672,7 +647,7 @@
                 const successRate = completedCount === 0 ? 0 : Math.round((passedCount / completedCount) * 100);
 
                 document.getElementById('dash-inprogress').innerHTML = `<b>${inProgressCount}</b>개의 매장을 진행중이에요.`;
-                document.getElementById('dash-completed').innerHTML = `지금까지<br><b>${completedCount}</b>개의 매장을<br>완료했어요.`;
+                document.getElementById('dash-completed').innerHTML = `<b>${completedCount}</b>개의 매장을<br>완료했어요.`;
                 document.getElementById('dash-success').innerHTML = `컨설팅 성공률은<br><b>${successRate}</b>%에요.`;
                 document.getElementById('dash-this-week').innerHTML = `<b>${thisWeekCount}</b>번의 방문<br>일정이 있어요!`;
                 document.getElementById('dash-next-week').innerHTML = `<b>${nextWeekCount}</b>번의 방문<br>일정이 있어요!`;
@@ -708,16 +683,20 @@
                 const subs = document.querySelectorAll('.store-sub-view');
                 subs.forEach(s => s.classList.remove('active')); cancelSelectionMode();
                 
+                if (filters) currentListFilters = filters; // 필터값 업데이트
+                
                 if (viewName === 'main') { document.getElementById('store-main-menu').classList.add('active'); renderBlockMap(); }
                 if (viewName === 'register') document.getElementById('store-register').classList.add('active');
                 if (viewName === 'manage') {
-                    currentListFilters = filters || ['진행중', '보류', '합격', '불합격']; 
+                    if(!currentListFilters || currentListFilters.length === 0) currentListFilters = ['진행중', '보류', '합격', '불합격'];
                     document.getElementById('store-manage').classList.add('active');
+                    
                     let titleStr = "매장 목록";
-                    if(filters.includes('진행중') && filters.length===1) titleStr = "진행 매장 관리";
-                    if(filters.includes('보류') && filters.length===1) titleStr = "보류 매장 관리";
-                    if(filters.includes('합격')) titleStr = "완료 매장 관리";
+                    if(currentListFilters.includes('진행중') && currentListFilters.length===1) titleStr = "진행 매장 관리";
+                    if(currentListFilters.includes('보류') && currentListFilters.length===1) titleStr = "보류 매장 관리";
+                    if(currentListFilters.includes('합격')) titleStr = "완료 매장 관리";
                     document.getElementById('store-list-title').textContent = titleStr;
+                    
                     renderStoreList();
                 }
             };
@@ -737,7 +716,7 @@
                     applyDate: document.getElementById('date-apply').value, consult1: "", consult2: "", inspect: "" 
                 };
                 storesData.unshift(newStore); updateDashboard(); renderBlockMap();
-                showToast(`[${newStore.name}] 등록이 완료되었습니다.`); // 토스트 알림!
+                showToast(`[${newStore.name}] 등록이 완료되었습니다.`);
                 this.reset(); citySelect.innerHTML = '<option value="" disabled selected>시/군/구</option>'; citySelect.disabled = true;
             });
 
@@ -799,7 +778,7 @@
                 const store = storesData.find(s => s.id === parseInt(document.getElementById('edit-store-id').value));
                 if(store) {
                     store.status = document.getElementById('edit-store-status').value; store.name = document.getElementById('edit-store-name').value; store.applyDate = document.getElementById('edit-date-apply').value; store.consult1 = document.getElementById('edit-date-consult1').value; store.consult2 = document.getElementById('edit-date-consult2').value; store.inspect = document.getElementById('edit-date-inspect').value;
-                    updateDashboard(); renderBlockMap(); showToast("저장되었습니다."); openStoreView('manage', currentListFilters); renderCalendar(); 
+                    updateDashboard(); renderBlockMap(); showToast("저장되었습니다."); openStoreView('manage'); renderCalendar(); 
                 }
             });
 
@@ -824,21 +803,21 @@
                         block.innerHTML = cityName + (count > 0 ? `<div class="badge">${count}</div>` : '');
                         
                         block.onclick = (e) => {
-                            // 블록 떠오르기 애니메이션
                             document.querySelectorAll('.map-block').forEach(b => b.classList.remove('popped'));
-                            block.classList.add('popped');
-                            document.getElementById('dimmer').classList.add('active');
+                            block.classList.add('popped'); document.getElementById('dimmer').classList.add('active');
                             
-                            // 탑 시트 오버레이 데이터 연동
                             document.getElementById('ts-title').textContent = cityName + " 현황";
                             const list = document.getElementById('ts-content'); list.innerHTML = '';
-                            const matched = storesData.filter(s => s.region.includes(cityName));
+                            
+                            const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
+                            const matched = storesData.filter(s => s.region.includes(cityName))
+                                                      .sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
                             
                             if(matched.length === 0) list.innerHTML = '<div class="store-empty" style="margin-top:20px;">등록된 매장이 없습니다.</div>';
                             else {
                                 matched.forEach(store => {
                                     const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`;
-                                    card.style.marginBottom = '12px';
+                                    card.style.marginBottom = '10px'; card.onclick = () => { closeMapOverlay(); openStoreView('manage', [store.status]); openEditStore(store.id); };
                                     card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>진행 금액</span> <strong>${store.price.split(' ')[0]}</strong></div>`;
                                     list.appendChild(card);
                                 });
@@ -860,7 +839,7 @@
 
 
             // ==========================================
-            // 캘린더 엔진
+            // 캘린더 엔진 (좌우 스와이프 적용)
             // ==========================================
             let currentDate = new Date(); let selectedDateStr = null;
             function getSchedulesForDate(dateStr) {
@@ -908,10 +887,20 @@
                 else listEl.innerHTML = '<div class="schedule-empty">등록된 일정이 없습니다.</div>';
             }
 
-            const calWrap = document.getElementById('calendar-wrapper'); let isTwoFing = false; let sY = 0; let cY = 0;
-            calWrap.addEventListener('touchstart', (e) => { if (e.touches.length === 2) { isTwoFing = true; sY = (e.touches[0].clientY + e.touches[1].clientY) / 2; e.preventDefault(); } }, {passive: false});
-            calWrap.addEventListener('touchmove', (e) => { if (isTwoFing && e.touches.length === 2) { cY = (e.touches[0].clientY + e.touches[1].clientY) / 2; e.preventDefault(); } }, {passive: false});
-            calWrap.addEventListener('touchend', (e) => { if (isTwoFing) { let dY = sY - cY; if (Math.abs(dY) > 50 && cY !== 0) { if (dY > 0) currentDate.setMonth(currentDate.getMonth() + 1); else currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); } isTwoFing = false; sY = 0; cY = 0; } });
+            const calWrap = document.getElementById('calendar-wrapper'); let isTwoFing = false; let sX = 0; let cX = 0;
+            calWrap.addEventListener('touchstart', (e) => { if (e.touches.length === 2) { isTwoFing = true; sX = (e.touches[0].clientX + e.touches[1].clientX) / 2; e.preventDefault(); } }, {passive: false});
+            calWrap.addEventListener('touchmove', (e) => { if (isTwoFing && e.touches.length === 2) { cX = (e.touches[0].clientX + e.touches[1].clientX) / 2; e.preventDefault(); } }, {passive: false});
+            calWrap.addEventListener('touchend', (e) => { 
+                if (isTwoFing) { 
+                    let dX = sX - cX; 
+                    if (Math.abs(dX) > 50 && cX !== 0) { 
+                        if (dX > 0) currentDate.setMonth(currentDate.getMonth() + 1); 
+                        else currentDate.setMonth(currentDate.getMonth() - 1); 
+                        renderCalendar(); 
+                    } 
+                    isTwoFing = false; sX = 0; cX = 0; 
+                } 
+            });
 
             window.openYearModal = function() { document.getElementById('year-input').value = currentDate.getFullYear(); document.getElementById('year-modal').classList.add('show'); };
             window.closeYearModal = function() { document.getElementById('year-modal').classList.remove('show'); };
