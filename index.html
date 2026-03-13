@@ -35,13 +35,32 @@
             --blue-bg: #E8F3FF; --dark-gray-bg: #333D4B;
         }
 
+        /* 기기/브라우저 강제 다크모드 방어 (무조건 라이트모드 변수 덮어쓰기) */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --brand-color: #036eb8; 
+                --bg-color: #ffffff;
+                --gray-50: #f9fafb;
+                --gray-100: #f2f4f6;
+                --gray-200: #e5e8eb;
+                --gray-300: #d1d6db;
+                --gray-600: #8b95a1;
+                --gray-800: #333d4b;
+                --text-main: #191f28;
+                --red-color: #E53E3E; --red-bg: #FFF5F5; --red-border: #FED7D7;
+                --yellow-color: #D97706; --yellow-bg: #FFFBEB; --yellow-border: #FDE68A;
+                --blue-bg: #E8F3FF; --dark-gray-bg: #333D4B;
+            }
+        }
+
         body.golden-theme { --brand-color: #D4AF37; --blue-bg: #FFF9E6; }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
 
-        /* 바디 스크롤 차단 */
+        /* 바디 스크롤 차단 (삼성 인터넷 강제 색반전 방어를 위해 background-image 속성 추가 사용) */
         body, html { 
-            width: 100vw; height: 100dvh; background-color: var(--bg-color); color: var(--text-main); 
+            width: 100vw; height: 100dvh; background-color: var(--bg-color); 
+            background-image: linear-gradient(var(--bg-color), var(--bg-color)); color: var(--text-main); 
             overflow: hidden; touch-action: none; transition: background-color 0.4s ease, color 0.4s ease; 
         }
 
@@ -76,7 +95,7 @@
         #splash-screen img { width: 200px; height: auto; }
 
         /* 로그인 오버레이 (새로 추가됨) */
-        #login-overlay { position:fixed; top:0; left:0; width:100vw; height:100vh; background:var(--bg-color); z-index:9000; display:none; flex-direction:column; justify-content:center; align-items:center; padding:24px; }
+        #login-overlay { position:fixed; top:0; left:0; width:100vw; height:100vh; background:var(--bg-color); background-image: linear-gradient(var(--bg-color), var(--bg-color)); z-index:9000; display:none; flex-direction:column; justify-content:center; align-items:center; padding:24px; }
         
         /* --- 홈 화면 & 캐릭터 --- */
         .helper-container { display: flex; justify-content: center; margin-bottom: 24px; position: relative; }
@@ -524,7 +543,7 @@
                     <h2 class="greeting" style="text-align:left; margin-bottom:20px;">매장관리</h2>
                     <div class="store-btn-grid" id="store-main-menu">
                         <div class="store-menu-card" onclick="openStoreView('register')"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> 신규 등록</div>
-                        <div class="store-menu-card" onclick="openStoreView('manage', ['진행중'])"><svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0-4h14v-2H7v2zM7 7v2h14V7H7z"/></svg> 진행 매장</div>
+                        <div class="store-menu-card" onclick="openStoreView('manage', ['진행중'])"><svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg> 진행 매장</div>
                         <div class="store-menu-card" onclick="openStoreView('manage', ['보류'])"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> 보류 매장</div>
                         <div class="store-menu-card" onclick="openStoreView('manage', ['합격', '불합격'])"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg> 완료 매장</div>
                     </div>
