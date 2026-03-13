@@ -75,7 +75,7 @@
         #splash-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background-color: var(--bg-color); display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.4s ease-out; }
         #splash-screen img { width: 200px; height: auto; }
 
-        /* 로그인 오버레이 (새로 추가됨) */
+        /* 로그인 오버레이 */
         #login-overlay { position:fixed; top:0; left:0; width:100vw; height:100vh; background:var(--bg-color); z-index:9000; display:none; flex-direction:column; justify-content:center; align-items:center; padding:24px; }
         
         /* --- 홈 화면 & 캐릭터 --- */
@@ -645,11 +645,10 @@ const firebaseConfig = {
         const db = firebase.firestore();
         let currentUser = null;
 
-        // 전역 데이터베이스
         let storesData = [];
         let adminPw = localStorage.getItem('kadarosAdminPw') || '0000';
 
-        // 서버(Firestore) 연동용 함수로 변경
+        // 서버 연동용 함수
         async function saveStoresData() { 
             if(!currentUser) return;
             try {
@@ -676,7 +675,6 @@ const firebaseConfig = {
             }
         }
 
-        // 로그인/로그아웃 핸들러
         window.handleLogin = function() {
             const email = document.getElementById('login-email').value;
             const pw = document.getElementById('login-pw').value;
@@ -1330,6 +1328,15 @@ const firebaseConfig = {
                 store.documents = docs;
                 saveStoresData(); closeDocModal(); showToast("서류 체크가 저장되었습니다.");
             };
+
+            // 서비스 워커 등록 (PWA 앱 설치 활성화)
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('./sw.js')
+                        .then(reg => console.log('Service Worker 등록 성공', reg.scope))
+                        .catch(err => console.log('Service Worker 등록 실패', err));
+                });
+            }
             
         });
     </script>
