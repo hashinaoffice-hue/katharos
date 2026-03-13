@@ -62,9 +62,10 @@
             overflow: hidden; touch-action: none; transition: background-color 0.4s ease, color 0.4s ease; 
         }
 
+        /* 앱 메인 컨테이너 기본 숨김 (페이드 인/아웃 적용) */
         #app-container { 
             display: none; width: 100%; height: calc(100dvh - var(--nav-height) - env(safe-area-inset-bottom)); 
-            flex-direction: column; position: relative; opacity: 0; transition: opacity 0.3s ease-in;
+            flex-direction: column; position: relative; opacity: 0; transition: opacity 0.4s ease-in-out;
         }
 
         .view-section {
@@ -74,7 +75,6 @@
         .view-section.active { display: flex; }
         
         .view-header { padding: 32px 24px 16px 24px; flex-shrink: 0; background: var(--bg-color); z-index: 10; }
-        
         #view-home .view-header { padding-top: 85px; padding-bottom: 12px; }
 
         .scroll-area { flex: 1; overflow-y: auto; touch-action: pan-y; padding: 0 24px 32px 24px; -ms-overflow-style: none; scrollbar-width: none; }
@@ -82,20 +82,26 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* 토스트 알림창 */
         .toast {
             position: fixed; bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 24px); left: 50%; transform: translateX(-50%) translateY(50px);
             background: rgba(25, 31, 40, 0.9); color: white; padding: 14px 24px; border-radius: 20px; font-size: 14px; font-weight: 600; opacity: 0; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 9999; pointer-events: none; box-shadow: 0 8px 24px rgba(0,0,0,0.15); white-space: nowrap;
         }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
+        /* 캔버스 (액체 폭발 물리엔진용) */
         #fx-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 10000; pointer-events: none; display: none; }
 
-        /* 로그인 오버레이 */
-        #login-overlay { position:fixed; top:0; left:0; width:100vw; height:100vh; background:var(--bg-color); background-image: linear-gradient(var(--bg-color), var(--bg-color)); z-index:9000; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:32px; }
+        /* 로그인 오버레이 (페이드 인/아웃 적용) */
+        #login-overlay { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-color); 
+            background-image: linear-gradient(var(--bg-color), var(--bg-color)); z-index: 9000; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 32px;
+            transition: opacity 0.4s ease-in-out;
+        }
         
-        /* --- 캐릭터 설정 --- */
+        /* --- 캐릭터 모션 설정 --- */
         .helper-container { display: flex; justify-content: center; margin-bottom: 20px; position: relative; height: 66px; }
-        
         #helper-floater { animation: float 2.5s ease-in-out infinite; transform-origin: bottom center; }
         
         .helper-character {
@@ -125,6 +131,7 @@
         .helper-character.face-happy::before, .helper-character.face-happy::after { border-top: 3px solid #fff; background: transparent; height: 8px; width: 12px; border-radius: 50% 50% 0 0; top: 24px; transform: none;} 
         .helper-character.face-happy .smile { width: 20px; height: 12px; bottom: 12px; border: none; border-bottom: 2.5px solid #fff; border-radius: 0 0 20px 20px; background: transparent; transform: translateX(-50%);}
         
+        /* 꾹 누를 때 볼 빵빵 표정 */
         .helper-character.face-puff::before, .helper-character.face-puff::after { height: 6px; width: 6px; top: 22px; background: #fff; border-radius: 50%; border: none; transform: none;} 
         .helper-character.face-puff::before { left: 10px; }
         .helper-character.face-puff::after { right: 10px; }
@@ -132,14 +139,13 @@
 
         .greeting { font-size: 21px; font-weight: 700; line-height: 1.4; margin-bottom: 20px; text-align: center; word-break: keep-all; letter-spacing: -0.5px; transition: color 0.4s ease; }
 
-        /* 검색바 */
+        /* 검색 & 대시보드 */
         .search-container { position: relative; margin-bottom: 20px; }
         .search-container input { width: 100%; padding: 15px 20px 15px 48px; border: none; border-radius: 16px; background-color: var(--gray-100); font-size: 15px; color: var(--text-main); outline: none; transition: all 0.2s; }
         .search-container input:focus { background-color: var(--gray-50); box-shadow: 0 0 0 2px var(--brand-color) inset; }
         .search-container input::placeholder { color: var(--gray-600); }
         .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; fill: var(--gray-600); }
         
-        /* 대시보드 카드 */
         .dashboard-header { font-size: 17px; font-weight: 700; margin-bottom: 12px; color: var(--text-main); }
         .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-bottom: 10px; }
         .dash-card { background: var(--gray-50); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; border: 1px solid var(--gray-100); transition: all 0.4s ease; }
@@ -198,7 +204,7 @@
         .top-icon-btn { background: var(--gray-100); color: var(--gray-800); border: none; padding: 8px 14px; border-radius: 14px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s;}
         .top-icon-btn:active { background: var(--gray-200); transform: scale(0.95);}
 
-        /* 폼 */
+        /* 폼 (Z플립 대응 Flex 구조 유지) */
         .form-group { margin-bottom: 20px; width: 100%;}
         .form-group label { display: block; font-size: 13px; font-weight: 700; color: var(--gray-600); margin-bottom: 6px; }
         .form-input { width: 100%; padding: 14px 16px; border: 1px solid transparent; border-radius: 14px; background-color: var(--gray-50); font-size: 15px; color: var(--text-main); outline: none; box-sizing: border-box; font-weight: 500; transition: all 0.2s;}
@@ -683,7 +689,63 @@ const firebaseConfig = {
 
         let storesData = [];
         let adminPw = localStorage.getItem('kadarosAdminPw') || '0000';
+        let unsubscribeSnapshot = null;
 
+        // 화면 UI 전환 (로그인 <-> 앱 메인)
+        function toggleAppUI(isLoggedIn) {
+            const appContainer = document.getElementById('app-container');
+            const loginOverlay = document.getElementById('login-overlay');
+            
+            if(isLoggedIn) {
+                loginOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    loginOverlay.style.display = 'none';
+                    appContainer.style.display = 'flex';
+                    void appContainer.offsetWidth; // 리플로우 강제 트리거
+                    appContainer.style.opacity = '1';
+                }, 400);
+            } else {
+                appContainer.style.opacity = '0';
+                setTimeout(() => {
+                    appContainer.style.display = 'none';
+                    loginOverlay.style.display = 'flex';
+                    void loginOverlay.offsetWidth;
+                    loginOverlay.style.opacity = '1';
+                }, 400);
+            }
+        }
+
+        // 실시간 동기화 (Real-time Sync) 시작 함수
+        function initRealtimeSync() {
+            if (!currentUser) return;
+            
+            // 기존에 켜져있던 스냅샷 리스너가 있다면 끄기
+            if(unsubscribeSnapshot) unsubscribeSnapshot();
+
+            // 서버의 데이터가 바뀔 때마다 실시간으로 이 함수가 실행됩니다!
+            unsubscribeSnapshot = db.collection('users').doc(currentUser.uid).onSnapshot((doc) => {
+                if (doc.exists) {
+                    storesData = doc.data().stores || [];
+                } else {
+                    storesData = [];
+                }
+                
+                // 데이터가 갱신되었으므로 보이는 모든 화면을 업데이트
+                updateDashboard(); 
+                renderCalendar(); 
+                renderConsultingList(); 
+                renderBlockMap();
+                
+                // 매장관리 탭을 보고 있는 중이었다면 리스트도 업데이트
+                if(document.getElementById('store-manage').classList.contains('active')) {
+                    renderStoreList();
+                }
+            }, (error) => {
+                console.error("Realtime sync error:", error);
+            });
+        }
+
+        // 서버 저장 로직 (저장하면 onSnapshot이 자동으로 화면을 갱신해줌)
         async function saveStoresData() { 
             if(!currentUser) return;
             try {
@@ -694,22 +756,23 @@ const firebaseConfig = {
             }
         }
         
-        async function loadStoresData() { 
-            if(!currentUser) return;
-            try {
-                const doc = await db.collection('users').doc(currentUser.uid).get();
-                if(doc.exists) {
-                    storesData = doc.data().stores || [];
-                } else {
-                    storesData = [];
+        // 인증 상태 감지 (최초 로딩 또는 새로고침 시)
+        auth.onAuthStateChanged(user => {
+            if(user) {
+                currentUser = user;
+                toggleAppUI(true);
+                initRealtimeSync(); // 로그인 성공 시 실시간 동기화 시작
+            } else {
+                currentUser = null;
+                if(unsubscribeSnapshot) {
+                    unsubscribeSnapshot(); // 로그아웃 시 리스너 해제
+                    unsubscribeSnapshot = null;
                 }
-                updateDashboard(); renderCalendar(); renderConsultingList(); renderBlockMap();
-            } catch(e) {
-                console.error("불러오기 실패", e);
+                toggleAppUI(false);
             }
-        }
+        });
 
-        // 로그인 유지 로직 추가
+        // 로그인 버튼 클릭 시
         window.handleLogin = function() {
             const email = document.getElementById('login-email').value;
             const pw = document.getElementById('login-pw').value;
@@ -732,6 +795,7 @@ const firebaseConfig = {
                 });
         };
 
+        // 로그아웃 버튼 클릭 시
         window.handleLogout = function() {
             auth.signOut().then(() => {
                 showToast("로그아웃 되었습니다.");
@@ -796,716 +860,712 @@ const firebaseConfig = {
             }
         ];
 
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg; toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 2500);
+        // ------------------------------------
+        // 이후 모션 및 UI 로직은 기존과 동일
+        // ------------------------------------
+
+        const canvas = document.getElementById('fx-canvas');
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const helperChar = document.getElementById('helper-char');
+        const motions = ['motion-jump', 'motion-spin', 'motion-squish', 'motion-wiggle']; 
+        const faces = ['face-happy', 'face-surprised', 'face-wink'];
+        
+        let isGolden = false; let isTransitioning = false; 
+        let pressTimer = null; let explodeTimer = null; let isPressing = false; 
+        let isInflating = false; let isPopped = false;
+        let pressStartTime = 0; let rafId = null;
+
+        function doClickAction() {
+            if (!isGolden && Math.random() < 0.03) { 
+                isTransitioning = true; isGolden = true; playMotionGraphicWipe(true); return; 
+            }
+            helperChar.classList.remove(...motions, ...faces, 'face-puff'); void helperChar.offsetWidth; 
+            const rm = motions[Math.floor(Math.random() * motions.length)]; const rf = faces[Math.floor(Math.random() * faces.length)];
+            helperChar.classList.add(rm, rf); setTimeout(() => { helperChar.classList.remove(rm, rf); }, 600);
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
+        function playMotionGraphicWipe(isToGolden) {
+            canvas.style.display = 'block'; 
+            let start = null; const duration = 2000;
+            const particles = Array.from({length: 100}, () => ({ x: Math.random() * canvas.width, y: -Math.random()*canvas.height, size: Math.random() * 4 + 1.5, speedY: Math.random() * 15 + 10, speedX: Math.random() * 4 - 2, opacity: Math.random() * 0.8 + 0.2 }));
 
-            const canvas = document.getElementById('fx-canvas');
-            const ctx = canvas.getContext('2d');
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+            function render(time) {
+                if (!start) start = time; const elapsed = time - start; const progress = Math.min(elapsed / duration, 1);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                let overlayAlpha = 0;
+                if (progress < 0.4) overlayAlpha = progress / 0.4;
+                else if (progress < 0.6) { overlayAlpha = 1; if (!canvas.dataset.swapped) { toggleThemeDOM(isToGolden); canvas.dataset.swapped = 'true'; if(navigator.vibrate) navigator.vibrate([100, 50, 100]); } }
+                else overlayAlpha = 1 - ((progress - 0.6) / 0.4);
+
+                const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                if (isToGolden) { gradient.addColorStop(0, `rgba(255, 223, 0, ${overlayAlpha})`); gradient.addColorStop(1, `rgba(212, 175, 55, ${overlayAlpha})`); }
+                else { gradient.addColorStop(0, `rgba(3, 110, 184, ${overlayAlpha})`); gradient.addColorStop(1, `rgba(0, 80, 150, ${overlayAlpha})`); }
+                ctx.fillStyle = gradient; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                particles.forEach(p => { p.y += p.speedY * (progress * 2); p.x += Math.sin(progress * 10 + p.speedX) * 2; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fillStyle = isToGolden ? `rgba(255, 255, 255, ${p.opacity})` : `rgba(150, 200, 255, ${p.opacity})`; ctx.shadowBlur = 10; ctx.shadowColor = isToGolden ? "#FFF" : "#00FFFF"; ctx.fill(); });
+
+                if (progress < 1) requestAnimationFrame(render);
+                else { canvas.style.display = 'none'; canvas.dataset.swapped = ''; isTransitioning = false; }
             }
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
+            requestAnimationFrame(render);
+        }
 
-            const helperChar = document.getElementById('helper-char');
-            const motions = ['motion-jump', 'motion-spin', 'motion-squish', 'motion-wiggle']; 
-            const faces = ['face-happy', 'face-surprised', 'face-wink'];
+        function toggleThemeDOM(toGolden) {
+            const greeting = document.getElementById('main-greeting');
+            if (toGolden) { document.body.classList.add('golden-theme'); helperChar.classList.add('golden'); greeting.innerHTML = "✨ 앗! 황금이 발견! ✨<br>오늘 하루 대박나실 거예요!"; }
+            else { document.body.classList.remove('golden-theme'); helperChar.classList.remove('golden'); greeting.innerHTML = "카다로스 업무 도우미입니다.<br>무엇을 도와드릴까요?"; }
+        }
+
+        function triggerLiquidPop() {
+            isPopped = true;
+            isInflating = false;
             
-            let isGolden = false; let isTransitioning = false; 
-            let pressTimer = null; let explodeTimer = null; let isPressing = false; 
-            let isInflating = false; let isPopped = false;
-            let pressStartTime = 0; let rafId = null;
+            helperChar.style.transition = 'none';
+            helperChar.style.opacity = '0';
+            helperChar.style.transform = 'scale(0)';
+            helperChar.classList.remove('face-puff');
 
-            function doClickAction() {
-                if (!isGolden && Math.random() < 0.03) { 
-                    isTransitioning = true; isGolden = true; playMotionGraphicWipe(true); return; 
-                }
-                helperChar.classList.remove(...motions, ...faces, 'face-puff'); void helperChar.offsetWidth; 
-                const rm = motions[Math.floor(Math.random() * motions.length)]; const rf = faces[Math.floor(Math.random() * faces.length)];
-                helperChar.classList.add(rm, rf); setTimeout(() => { helperChar.classList.remove(rm, rf); }, 600);
-            }
+            canvas.style.display = 'block';
 
-            function playMotionGraphicWipe(isToGolden) {
-                canvas.style.display = 'block'; 
-                let start = null; const duration = 2000;
-                const particles = Array.from({length: 100}, () => ({ x: Math.random() * canvas.width, y: -Math.random()*canvas.height, size: Math.random() * 4 + 1.5, speedY: Math.random() * 15 + 10, speedX: Math.random() * 4 - 2, opacity: Math.random() * 0.8 + 0.2 }));
+            const rect = helperChar.parentElement.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
 
-                function render(time) {
-                    if (!start) start = time; const elapsed = time - start; const progress = Math.min(elapsed / duration, 1);
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                    let overlayAlpha = 0;
-                    if (progress < 0.4) overlayAlpha = progress / 0.4;
-                    else if (progress < 0.6) { overlayAlpha = 1; if (!canvas.dataset.swapped) { toggleThemeDOM(isToGolden); canvas.dataset.swapped = 'true'; if(navigator.vibrate) navigator.vibrate([100, 50, 100]); } }
-                    else overlayAlpha = 1 - ((progress - 0.6) / 0.4);
-
-                    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-                    if (isToGolden) { gradient.addColorStop(0, `rgba(255, 223, 0, ${overlayAlpha})`); gradient.addColorStop(1, `rgba(212, 175, 55, ${overlayAlpha})`); }
-                    else { gradient.addColorStop(0, `rgba(3, 110, 184, ${overlayAlpha})`); gradient.addColorStop(1, `rgba(0, 80, 150, ${overlayAlpha})`); }
-                    ctx.fillStyle = gradient; ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                    particles.forEach(p => { p.y += p.speedY * (progress * 2); p.x += Math.sin(progress * 10 + p.speedX) * 2; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fillStyle = isToGolden ? `rgba(255, 255, 255, ${p.opacity})` : `rgba(150, 200, 255, ${p.opacity})`; ctx.shadowBlur = 10; ctx.shadowColor = isToGolden ? "#FFF" : "#00FFFF"; ctx.fill(); });
-
-                    if (progress < 1) requestAnimationFrame(render);
-                    else { canvas.style.display = 'none'; canvas.dataset.swapped = ''; isTransitioning = false; }
-                }
-                requestAnimationFrame(render);
-            }
-
-            function toggleThemeDOM(toGolden) {
-                const greeting = document.getElementById('main-greeting');
-                if (toGolden) { document.body.classList.add('golden-theme'); helperChar.classList.add('golden'); greeting.innerHTML = "✨ 앗! 황금이 발견! ✨<br>오늘 하루 대박나실 거예요!"; }
-                else { document.body.classList.remove('golden-theme'); helperChar.classList.remove('golden'); greeting.innerHTML = "카다로스 업무 도우미입니다.<br>무엇을 도와드릴까요?"; }
-            }
-
-            function triggerLiquidPop() {
-                isPopped = true;
-                isInflating = false;
+            let pList = Array.from({length: 70}, () => {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 45 + 15; 
                 
-                helperChar.style.transition = 'none';
-                helperChar.style.opacity = '0';
-                helperChar.style.transform = 'scale(0)';
-                helperChar.classList.remove('face-puff');
+                let pColor = isGolden ? 
+                    `rgba(${200 + Math.random()*55}, ${150 + Math.random()*50}, 30, 1)` : 
+                    `rgba(${10 + Math.random()*20}, ${90 + Math.random()*40}, ${170 + Math.random()*50}, 1)`;
 
-                canvas.style.display = 'block';
+                return {
+                    x: centerX, y: centerY,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    size: Math.random() * 14 + 4,
+                    friction: 0.80 + Math.random() * 0.08,
+                    color: pColor
+                };
+            });
 
-                const rect = helperChar.parentElement.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
+            let pStartTime = performance.now();
 
-                let pList = Array.from({length: 70}, () => {
-                    const angle = Math.random() * Math.PI * 2;
-                    const speed = Math.random() * 45 + 15; 
-                    
-                    let pColor = isGolden ? 
-                        `rgba(${200 + Math.random()*55}, ${150 + Math.random()*50}, 30, 1)` : 
-                        `rgba(${10 + Math.random()*20}, ${90 + Math.random()*40}, ${170 + Math.random()*50}, 1)`;
+            function renderPop(time) {
+                const elapsed = time - pStartTime;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                    return {
-                        x: centerX, y: centerY,
-                        vx: Math.cos(angle) * speed,
-                        vy: Math.sin(angle) * speed,
-                        size: Math.random() * 14 + 4,
-                        friction: 0.80 + Math.random() * 0.08,
-                        color: pColor
-                    };
-                });
+                let allGathered = true;
 
-                let pStartTime = performance.now();
-
-                function renderPop(time) {
-                    const elapsed = time - pStartTime;
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                    let allGathered = true;
-
-                    pList.forEach(p => {
-                        if (elapsed < 800) {
+                pList.forEach(p => {
+                    if (elapsed < 800) {
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vx *= p.friction;
+                        p.vy *= p.friction;
+                        allGathered = false;
+                    } 
+                    else if (elapsed >= 800 && elapsed < 1800) {
+                        const dx = centerX - p.x;
+                        const dy = centerY - p.y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        
+                        if (dist > 8) {
+                            allGathered = false;
+                            const gatherForce = Math.pow((elapsed - 800) / 1000, 2) * 0.4; 
+                            p.vx += dx * gatherForce;
+                            p.vy += dy * gatherForce;
+                            p.vx *= 0.88;
+                            p.vy *= 0.88;
+                            
                             p.x += p.vx;
                             p.y += p.vy;
-                            p.vx *= p.friction;
-                            p.vy *= p.friction;
-                            allGathered = false;
-                        } 
-                        else if (elapsed >= 800 && elapsed < 1800) {
-                            const dx = centerX - p.x;
-                            const dy = centerY - p.y;
-                            const dist = Math.sqrt(dx*dx + dy*dy);
-                            
-                            if (dist > 8) {
-                                allGathered = false;
-                                const gatherForce = Math.pow((elapsed - 800) / 1000, 2) * 0.4; 
-                                p.vx += dx * gatherForce;
-                                p.vy += dy * gatherForce;
-                                p.vx *= 0.88;
-                                p.vy *= 0.88;
-                                
-                                p.x += p.vx;
-                                p.y += p.vy;
-                            } else {
-                                p.x = centerX;
-                                p.y = centerY;
-                                p.vx = 0; p.vy = 0;
-                            }
+                        } else {
+                            p.x = centerX;
+                            p.y = centerY;
+                            p.vx = 0; p.vy = 0;
                         }
-
-                        const speedSq = p.vx*p.vx + p.vy*p.vy;
-                        const stretch = Math.max(1, speedSq * 0.015);
-                        const angle = Math.atan2(p.vy, p.vx);
-
-                        ctx.save();
-                        ctx.translate(p.x, p.y);
-                        ctx.rotate(angle);
-                        ctx.beginPath();
-                        ctx.ellipse(0, 0, p.size * stretch, p.size, 0, 0, Math.PI * 2);
-                        ctx.fillStyle = p.color;
-                        ctx.fill();
-                        ctx.restore();
-                    });
-
-                    if (elapsed < 1800 || !allGathered) {
-                        rafId = requestAnimationFrame(renderPop);
-                    } else {
-                        canvas.style.display = 'none';
-                        
-                        helperChar.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s';
-                        helperChar.style.opacity = '1';
-                        helperChar.style.transform = 'scale(1)';
-                        
-                        if(navigator.vibrate) navigator.vibrate(40);
-
-                        setTimeout(() => {
-                            isPopped = false;
-                            helperChar.style.transition = 'transform 0.4s ease'; 
-                            helperChar.style.transform = '';
-                        }, 600);
                     }
-                }
-                
-                if(navigator.vibrate) navigator.vibrate([80, 40, 80]); 
-                rafId = requestAnimationFrame(renderPop);
-            }
 
-            const startPress = (e) => { 
-                if (isTransitioning || isPopped) return; 
-                isPressing = true; 
-                pressStartTime = Date.now();
-                
-                pressTimer = setTimeout(() => { 
-                    if(!isPressing) return;
-                    isInflating = true;
-                    helperChar.classList.add('face-puff');
-                    
-                    helperChar.style.transition = 'transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                    helperChar.style.transform = 'scale(2.5)';
-                    
-                    explodeTimer = setTimeout(() => { 
-                        if(isInflating) triggerLiquidPop();
-                    }, 1500); 
+                    const speedSq = p.vx*p.vx + p.vy*p.vy;
+                    const stretch = Math.max(1, speedSq * 0.015);
+                    const angle = Math.atan2(p.vy, p.vx);
 
-                }, 500); 
-            };
-
-            const cancelPress = (e) => { 
-                if(!isPressing) return;
-                isPressing = false; 
-                clearTimeout(pressTimer);
-                clearTimeout(explodeTimer);
-                
-                const holdDuration = Date.now() - pressStartTime;
-
-                if(holdDuration < 500 && !isPopped && !isTransitioning) {
-                    doClickAction();
-                } 
-                else if (isInflating && !isPopped) {
-                    isInflating = false;
-                    helperChar.classList.remove('face-puff');
-                    helperChar.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-                    helperChar.style.transform = 'scale(1)';
-                }
-            };
-
-            helperChar.addEventListener('mousedown', startPress); helperChar.addEventListener('touchstart', startPress, {passive: true});
-            helperChar.addEventListener('mouseup', cancelPress); helperChar.addEventListener('mouseleave', cancelPress);
-            helperChar.addEventListener('touchend', cancelPress); helperChar.addEventListener('touchcancel', cancelPress);
-
-
-            const navItems = document.querySelectorAll('.nav-item');
-            const viewSections = document.querySelectorAll('.view-section');
-            navItems.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    navItems.forEach(nav => nav.classList.remove('active')); this.classList.add('active');
-                    const targetId = this.getAttribute('data-target');
-                    viewSections.forEach(section => { section.classList.remove('active'); });
-                    document.getElementById(targetId).classList.add('active');
-                    
-                    if(targetId === 'view-calendar') renderCalendar();
-                    if(targetId === 'view-store') { openStoreView('main'); renderBlockMap(); }
-                    if(targetId === 'view-consulting') renderConsultingList();
-                });
-            });
-
-            document.getElementById('home-search-input').addEventListener('input', function(e) {
-                const query = e.target.value.trim().toLowerCase();
-                const dash = document.getElementById('dashboard'); const dashHeader = document.getElementById('home-dash-header'); const resWrap = document.getElementById('home-search-results');
-                if (query) {
-                    dash.style.display = 'none'; dashHeader.style.display = 'none'; resWrap.style.display = 'flex'; resWrap.innerHTML = '';
-                    const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
-                    const matched = storesData.filter(s => s.name.toLowerCase().includes(query)).sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
-                    if (matched.length === 0) resWrap.innerHTML = '<div class="store-empty">검색 결과가 없습니다.</div>';
-                    else {
-                        matched.forEach(store => {
-                            const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`;
-                            card.onclick = () => { document.querySelector('.nav-item[data-target="view-store"]').click(); openStoreView('manage', [store.status]); openEditStore(store.id); };
-                            card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>지역</span> <strong>${store.region}</strong></div>`;
-                            resWrap.appendChild(card);
-                        });
-                    }
-                } else { dash.style.display = 'grid'; dashHeader.style.display = 'block'; resWrap.style.display = 'none'; }
-            });
-
-            function updateDashboard() {
-                let inProgressCount = 0; let passedCount = 0; let failedCount = 0; let thisWeekCount = 0; let nextWeekCount = 0;
-                const now = new Date(); now.setHours(0,0,0,0);
-                const endOfWeek = new Date(now); const diff = now.getDay() === 0 ? 0 : 7 - now.getDay(); endOfWeek.setDate(now.getDate() + diff); endOfWeek.setHours(23,59,59,999);
-                const nextWeekStart = new Date(endOfWeek); nextWeekStart.setDate(nextWeekStart.getDate() + 1); nextWeekStart.setHours(0,0,0,0);
-                const nextWeekEnd = new Date(nextWeekStart); nextWeekEnd.setDate(nextWeekStart.getDate() + 6); nextWeekEnd.setHours(23,59,59,999);
-
-                storesData.forEach(store => {
-                    if (store.status === '진행중' || store.status === '보류') inProgressCount++;
-                    if (store.status === '합격') passedCount++;
-                    if (store.status === '불합격') failedCount++;
-                    
-                    [store.consult1, store.consult2].filter(d => d).forEach(dStr => {
-                        const d = new Date(dStr);
-                        if(d >= now && d <= endOfWeek) thisWeekCount++;
-                        if(d >= nextWeekStart && d <= nextWeekEnd) nextWeekCount++;
-                    });
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(angle);
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, p.size * stretch, p.size, 0, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                    ctx.restore();
                 });
 
-                const completedCount = passedCount + failedCount;
-                const successRate = completedCount === 0 ? 0 : Math.round((passedCount / completedCount) * 100);
-
-                document.getElementById('dash-inprogress').innerHTML = `<b>${inProgressCount}</b>개의 매장을 진행중이에요.`;
-                document.getElementById('dash-completed').innerHTML = `<b>${completedCount}</b>개의 매장을<br>완료했어요.`;
-                document.getElementById('dash-success').innerHTML = `컨설팅 성공률은<br><b>${successRate}</b>%에요.`;
-                document.getElementById('dash-this-week').innerHTML = `<b>${thisWeekCount}</b>번의 방문<br>일정이 있어요!`;
-                document.getElementById('dash-next-week').innerHTML = `<b>${nextWeekCount}</b>번의 방문<br>일정이 있어요!`;
-            }
-
-            let currentListFilters = []; let isSelectionMode = false; let selectedStoreIds = new Set();
-
-            window.goBackToStoreManage = function() { 
-                openStoreView('manage', currentListFilters && currentListFilters.length ? currentListFilters : ['진행중']); 
-            };
-
-            window.openStoreView = function(viewName, filters = null) {
-                document.querySelectorAll('.store-sub-view').forEach(s => s.classList.remove('active')); cancelSelectionMode();
-                if (filters) currentListFilters = filters; 
-                
-                if (viewName === 'main') { document.getElementById('store-main-view').classList.add('active'); renderBlockMap(); }
-                if (viewName === 'register') document.getElementById('store-register').classList.add('active');
-                if (viewName === 'manage') {
-                    if(!currentListFilters || currentListFilters.length === 0) currentListFilters = ['진행중', '보류', '합격', '불합격'];
-                    document.getElementById('store-manage').classList.add('active');
-                    let titleStr = "매장 목록";
-                    if(currentListFilters.includes('진행중') && currentListFilters.length===1) titleStr = "진행 매장 관리";
-                    if(currentListFilters.includes('보류') && currentListFilters.length===1) titleStr = "보류 매장 관리";
-                    if(currentListFilters.includes('합격')) titleStr = "완료 매장 관리";
-                    document.getElementById('store-list-title').textContent = titleStr;
-                    renderStoreList();
-                }
-            };
-
-            const provSelect = document.getElementById('region-province'); const citySelect = document.getElementById('region-city');
-            provSelect.addEventListener('change', function() {
-                const selected = this.value; citySelect.innerHTML = '<option value="" disabled selected>시/군/구</option>';
-                if(regionData[selected]) { regionData[selected].forEach(city => { const option = document.createElement('option'); option.value = city; option.textContent = city; citySelect.appendChild(option); }); citySelect.disabled = false; } else citySelect.disabled = true;
-            });
-
-            document.getElementById('new-store-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const price = Number(document.getElementById('store-price').value) || 0;
-                const deposit = Number(document.getElementById('store-deposit').value) || 0;
-                
-                const newStore = {
-                    id: Date.now(), name: document.getElementById('store-name').value, status: '진행중', 
-                    region: `${document.getElementById('region-province').value} ${document.getElementById('region-city').value}`,
-                    priceTotal: price, priceDeposit: deposit, vat: document.querySelector('input[name="vat"]:checked').value,
-                    applyDate: document.getElementById('date-apply').value, consult1: "", consult2: "", inspect: "",
-                    checklistData: null, memo: "", providedItems: {}, documents: {}
-                };
-                storesData.unshift(newStore); saveStoresData(); updateDashboard(); renderBlockMap();
-                showToast(`[${newStore.name}] 등록되었습니다.`);
-                this.reset(); citySelect.innerHTML = '<option value="" disabled selected>시/군/구</option>'; citySelect.disabled = true;
-                openStoreView('manage', ['진행중']); 
-            });
-
-            function getStatusClass(status) {
-                if(status === '합격') return 'status-pass'; if(status === '불합격') return 'status-fail'; if(status === '보류') return 'status-pending'; return 'status-progress';
-            }
-
-            window.activateSelectionMode = function(firstId) { isSelectionMode = true; selectedStoreIds.add(firstId); renderStoreList(); updateSelectionBar(); };
-            window.cancelSelectionMode = function() { isSelectionMode = false; selectedStoreIds.clear(); document.getElementById('selection-bar').classList.remove('active'); renderStoreList(); };
-            window.updateSelectionBar = function() {
-                const bar = document.getElementById('selection-bar');
-                if(isSelectionMode) { bar.classList.add('active'); document.getElementById('selection-count').textContent = `${selectedStoreIds.size}개 선택됨`; } else bar.classList.remove('active');
-            };
-
-            window.openDeletePwModal = function() {
-                if(selectedStoreIds.size === 0) return;
-                document.getElementById('del-pw-input').value = '';
-                document.getElementById('pw-modal').style.display = 'flex';
-                void document.getElementById('pw-modal').offsetWidth;
-                document.getElementById('pw-modal').classList.add('show');
-            };
-            window.closePwModal = function() {
-                document.getElementById('pw-modal').classList.remove('show');
-                setTimeout(() => document.getElementById('pw-modal').style.display = 'none', 200);
-            };
-            window.confirmDelete = function() {
-                const inputPw = document.getElementById('del-pw-input').value;
-                if(inputPw === adminPw) {
-                    storesData = storesData.filter(s => !selectedStoreIds.has(s.id));
-                    cancelSelectionMode(); saveStoresData(); updateDashboard(); renderCalendar(); renderBlockMap();
-                    closePwModal(); showToast("성공적으로 삭제되었습니다.");
+                if (elapsed < 1800 || !allGathered) {
+                    rafId = requestAnimationFrame(renderPop);
                 } else {
-                    showToast("비밀번호가 일치하지 않습니다.");
-                }
-            };
-
-            function renderStoreList() {
-                const container = document.getElementById('store-list-container');
-                container.innerHTML = ''; container.classList.toggle('selection-mode-active', isSelectionMode);
-
-                const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
-                const filtered = storesData.filter(s => currentListFilters.includes(s.status)).sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
-
-                if(filtered.length === 0) { container.innerHTML = '<div class="store-empty">해당되는 매장이 없습니다.</div>'; return; }
-                
-                filtered.forEach(store => {
-                    const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`;
-                    if (selectedStoreIds.has(store.id)) card.classList.add('is-selected');
+                    canvas.style.display = 'none';
                     
-                    const balance = (store.priceTotal || 0) - (store.priceDeposit || 0);
-                    let balanceHtml = balance > 0 ? `<div class="store-info-line"><span>미수금</span> <strong style="color:var(--red-color)">${balance.toLocaleString()}원</strong></div>` : `<div class="store-info-line"><span>미수금</span> <strong style="color:var(--brand-color)">결제 완료</strong></div>`;
-
-                    card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>지역</span> <strong>${store.region}</strong></div><div class="store-info-line"><span>신청일</span> <strong>${store.applyDate || '-'}</strong></div>${balanceHtml}<div class="select-indicator"></div>`;
-
-                    let tPressTimer; let tIsPressing = false; let startY = 0;
-                    const cStartPress = (e) => { if(isSelectionMode) return; tIsPressing = true; startY = e.touches ? e.touches[0].clientY : e.clientY; tPressTimer = setTimeout(() => { tIsPressing = false; activateSelectionMode(store.id); if(navigator.vibrate) navigator.vibrate(50); }, 2000); };
-                    const cCancelPress = () => { clearTimeout(tPressTimer); tIsPressing = false; };
-                    const movePress = (e) => { const currentY = e.touches ? e.touches[0].clientY : e.clientY; if(Math.abs(currentY - startY) > 10) cCancelPress(); };
-
-                    card.addEventListener('mousedown', cStartPress); card.addEventListener('touchstart', cStartPress, {passive:true});
-                    card.addEventListener('mousemove', movePress); card.addEventListener('touchmove', movePress, {passive:true});
-                    card.addEventListener('mouseup', cCancelPress); card.addEventListener('mouseleave', cCancelPress); card.addEventListener('touchend', cCancelPress);
-
-                    card.addEventListener('click', () => {
-                        if (isSelectionMode) { if (selectedStoreIds.has(store.id)) selectedStoreIds.delete(store.id); else selectedStoreIds.add(store.id); renderStoreList(); updateSelectionBar(); }
-                        else openEditStore(store.id);
-                    }); container.appendChild(card);
-                });
-            }
-
-            window.openEditStore = function(id) {
-                const store = storesData.find(s => s.id === id); if(!store) return;
-                document.getElementById('edit-store-id').value = store.id; 
-                document.getElementById('edit-store-status').value = store.status; 
-                document.getElementById('edit-store-name').value = store.name; 
-                document.getElementById('edit-store-price').value = store.priceTotal || 0;
-                document.getElementById('edit-store-deposit').value = store.priceDeposit || 0;
-                document.getElementById('edit-date-apply').value = store.applyDate; 
-                document.getElementById('edit-date-consult1').value = store.consult1; 
-                document.getElementById('edit-date-consult2').value = store.consult2; 
-                document.getElementById('edit-date-inspect').value = store.inspect;
-                
-                const viewBtn = document.getElementById('btn-view-checklist');
-                if(store.checklistData || store.memo || (store.providedItems && Object.keys(store.providedItems).length > 0) || (store.documents && Object.keys(store.documents).length > 0)) {
-                    viewBtn.style.display = 'block';
-                    viewBtn.onclick = () => { document.querySelector('.nav-item[data-target="view-consulting"]').click(); openChecklist(store.id); };
-                } else { viewBtn.style.display = 'none'; }
-
-                document.querySelectorAll('.store-sub-view').forEach(s => s.classList.remove('active')); document.getElementById('store-edit').classList.add('active');
-            };
-
-            document.getElementById('edit-store-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const store = storesData.find(s => s.id === parseInt(document.getElementById('edit-store-id').value));
-                if(store) {
-                    store.status = document.getElementById('edit-store-status').value; 
-                    store.name = document.getElementById('edit-store-name').value; 
-                    store.priceTotal = Number(document.getElementById('edit-store-price').value) || 0;
-                    store.priceDeposit = Number(document.getElementById('edit-store-deposit').value) || 0;
-                    store.applyDate = document.getElementById('edit-date-apply').value; 
-                    store.consult1 = document.getElementById('edit-date-consult1').value; 
-                    store.consult2 = document.getElementById('edit-date-consult2').value; 
-                    store.inspect = document.getElementById('edit-date-inspect').value;
+                    helperChar.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s';
+                    helperChar.style.opacity = '1';
+                    helperChar.style.transform = 'scale(1)';
                     
-                    saveStoresData(); updateDashboard(); renderBlockMap(); showToast("저장되었습니다."); goBackToStoreManage(); renderCalendar(); 
+                    if(navigator.vibrate) navigator.vibrate(40);
+
+                    setTimeout(() => {
+                        isPopped = false;
+                        helperChar.style.transition = 'transform 0.4s ease'; 
+                        helperChar.style.transform = '';
+                    }, 600);
                 }
-            });
-
-            window.openChangePwModal = function() {
-                document.getElementById('current-pw-input').value = ''; document.getElementById('new-pw-input').value = '';
-                document.getElementById('change-pw-modal').style.display = 'flex'; void document.getElementById('change-pw-modal').offsetWidth; document.getElementById('change-pw-modal').classList.add('show');
-            };
-            window.closeChangePwModal = function() { document.getElementById('change-pw-modal').classList.remove('show'); setTimeout(() => document.getElementById('change-pw-modal').style.display = 'none', 200); };
-            window.confirmChangePw = function() {
-                const current = document.getElementById('current-pw-input').value; const newPw = document.getElementById('new-pw-input').value;
-                if(current === adminPw) {
-                    if(newPw.length < 4) { showToast("새 비밀번호는 4자리 이상 입력해주세요."); return; }
-                    adminPw = newPw; localStorage.setItem('kadarosAdminPw', adminPw); closeChangePwModal(); showToast("비밀번호가 성공적으로 변경되었습니다.");
-                } else { showToast("현재 비밀번호가 틀립니다."); }
-            };
-
-            window.switchMapTab = function(regionKey) {
-                document.querySelectorAll('.map-tab').forEach(t => t.classList.remove('active')); document.querySelector(`.map-tab[data-target="${regionKey}"]`).classList.add('active');
-                document.getElementById('block-map-seoul').style.display = regionKey === 'seoul' ? 'grid' : 'none'; document.getElementById('block-map-gyeonggi').style.display = regionKey === 'gyeonggi' ? 'grid' : 'none';
-            };
-
-            function renderBlockMap() {
-                const drawBlocks = (targetId, dataArr) => {
-                    const grid = document.getElementById(targetId); grid.innerHTML = '';
-                    dataArr.forEach(cityName => {
-                        const count = storesData.filter(s => s.region.includes(cityName)).length;
-                        const block = document.createElement('div'); block.className = `map-block ${count > 0 ? (count > 2 ? 'has-store-dense' : 'has-store') : ''}`; block.innerHTML = cityName + (count > 0 ? `<div class="badge">${count}</div>` : '');
-                        block.onclick = () => {
-                            document.querySelectorAll('.map-block').forEach(b => b.classList.remove('popped')); block.classList.add('popped'); document.getElementById('dimmer').classList.add('active');
-                            document.getElementById('ts-title').textContent = cityName + " 현황"; const list = document.getElementById('ts-content'); list.innerHTML = '';
-                            const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
-                            const matched = storesData.filter(s => s.region.includes(cityName)).sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
-                            if(matched.length === 0) list.innerHTML = '<div class="store-empty" style="margin-top:20px;">등록된 매장이 없습니다.</div>';
-                            else {
-                                matched.forEach(store => {
-                                    const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`; card.style.marginBottom = '10px'; card.onclick = () => { closeMapOverlay(); openStoreView('manage', [store.status]); openEditStore(store.id); };
-                                    
-                                    const bal = (store.priceTotal || 0) - (store.priceDeposit || 0);
-                                    let balHtml = bal > 0 ? `<strong style="color:var(--red-color)">미수금 ${bal.toLocaleString()}원</strong>` : `<strong style="color:var(--brand-color)">결제 완료</strong>`;
-                                    
-                                    card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>결제현황</span> ${balHtml}</div>`; list.appendChild(card);
-                                });
-                            }
-                            document.getElementById('top-sheet').classList.add('active');
-                        }; grid.appendChild(block);
-                    });
-                };
-                drawBlocks('block-map-seoul', regionData["서울특별시"]); drawBlocks('block-map-gyeonggi', regionData["경기도"]);
-            }
-            window.closeMapOverlay = function() { document.querySelectorAll('.map-block').forEach(b => b.classList.remove('popped')); document.getElementById('dimmer').classList.remove('active'); document.getElementById('top-sheet').classList.remove('active'); };
-
-            let currentDate = new Date(); let selectedDateStr = null;
-            function getSchedulesForDate(dateStr) {
-                let results = [];
-                storesData.forEach(store => {
-                    if(store.applyDate === dateStr) results.push({ name: store.name, type: "신청일", typeClass: "type-apply" });
-                    if(store.consult1 === dateStr) results.push({ name: store.name, type: "1차 컨설팅", typeClass: "" });
-                    if(store.consult2 === dateStr) results.push({ name: store.name, type: "2차 컨설팅", typeClass: "" });
-                    if(store.inspect === dateStr) results.push({ name: store.name, type: "심사일", typeClass: "type-inspect" });
-                }); return results;
-            }
-
-            function generateCalendarDOM() {
-                const year = currentDate.getFullYear(); const month = currentDate.getMonth(); const today = new Date();
-                document.getElementById('cal-year').textContent = year; document.getElementById('cal-month').textContent = (month + 1) + '월';
-                const firstDay = new Date(year, month, 1).getDay(); const daysInMonth = new Date(year, month + 1, 0).getDate();
-                let html = '';
-                for (let i = 0; i < firstDay; i++) { html += `<div class="calendar-cell empty"></div>`; }
-                for (let i = 1; i <= daysInMonth; i++) {
-                    const cellDateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`; let cls = 'calendar-cell';
-                    if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) { cls += ' today'; if(!selectedDateStr) selectDate(cellDateStr); }
-                    if (cellDateStr === selectedDateStr) cls += ' selected';
-                    let markers = ''; const schedules = getSchedulesForDate(cellDateStr);
-                    if (schedules.length > 0) {
-                        markers += '<div class="marker-wrap">';
-                        schedules.slice(0, 3).forEach(sch => { let mcls = 'marker'; if(sch.type === '심사일') mcls += ' marker-red'; if(sch.type === '신청일') mcls += ' marker-yellow'; markers += `<div class="${mcls}"></div>`; });
-                        markers += '</div>';
-                    }
-                    html += `<div class="${cls}" data-date="${cellDateStr}">${i}${markers}</div>`;
-                } return html;
-            }
-
-            function renderCalendar() {
-                const grid = document.getElementById('calendar-grid'); grid.innerHTML = generateCalendarDOM();
-                grid.querySelectorAll('.calendar-cell:not(.empty)').forEach(cell => { cell.addEventListener('click', function() { document.querySelectorAll('.calendar-cell').forEach(c => c.classList.remove('selected')); this.classList.add('selected'); selectDate(this.dataset.date); }); });
-            }
-
-            function selectDate(dateStr) {
-                selectedDateStr = dateStr; const dateObj = new Date(dateStr); document.getElementById('selected-date-title').textContent = `${dateObj.getMonth()+1}월 ${dateObj.getDate()}일 일정`;
-                const listEl = document.getElementById('schedule-list'); listEl.innerHTML = ''; const schedules = getSchedulesForDate(dateStr);
-                if (schedules.length > 0) schedules.forEach(item => { listEl.innerHTML += `<div class="schedule-box ${item.typeClass}"><span class="sch-name">${item.name}</span><span class="sch-type">${item.type}</span></div>`; });
-                else listEl.innerHTML = '<div class="schedule-empty">등록된 일정이 없습니다.</div>';
-            }
-
-            const calWrap = document.getElementById('calendar-wrapper'); let isTwoFing = false; let sX = 0; let cX = 0;
-            calWrap.addEventListener('touchstart', (e) => { if (e.touches.length === 2) { isTwoFing = true; sX = (e.touches[0].clientX + e.touches[1].clientX) / 2; e.preventDefault(); } }, {passive: false});
-            calWrap.addEventListener('touchmove', (e) => { if (isTwoFing && e.touches.length === 2) { cX = (e.touches[0].clientX + e.touches[1].clientX) / 2; e.preventDefault(); } }, {passive: false});
-            calWrap.addEventListener('touchend', (e) => { 
-                if (isTwoFing) { 
-                    let dX = sX - cX; 
-                    if (Math.abs(dX) > 40 && cX !== 0) { 
-                        const grid = document.getElementById('calendar-grid');
-                        const outClass = dX > 0 ? 'slide-left-out' : 'slide-right-out'; const inClass = dX > 0 ? 'slide-right-in' : 'slide-left-in';
-                        grid.classList.add(outClass);
-                        setTimeout(() => {
-                            if (dX > 0) currentDate.setMonth(currentDate.getMonth() + 1); else currentDate.setMonth(currentDate.getMonth() - 1);
-                            grid.classList.remove(outClass); grid.innerHTML = generateCalendarDOM(); grid.classList.add(inClass);
-                            setTimeout(() => { grid.classList.remove(inClass); renderCalendar(); }, 50);
-                        }, 200);
-                    } isTwoFing = false; sX = 0; cX = 0; 
-                } 
-            });
-
-            window.openYearModal = function() { 
-                document.getElementById('year-input').value = currentDate.getFullYear(); 
-                document.getElementById('year-modal').style.display = 'flex'; 
-                void document.getElementById('year-modal').offsetWidth;
-                document.getElementById('year-modal').classList.add('show'); 
-            };
-            window.closeYearModal = function() { 
-                document.getElementById('year-modal').classList.remove('show'); 
-                setTimeout(()=> {document.getElementById('year-modal').style.display = 'none';}, 200);
-            };
-            window.applyYear = function() { const newYear = document.getElementById('year-input').value; if (newYear && !isNaN(newYear)) { currentDate.setFullYear(parseInt(newYear)); renderCalendar(); closeYearModal(); } };
-
-            let currentChecklistStoreId = null;
-            let currentChecklistData = {};
-
-            function renderConsultingList() {
-                document.getElementById('consult-check-view').style.display = 'none'; document.getElementById('consult-list-view').style.display = 'flex';
-                const list = document.getElementById('consult-store-list'); list.innerHTML = '';
-                const inProgress = storesData.filter(s => s.status === '진행중' || s.status === '보류');
-                if(inProgress.length === 0) { list.innerHTML = '<div class="store-empty">진행중인 매장이 없습니다.</div>'; return; }
-                inProgress.forEach(store => {
-                    const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`; card.onclick = () => openChecklist(store.id);
-                    card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>신청일</span> <strong>${store.applyDate || '-'}</strong></div>`; list.appendChild(card);
-                });
-            }
-
-            window.openChecklist = function(storeId) {
-                currentChecklistStoreId = storeId;
-                const store = storesData.find(s => s.id === storeId); if(!store) return;
-                currentChecklistData = store.checklistData || {};
-                document.getElementById('memo-textarea').value = store.memo || '';
-                document.getElementById('check-store-title').textContent = `${store.name} 평가표`;
-                document.getElementById('consult-list-view').style.display = 'none'; document.getElementById('consult-check-view').style.display = 'flex';
-                
-                const accordion = document.getElementById('checklist-accordion'); accordion.innerHTML = '';
-                hygieneChecklistMaster.forEach((cat, index) => {
-                    const itemDiv = document.createElement('div'); itemDiv.className = 'accordion-item';
-                    let html = `<div class="accordion-header" onclick="this.nextElementSibling.classList.toggle('active'); this.classList.toggle('active');">
-                                    ${cat.cat} <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
-                                </div><div class="accordion-content ${index===0 ? 'active' : ''}">`; 
-                    cat.items.forEach(itm => {
-                        const savedVal = currentChecklistData[itm.id];
-                        let isChecked = false; let isNA = (savedVal === 'NA');
-                        if (!isNA) {
-                            if (itm.type === 'basic') isChecked = (savedVal === 'O');
-                            else isChecked = (savedVal !== undefined && parseInt(savedVal) === itm.max); 
-                        }
-
-                        let naHtml = '';
-                        if (itm.type === 'general') { naHtml = `<button class="btn-na ${isNA ? 'active' : ''}" onclick="toggleNA(this)">비해당</button>`; }
-
-                        let formattedTxt = itm.txt.replace(/(\[[0-9]+점\])/g, '<span style="color:var(--gray-400); font-size:13px; font-weight:500; margin-left:2px;">$1</span>');
-
-                        html += `
-                            <div class="check-item-row" data-na="${isNA}">
-                                <div class="chk-info"><span class="chk-text">${formattedTxt}</span></div>
-                                <div class="chk-actions">
-                                    ${naHtml}
-                                    <label>
-                                        <input type="checkbox" class="hygiene-check score-input" data-id="${itm.id}" data-type="${itm.type}" value="${itm.max}" ${isChecked ? 'checked' : ''} ${isNA ? 'disabled' : ''} onchange="calcTotal()">
-                                        <div class="custom-chk"></div>
-                                    </label>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    html += `</div>`; itemDiv.innerHTML = html; accordion.appendChild(itemDiv);
-                });
-                calcTotal();
-            };
-
-            window.closeChecklist = function() { renderConsultingList(); };
-
-            window.toggleNA = function(btn) {
-                const row = btn.closest('.check-item-row'); const chk = row.querySelector('.hygiene-check'); const isNA = row.dataset.na === 'true';
-                if (isNA) { row.dataset.na = 'false'; btn.classList.remove('active'); chk.disabled = false; } else { row.dataset.na = 'true'; btn.classList.add('active'); chk.disabled = true; chk.checked = false; }
-                calcTotal();
-            };
-
-            window.calcTotal = function() {
-                let sumGenPossible = 0; let sumGenObtained = 0; let sumBonus = 0;
-
-                document.querySelectorAll('.check-item-row').forEach(row => {
-                    const chk = row.querySelector('.hygiene-check');
-                    const isNA = row.dataset.na === 'true'; const isChecked = chk.checked;
-                    const type = chk.dataset.type; const max = parseInt(chk.value) || 0;
-
-                    if (type === 'general') { if (!isNA) { sumGenPossible += max; if (isChecked) sumGenObtained += max; } } 
-                    else if (type === 'bonus') { if (isChecked) sumBonus += max; }
-                });
-
-                let score1 = 0;
-                if (sumGenPossible > 0) score1 = Math.round((sumGenObtained / sumGenPossible) * 100);
-                
-                let total = score1 + sumBonus;
-                const scoreEl = document.getElementById('check-total-score');
-                scoreEl.textContent = total + "점";
-                document.getElementById('check-breakdown').textContent = `(환산 ${score1}점 + 가점 ${sumBonus}점)`;
-
-                if(total < 85) scoreEl.style.color = 'var(--red-color)';
-                else scoreEl.style.color = 'var(--brand-color)';
-            };
-
-            window.saveChecklist = function() {
-                const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
-                const newData = {};
-                document.querySelectorAll('.check-item-row').forEach(row => {
-                    const chk = row.querySelector('.score-input'); const isNA = row.dataset.na === 'true';
-                    if(isNA) newData[chk.dataset.id] = 'NA';
-                    else if(chk.dataset.type === 'basic') newData[chk.dataset.id] = chk.checked ? 'O' : 'X';
-                    else newData[chk.dataset.id] = chk.checked ? chk.value : '0';
-                });
-                store.checklistData = newData; store.memo = document.getElementById('memo-textarea').value;
-                saveStoresData(); showToast("평가 결과가 저장되었습니다."); closeChecklist();
-            };
-
-            window.openMemo = function() { document.getElementById('memo-modal').classList.add('active'); };
-            window.closeMemo = function() { document.getElementById('memo-modal').classList.remove('active'); };
-            window.saveMemo = function() { 
-                const store = storesData.find(s => s.id === currentChecklistStoreId);
-                if(store) { store.memo = document.getElementById('memo-textarea').value; saveStoresData(); }
-                closeMemo(); showToast("메모가 저장되었습니다."); 
-            };
-
-            window.openItemsModal = function() {
-                const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
-                const pItems = store.providedItems || {};
-                document.querySelectorAll('.item-chk').forEach(chk => { chk.checked = !!pItems[chk.value]; });
-                document.getElementById('items-modal').classList.add('active');
-            };
-            window.closeItemsModal = function() { document.getElementById('items-modal').classList.remove('active'); };
-            window.saveItems = function() {
-                const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
-                const pItems = {};
-                document.querySelectorAll('.item-chk').forEach(chk => { pItems[chk.value] = chk.checked; });
-                store.providedItems = pItems;
-                saveStoresData(); closeItemsModal(); showToast("제공물품이 저장되었습니다.");
-            };
-
-            window.openDocModal = function() {
-                const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
-                const docs = store.documents || {};
-                document.querySelectorAll('.doc-chk').forEach(chk => { chk.checked = !!docs[chk.value]; });
-                document.getElementById('doc-modal').classList.add('active');
-            };
-            window.closeDocModal = function() { document.getElementById('doc-modal').classList.remove('active'); };
-            window.saveDocs = function() {
-                const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
-                const docs = {};
-                document.querySelectorAll('.doc-chk').forEach(chk => { docs[chk.value] = chk.checked; });
-                store.documents = docs;
-                saveStoresData(); closeDocModal(); showToast("서류 체크가 저장되었습니다.");
-            };
-
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('./sw.js')
-                        .then(reg => console.log('Service Worker 등록 성공'))
-                        .catch(err => console.log('Service Worker 등록 실패', err));
-                });
             }
             
+            if(navigator.vibrate) navigator.vibrate([80, 40, 80]); 
+            rafId = requestAnimationFrame(renderPop);
+        }
+
+        const startPress = (e) => { 
+            if (isTransitioning || isPopped) return; 
+            isPressing = true; 
+            pressStartTime = Date.now();
+            
+            pressTimer = setTimeout(() => { 
+                if(!isPressing) return;
+                isInflating = true;
+                helperChar.classList.add('face-puff');
+                
+                helperChar.style.transition = 'transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                helperChar.style.transform = 'scale(2.5)';
+                
+                explodeTimer = setTimeout(() => { 
+                    if(isInflating) triggerLiquidPop();
+                }, 1500); 
+
+            }, 500); 
+        };
+
+        const cancelPress = (e) => { 
+            if(!isPressing) return;
+            isPressing = false; 
+            clearTimeout(pressTimer);
+            clearTimeout(explodeTimer);
+            
+            const holdDuration = Date.now() - pressStartTime;
+
+            if(holdDuration < 500 && !isPopped && !isTransitioning) {
+                doClickAction();
+            } 
+            else if (isInflating && !isPopped) {
+                isInflating = false;
+                helperChar.classList.remove('face-puff');
+                helperChar.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                helperChar.style.transform = 'scale(1)';
+            }
+        };
+
+        helperChar.addEventListener('mousedown', startPress); helperChar.addEventListener('touchstart', startPress, {passive: true});
+        helperChar.addEventListener('mouseup', cancelPress); helperChar.addEventListener('mouseleave', cancelPress);
+        helperChar.addEventListener('touchend', cancelPress); helperChar.addEventListener('touchcancel', cancelPress);
+
+
+        const navItems = document.querySelectorAll('.nav-item');
+        const viewSections = document.querySelectorAll('.view-section');
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                navItems.forEach(nav => nav.classList.remove('active')); this.classList.add('active');
+                const targetId = this.getAttribute('data-target');
+                viewSections.forEach(section => { section.classList.remove('active'); });
+                document.getElementById(targetId).classList.add('active');
+                
+                if(targetId === 'view-calendar') renderCalendar();
+                if(targetId === 'view-store') { openStoreView('main'); renderBlockMap(); }
+                if(targetId === 'view-consulting') renderConsultingList();
+            });
         });
+
+        document.getElementById('home-search-input').addEventListener('input', function(e) {
+            const query = e.target.value.trim().toLowerCase();
+            const dash = document.getElementById('dashboard'); const dashHeader = document.getElementById('home-dash-header'); const resWrap = document.getElementById('home-search-results');
+            if (query) {
+                dash.style.display = 'none'; dashHeader.style.display = 'none'; resWrap.style.display = 'flex'; resWrap.innerHTML = '';
+                const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
+                const matched = storesData.filter(s => s.name.toLowerCase().includes(query)).sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
+                if (matched.length === 0) resWrap.innerHTML = '<div class="store-empty">검색 결과가 없습니다.</div>';
+                else {
+                    matched.forEach(store => {
+                        const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`;
+                        card.onclick = () => { document.querySelector('.nav-item[data-target="view-store"]').click(); openStoreView('manage', [store.status]); openEditStore(store.id); };
+                        card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>지역</span> <strong>${store.region}</strong></div>`;
+                        resWrap.appendChild(card);
+                    });
+                }
+            } else { dash.style.display = 'grid'; dashHeader.style.display = 'block'; resWrap.style.display = 'none'; }
+        });
+
+        function updateDashboard() {
+            let inProgressCount = 0; let passedCount = 0; let failedCount = 0; let thisWeekCount = 0; let nextWeekCount = 0;
+            const now = new Date(); now.setHours(0,0,0,0);
+            const endOfWeek = new Date(now); const diff = now.getDay() === 0 ? 0 : 7 - now.getDay(); endOfWeek.setDate(now.getDate() + diff); endOfWeek.setHours(23,59,59,999);
+            const nextWeekStart = new Date(endOfWeek); nextWeekStart.setDate(nextWeekStart.getDate() + 1); nextWeekStart.setHours(0,0,0,0);
+            const nextWeekEnd = new Date(nextWeekStart); nextWeekEnd.setDate(nextWeekStart.getDate() + 6); nextWeekEnd.setHours(23,59,59,999);
+
+            storesData.forEach(store => {
+                if (store.status === '진행중' || store.status === '보류') inProgressCount++;
+                if (store.status === '합격') passedCount++;
+                if (store.status === '불합격') failedCount++;
+                
+                [store.consult1, store.consult2].filter(d => d).forEach(dStr => {
+                    const d = new Date(dStr);
+                    if(d >= now && d <= endOfWeek) thisWeekCount++;
+                    if(d >= nextWeekStart && d <= nextWeekEnd) nextWeekCount++;
+                });
+            });
+
+            const completedCount = passedCount + failedCount;
+            const successRate = completedCount === 0 ? 0 : Math.round((passedCount / completedCount) * 100);
+
+            document.getElementById('dash-inprogress').innerHTML = `<b>${inProgressCount}</b>개의 매장을 진행중이에요.`;
+            document.getElementById('dash-completed').innerHTML = `<b>${completedCount}</b>개의 매장을<br>완료했어요.`;
+            document.getElementById('dash-success').innerHTML = `컨설팅 성공률은<br><b>${successRate}</b>%에요.`;
+            document.getElementById('dash-this-week').innerHTML = `<b>${thisWeekCount}</b>번의 방문<br>일정이 있어요!`;
+            document.getElementById('dash-next-week').innerHTML = `<b>${nextWeekCount}</b>번의 방문<br>일정이 있어요!`;
+        }
+
+        let currentListFilters = []; let isSelectionMode = false; let selectedStoreIds = new Set();
+
+        window.goBackToStoreManage = function() { 
+            openStoreView('manage', currentListFilters && currentListFilters.length ? currentListFilters : ['진행중']); 
+        };
+
+        window.openStoreView = function(viewName, filters = null) {
+            document.querySelectorAll('.store-sub-view').forEach(s => s.classList.remove('active')); cancelSelectionMode();
+            if (filters) currentListFilters = filters; 
+            
+            if (viewName === 'main') { document.getElementById('store-main-view').classList.add('active'); renderBlockMap(); }
+            if (viewName === 'register') document.getElementById('store-register').classList.add('active');
+            if (viewName === 'manage') {
+                if(!currentListFilters || currentListFilters.length === 0) currentListFilters = ['진행중', '보류', '합격', '불합격'];
+                document.getElementById('store-manage').classList.add('active');
+                let titleStr = "매장 목록";
+                if(currentListFilters.includes('진행중') && currentListFilters.length===1) titleStr = "진행 매장 관리";
+                if(currentListFilters.includes('보류') && currentListFilters.length===1) titleStr = "보류 매장 관리";
+                if(currentListFilters.includes('합격')) titleStr = "완료 매장 관리";
+                document.getElementById('store-list-title').textContent = titleStr;
+                renderStoreList();
+            }
+        };
+
+        const provSelect = document.getElementById('region-province'); const citySelect = document.getElementById('region-city');
+        provSelect.addEventListener('change', function() {
+            const selected = this.value; citySelect.innerHTML = '<option value="" disabled selected>시/군/구</option>';
+            if(regionData[selected]) { regionData[selected].forEach(city => { const option = document.createElement('option'); option.value = city; option.textContent = city; citySelect.appendChild(option); }); citySelect.disabled = false; } else citySelect.disabled = true;
+        });
+
+        document.getElementById('new-store-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const price = Number(document.getElementById('store-price').value) || 0;
+            const deposit = Number(document.getElementById('store-deposit').value) || 0;
+            
+            const newStore = {
+                id: Date.now(), name: document.getElementById('store-name').value, status: '진행중', 
+                region: `${document.getElementById('region-province').value} ${document.getElementById('region-city').value}`,
+                priceTotal: price, priceDeposit: deposit, vat: document.querySelector('input[name="vat"]:checked').value,
+                applyDate: document.getElementById('date-apply').value, consult1: "", consult2: "", inspect: "",
+                checklistData: null, memo: "", providedItems: {}, documents: {}
+            };
+            storesData.unshift(newStore); saveStoresData(); updateDashboard(); renderBlockMap();
+            showToast(`[${newStore.name}] 등록되었습니다.`);
+            this.reset(); citySelect.innerHTML = '<option value="" disabled selected>시/군/구</option>'; citySelect.disabled = true;
+            openStoreView('manage', ['진행중']); 
+        });
+
+        function getStatusClass(status) {
+            if(status === '합격') return 'status-pass'; if(status === '불합격') return 'status-fail'; if(status === '보류') return 'status-pending'; return 'status-progress';
+        }
+
+        window.activateSelectionMode = function(firstId) { isSelectionMode = true; selectedStoreIds.add(firstId); renderStoreList(); updateSelectionBar(); };
+        window.cancelSelectionMode = function() { isSelectionMode = false; selectedStoreIds.clear(); document.getElementById('selection-bar').classList.remove('active'); renderStoreList(); };
+        window.updateSelectionBar = function() {
+            const bar = document.getElementById('selection-bar');
+            if(isSelectionMode) { bar.classList.add('active'); document.getElementById('selection-count').textContent = `${selectedStoreIds.size}개 선택됨`; } else bar.classList.remove('active');
+        };
+
+        window.openDeletePwModal = function() {
+            if(selectedStoreIds.size === 0) return;
+            document.getElementById('del-pw-input').value = '';
+            document.getElementById('pw-modal').style.display = 'flex';
+            void document.getElementById('pw-modal').offsetWidth;
+            document.getElementById('pw-modal').classList.add('show');
+        };
+        window.closePwModal = function() {
+            document.getElementById('pw-modal').classList.remove('show');
+            setTimeout(() => document.getElementById('pw-modal').style.display = 'none', 200);
+        };
+        window.confirmDelete = function() {
+            const inputPw = document.getElementById('del-pw-input').value;
+            if(inputPw === adminPw) {
+                storesData = storesData.filter(s => !selectedStoreIds.has(s.id));
+                cancelSelectionMode(); saveStoresData(); updateDashboard(); renderCalendar(); renderBlockMap();
+                closePwModal(); showToast("성공적으로 삭제되었습니다.");
+            } else {
+                showToast("비밀번호가 일치하지 않습니다.");
+            }
+        };
+
+        function renderStoreList() {
+            const container = document.getElementById('store-list-container');
+            container.innerHTML = ''; container.classList.toggle('selection-mode-active', isSelectionMode);
+
+            const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
+            const filtered = storesData.filter(s => currentListFilters.includes(s.status)).sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
+
+            if(filtered.length === 0) { container.innerHTML = '<div class="store-empty">해당되는 매장이 없습니다.</div>'; return; }
+            
+            filtered.forEach(store => {
+                const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`;
+                if (selectedStoreIds.has(store.id)) card.classList.add('is-selected');
+                
+                const balance = (store.priceTotal || 0) - (store.priceDeposit || 0);
+                let balanceHtml = balance > 0 ? `<div class="store-info-line"><span>미수금</span> <strong style="color:var(--red-color)">${balance.toLocaleString()}원</strong></div>` : `<div class="store-info-line"><span>미수금</span> <strong style="color:var(--brand-color)">결제 완료</strong></div>`;
+
+                card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>지역</span> <strong>${store.region}</strong></div><div class="store-info-line"><span>신청일</span> <strong>${store.applyDate || '-'}</strong></div>${balanceHtml}<div class="select-indicator"></div>`;
+
+                let tPressTimer; let tIsPressing = false; let startY = 0;
+                const cStartPress = (e) => { if(isSelectionMode) return; tIsPressing = true; startY = e.touches ? e.touches[0].clientY : e.clientY; tPressTimer = setTimeout(() => { tIsPressing = false; activateSelectionMode(store.id); if(navigator.vibrate) navigator.vibrate(50); }, 2000); };
+                const cCancelPress = () => { clearTimeout(tPressTimer); tIsPressing = false; };
+                const movePress = (e) => { const currentY = e.touches ? e.touches[0].clientY : e.clientY; if(Math.abs(currentY - startY) > 10) cCancelPress(); };
+
+                card.addEventListener('mousedown', cStartPress); card.addEventListener('touchstart', cStartPress, {passive:true});
+                card.addEventListener('mousemove', movePress); card.addEventListener('touchmove', movePress, {passive:true});
+                card.addEventListener('mouseup', cCancelPress); card.addEventListener('mouseleave', cCancelPress); card.addEventListener('touchend', cCancelPress);
+
+                card.addEventListener('click', () => {
+                    if (isSelectionMode) { if (selectedStoreIds.has(store.id)) selectedStoreIds.delete(store.id); else selectedStoreIds.add(store.id); renderStoreList(); updateSelectionBar(); }
+                    else openEditStore(store.id);
+                }); container.appendChild(card);
+            });
+        }
+
+        window.openEditStore = function(id) {
+            const store = storesData.find(s => s.id === id); if(!store) return;
+            document.getElementById('edit-store-id').value = store.id; 
+            document.getElementById('edit-store-status').value = store.status; 
+            document.getElementById('edit-store-name').value = store.name; 
+            document.getElementById('edit-store-price').value = store.priceTotal || 0;
+            document.getElementById('edit-store-deposit').value = store.priceDeposit || 0;
+            document.getElementById('edit-date-apply').value = store.applyDate; 
+            document.getElementById('edit-date-consult1').value = store.consult1; 
+            document.getElementById('edit-date-consult2').value = store.consult2; 
+            document.getElementById('edit-date-inspect').value = store.inspect;
+            
+            const viewBtn = document.getElementById('btn-view-checklist');
+            if(store.checklistData || store.memo || (store.providedItems && Object.keys(store.providedItems).length > 0) || (store.documents && Object.keys(store.documents).length > 0)) {
+                viewBtn.style.display = 'block';
+                viewBtn.onclick = () => { document.querySelector('.nav-item[data-target="view-consulting"]').click(); openChecklist(store.id); };
+            } else { viewBtn.style.display = 'none'; }
+
+            document.querySelectorAll('.store-sub-view').forEach(s => s.classList.remove('active')); document.getElementById('store-edit').classList.add('active');
+        };
+
+        document.getElementById('edit-store-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const store = storesData.find(s => s.id === parseInt(document.getElementById('edit-store-id').value));
+            if(store) {
+                store.status = document.getElementById('edit-store-status').value; 
+                store.name = document.getElementById('edit-store-name').value; 
+                store.priceTotal = Number(document.getElementById('edit-store-price').value) || 0;
+                store.priceDeposit = Number(document.getElementById('edit-store-deposit').value) || 0;
+                store.applyDate = document.getElementById('edit-date-apply').value; 
+                store.consult1 = document.getElementById('edit-date-consult1').value; 
+                store.consult2 = document.getElementById('edit-date-consult2').value; 
+                store.inspect = document.getElementById('edit-date-inspect').value;
+                
+                saveStoresData(); updateDashboard(); renderBlockMap(); showToast("저장되었습니다."); goBackToStoreManage(); renderCalendar(); 
+            }
+        });
+
+        window.openChangePwModal = function() {
+            document.getElementById('current-pw-input').value = ''; document.getElementById('new-pw-input').value = '';
+            document.getElementById('change-pw-modal').style.display = 'flex'; void document.getElementById('change-pw-modal').offsetWidth; document.getElementById('change-pw-modal').classList.add('show');
+        };
+        window.closeChangePwModal = function() { document.getElementById('change-pw-modal').classList.remove('show'); setTimeout(() => document.getElementById('change-pw-modal').style.display = 'none', 200); };
+        window.confirmChangePw = function() {
+            const current = document.getElementById('current-pw-input').value; const newPw = document.getElementById('new-pw-input').value;
+            if(current === adminPw) {
+                if(newPw.length < 4) { showToast("새 비밀번호는 4자리 이상 입력해주세요."); return; }
+                adminPw = newPw; localStorage.setItem('kadarosAdminPw', adminPw); closeChangePwModal(); showToast("비밀번호가 성공적으로 변경되었습니다.");
+            } else { showToast("현재 비밀번호가 틀립니다."); }
+        };
+
+        window.switchMapTab = function(regionKey) {
+            document.querySelectorAll('.map-tab').forEach(t => t.classList.remove('active')); document.querySelector(`.map-tab[data-target="${regionKey}"]`).classList.add('active');
+            document.getElementById('block-map-seoul').style.display = regionKey === 'seoul' ? 'grid' : 'none'; document.getElementById('block-map-gyeonggi').style.display = regionKey === 'gyeonggi' ? 'grid' : 'none';
+        };
+
+        function renderBlockMap() {
+            const drawBlocks = (targetId, dataArr) => {
+                const grid = document.getElementById(targetId); grid.innerHTML = '';
+                dataArr.forEach(cityName => {
+                    const count = storesData.filter(s => s.region.includes(cityName)).length;
+                    const block = document.createElement('div'); block.className = `map-block ${count > 0 ? (count > 2 ? 'has-store-dense' : 'has-store') : ''}`; block.innerHTML = cityName + (count > 0 ? `<div class="badge">${count}</div>` : '');
+                    block.onclick = () => {
+                        document.querySelectorAll('.map-block').forEach(b => b.classList.remove('popped')); block.classList.add('popped'); document.getElementById('dimmer').classList.add('active');
+                        document.getElementById('ts-title').textContent = cityName + " 현황"; const list = document.getElementById('ts-content'); list.innerHTML = '';
+                        const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
+                        const matched = storesData.filter(s => s.region.includes(cityName)).sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
+                        if(matched.length === 0) list.innerHTML = '<div class="store-empty" style="margin-top:20px;">등록된 매장이 없습니다.</div>';
+                        else {
+                            matched.forEach(store => {
+                                const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`; card.style.marginBottom = '10px'; card.onclick = () => { closeMapOverlay(); openStoreView('manage', [store.status]); openEditStore(store.id); };
+                                
+                                const bal = (store.priceTotal || 0) - (store.priceDeposit || 0);
+                                let balHtml = bal > 0 ? `<strong style="color:var(--red-color)">미수금 ${bal.toLocaleString()}원</strong>` : `<strong style="color:var(--brand-color)">결제 완료</strong>`;
+                                
+                                card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>결제현황</span> ${balHtml}</div>`; list.appendChild(card);
+                            });
+                        }
+                        document.getElementById('top-sheet').classList.add('active');
+                    }; grid.appendChild(block);
+                });
+            };
+            drawBlocks('block-map-seoul', regionData["서울특별시"]); drawBlocks('block-map-gyeonggi', regionData["경기도"]);
+        }
+        window.closeMapOverlay = function() { document.querySelectorAll('.map-block').forEach(b => b.classList.remove('popped')); document.getElementById('dimmer').classList.remove('active'); document.getElementById('top-sheet').classList.remove('active'); };
+
+        let currentDate = new Date(); let selectedDateStr = null;
+        function getSchedulesForDate(dateStr) {
+            let results = [];
+            storesData.forEach(store => {
+                if(store.applyDate === dateStr) results.push({ name: store.name, type: "신청일", typeClass: "type-apply" });
+                if(store.consult1 === dateStr) results.push({ name: store.name, type: "1차 컨설팅", typeClass: "" });
+                if(store.consult2 === dateStr) results.push({ name: store.name, type: "2차 컨설팅", typeClass: "" });
+                if(store.inspect === dateStr) results.push({ name: store.name, type: "심사일", typeClass: "type-inspect" });
+            }); return results;
+        }
+
+        function generateCalendarDOM() {
+            const year = currentDate.getFullYear(); const month = currentDate.getMonth(); const today = new Date();
+            document.getElementById('cal-year').textContent = year; document.getElementById('cal-month').textContent = (month + 1) + '월';
+            const firstDay = new Date(year, month, 1).getDay(); const daysInMonth = new Date(year, month + 1, 0).getDate();
+            let html = '';
+            for (let i = 0; i < firstDay; i++) { html += `<div class="calendar-cell empty"></div>`; }
+            for (let i = 1; i <= daysInMonth; i++) {
+                const cellDateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`; let cls = 'calendar-cell';
+                if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) { cls += ' today'; if(!selectedDateStr) selectDate(cellDateStr); }
+                if (cellDateStr === selectedDateStr) cls += ' selected';
+                let markers = ''; const schedules = getSchedulesForDate(cellDateStr);
+                if (schedules.length > 0) {
+                    markers += '<div class="marker-wrap">';
+                    schedules.slice(0, 3).forEach(sch => { let mcls = 'marker'; if(sch.type === '심사일') mcls += ' marker-red'; if(sch.type === '신청일') mcls += ' marker-yellow'; markers += `<div class="${mcls}"></div>`; });
+                    markers += '</div>';
+                }
+                html += `<div class="${cls}" data-date="${cellDateStr}">${i}${markers}</div>`;
+            } return html;
+        }
+
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid'); grid.innerHTML = generateCalendarDOM();
+            grid.querySelectorAll('.calendar-cell:not(.empty)').forEach(cell => { cell.addEventListener('click', function() { document.querySelectorAll('.calendar-cell').forEach(c => c.classList.remove('selected')); this.classList.add('selected'); selectDate(this.dataset.date); }); });
+        }
+
+        function selectDate(dateStr) {
+            selectedDateStr = dateStr; const dateObj = new Date(dateStr); document.getElementById('selected-date-title').textContent = `${dateObj.getMonth()+1}월 ${dateObj.getDate()}일 일정`;
+            const listEl = document.getElementById('schedule-list'); listEl.innerHTML = ''; const schedules = getSchedulesForDate(dateStr);
+            if (schedules.length > 0) schedules.forEach(item => { listEl.innerHTML += `<div class="schedule-box ${item.typeClass}"><span class="sch-name">${item.name}</span><span class="sch-type">${item.type}</span></div>`; });
+            else listEl.innerHTML = '<div class="schedule-empty">등록된 일정이 없습니다.</div>';
+        }
+
+        const calWrap = document.getElementById('calendar-wrapper'); let isTwoFing = false; let sX = 0; let cX = 0;
+        calWrap.addEventListener('touchstart', (e) => { if (e.touches.length === 2) { isTwoFing = true; sX = (e.touches[0].clientX + e.touches[1].clientX) / 2; e.preventDefault(); } }, {passive: false});
+        calWrap.addEventListener('touchmove', (e) => { if (isTwoFing && e.touches.length === 2) { cX = (e.touches[0].clientX + e.touches[1].clientX) / 2; e.preventDefault(); } }, {passive: false});
+        calWrap.addEventListener('touchend', (e) => { 
+            if (isTwoFing) { 
+                let dX = sX - cX; 
+                if (Math.abs(dX) > 40 && cX !== 0) { 
+                    const grid = document.getElementById('calendar-grid');
+                    const outClass = dX > 0 ? 'slide-left-out' : 'slide-right-out'; const inClass = dX > 0 ? 'slide-right-in' : 'slide-left-in';
+                    grid.classList.add(outClass);
+                    setTimeout(() => {
+                        if (dX > 0) currentDate.setMonth(currentDate.getMonth() + 1); else currentDate.setMonth(currentDate.getMonth() - 1);
+                        grid.classList.remove(outClass); grid.innerHTML = generateCalendarDOM(); grid.classList.add(inClass);
+                        setTimeout(() => { grid.classList.remove(inClass); renderCalendar(); }, 50);
+                    }, 200);
+                } isTwoFing = false; sX = 0; cX = 0; 
+            } 
+        });
+
+        window.openYearModal = function() { 
+            document.getElementById('year-input').value = currentDate.getFullYear(); 
+            document.getElementById('year-modal').style.display = 'flex'; 
+            void document.getElementById('year-modal').offsetWidth;
+            document.getElementById('year-modal').classList.add('show'); 
+        };
+        window.closeYearModal = function() { 
+            document.getElementById('year-modal').classList.remove('show'); 
+            setTimeout(()=> {document.getElementById('year-modal').style.display = 'none';}, 200);
+        };
+        window.applyYear = function() { const newYear = document.getElementById('year-input').value; if (newYear && !isNaN(newYear)) { currentDate.setFullYear(parseInt(newYear)); renderCalendar(); closeYearModal(); } };
+
+        let currentChecklistStoreId = null;
+        let currentChecklistData = {};
+
+        function renderConsultingList() {
+            document.getElementById('consult-check-view').style.display = 'none'; document.getElementById('consult-list-view').style.display = 'flex';
+            const list = document.getElementById('consult-store-list'); list.innerHTML = '';
+            const inProgress = storesData.filter(s => s.status === '진행중' || s.status === '보류');
+            if(inProgress.length === 0) { list.innerHTML = '<div class="store-empty">진행중인 매장이 없습니다.</div>'; return; }
+            inProgress.forEach(store => {
+                const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`; card.onclick = () => openChecklist(store.id);
+                card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>신청일</span> <strong>${store.applyDate || '-'}</strong></div>`; list.appendChild(card);
+            });
+        }
+
+        window.openChecklist = function(storeId) {
+            currentChecklistStoreId = storeId;
+            const store = storesData.find(s => s.id === storeId); if(!store) return;
+            currentChecklistData = store.checklistData || {};
+            document.getElementById('memo-textarea').value = store.memo || '';
+            document.getElementById('check-store-title').textContent = `${store.name} 평가표`;
+            document.getElementById('consult-list-view').style.display = 'none'; document.getElementById('consult-check-view').style.display = 'flex';
+            
+            const accordion = document.getElementById('checklist-accordion'); accordion.innerHTML = '';
+            hygieneChecklistMaster.forEach((cat, index) => {
+                const itemDiv = document.createElement('div'); itemDiv.className = 'accordion-item';
+                let html = `<div class="accordion-header" onclick="this.nextElementSibling.classList.toggle('active'); this.classList.toggle('active');">
+                                ${cat.cat} <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+                            </div><div class="accordion-content ${index===0 ? 'active' : ''}">`; 
+                cat.items.forEach(itm => {
+                    const savedVal = currentChecklistData[itm.id];
+                    let isChecked = false; let isNA = (savedVal === 'NA');
+                    if (!isNA) {
+                        if (itm.type === 'basic') isChecked = (savedVal === 'O');
+                        else isChecked = (savedVal !== undefined && parseInt(savedVal) === itm.max); 
+                    }
+
+                    let naHtml = '';
+                    if (itm.type === 'general') { naHtml = `<button class="btn-na ${isNA ? 'active' : ''}" onclick="toggleNA(this)">비해당</button>`; }
+
+                    let formattedTxt = itm.txt.replace(/(\[[0-9]+점\])/g, '<span style="color:var(--gray-400); font-size:13px; font-weight:500; margin-left:2px;">$1</span>');
+
+                    html += `
+                        <div class="check-item-row" data-na="${isNA}">
+                            <div class="chk-info"><span class="chk-text">${formattedTxt}</span></div>
+                            <div class="chk-actions">
+                                ${naHtml}
+                                <label>
+                                    <input type="checkbox" class="hygiene-check score-input" data-id="${itm.id}" data-type="${itm.type}" value="${itm.max}" ${isChecked ? 'checked' : ''} ${isNA ? 'disabled' : ''} onchange="calcTotal()">
+                                    <div class="custom-chk"></div>
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`; itemDiv.innerHTML = html; accordion.appendChild(itemDiv);
+            });
+            calcTotal();
+        };
+
+        window.closeChecklist = function() { renderConsultingList(); };
+
+        window.toggleNA = function(btn) {
+            const row = btn.closest('.check-item-row'); const chk = row.querySelector('.hygiene-check'); const isNA = row.dataset.na === 'true';
+            if (isNA) { row.dataset.na = 'false'; btn.classList.remove('active'); chk.disabled = false; } else { row.dataset.na = 'true'; btn.classList.add('active'); chk.disabled = true; chk.checked = false; }
+            calcTotal();
+        };
+
+        window.calcTotal = function() {
+            let sumGenPossible = 0; let sumGenObtained = 0; let sumBonus = 0;
+
+            document.querySelectorAll('.check-item-row').forEach(row => {
+                const chk = row.querySelector('.hygiene-check');
+                const isNA = row.dataset.na === 'true'; const isChecked = chk.checked;
+                const type = chk.dataset.type; const max = parseInt(chk.value) || 0;
+
+                if (type === 'general') { if (!isNA) { sumGenPossible += max; if (isChecked) sumGenObtained += max; } } 
+                else if (type === 'bonus') { if (isChecked) sumBonus += max; }
+            });
+
+            let score1 = 0;
+            if (sumGenPossible > 0) score1 = Math.round((sumGenObtained / sumGenPossible) * 100);
+            
+            let total = score1 + sumBonus;
+            const scoreEl = document.getElementById('check-total-score');
+            scoreEl.textContent = total + "점";
+            document.getElementById('check-breakdown').textContent = `(환산 ${score1}점 + 가점 ${sumBonus}점)`;
+
+            if(total < 85) scoreEl.style.color = 'var(--red-color)';
+            else scoreEl.style.color = 'var(--brand-color)';
+        };
+
+        window.saveChecklist = function() {
+            const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
+            const newData = {};
+            document.querySelectorAll('.check-item-row').forEach(row => {
+                const chk = row.querySelector('.score-input'); const isNA = row.dataset.na === 'true';
+                if(isNA) newData[chk.dataset.id] = 'NA';
+                else if(chk.dataset.type === 'basic') newData[chk.dataset.id] = chk.checked ? 'O' : 'X';
+                else newData[chk.dataset.id] = chk.checked ? chk.value : '0';
+            });
+            store.checklistData = newData; store.memo = document.getElementById('memo-textarea').value;
+            saveStoresData(); showToast("평가 결과가 저장되었습니다."); closeChecklist();
+        };
+
+        window.openMemo = function() { document.getElementById('memo-modal').classList.add('active'); };
+        window.closeMemo = function() { document.getElementById('memo-modal').classList.remove('active'); };
+        window.saveMemo = function() { 
+            const store = storesData.find(s => s.id === currentChecklistStoreId);
+            if(store) { store.memo = document.getElementById('memo-textarea').value; saveStoresData(); }
+            closeMemo(); showToast("메모가 저장되었습니다."); 
+        };
+
+        window.openItemsModal = function() {
+            const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
+            const pItems = store.providedItems || {};
+            document.querySelectorAll('.item-chk').forEach(chk => { chk.checked = !!pItems[chk.value]; });
+            document.getElementById('items-modal').classList.add('active');
+        };
+        window.closeItemsModal = function() { document.getElementById('items-modal').classList.remove('active'); };
+        window.saveItems = function() {
+            const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
+            const pItems = {};
+            document.querySelectorAll('.item-chk').forEach(chk => { pItems[chk.value] = chk.checked; });
+            store.providedItems = pItems;
+            saveStoresData(); closeItemsModal(); showToast("제공물품이 저장되었습니다.");
+        };
+
+        window.openDocModal = function() {
+            const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
+            const docs = store.documents || {};
+            document.querySelectorAll('.doc-chk').forEach(chk => { chk.checked = !!docs[chk.value]; });
+            document.getElementById('doc-modal').classList.add('active');
+        };
+        window.closeDocModal = function() { document.getElementById('doc-modal').classList.remove('active'); };
+        window.saveDocs = function() {
+            const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
+            const docs = {};
+            document.querySelectorAll('.doc-chk').forEach(chk => { docs[chk.value] = chk.checked; });
+            store.documents = docs;
+            saveStoresData(); closeDocModal(); showToast("서류 체크가 저장되었습니다.");
+        };
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker 등록 성공'))
+                    .catch(err => console.log('Service Worker 등록 실패', err));
+            });
+        }
+        
+    });
     </script>
 </body>
 </html>
