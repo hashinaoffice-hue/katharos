@@ -1,8 +1,3 @@
-self.addEventListener('install', (e) => {
-    console.log('[Service Worker] Install');
-});
-
-self.addEventListener('fetch', (e) => {
-    // 오프라인 캐싱 최소 조건 충족용
-    e.respondWith(fetch(e.request).catch(() => new Response('오프라인 상태입니다.')));
+self.addEventListener('fetch', function(event) {
+    // 브라우저가 PWA(앱)로 인식하도록 최소한의 fetch 이벤트만 열어둡니다.
 });
