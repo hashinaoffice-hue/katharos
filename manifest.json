@@ -1,8 +1,8 @@
 {
-  "name": "카다로스 업무 도우미",
+  "name": "카다로스",
   "short_name": "카다로스",
   "display": "standalone",
-  "start_url": "./index.html",
+  "start_url": ".",
   "background_color": "#ffffff",
   "theme_color": "#036eb8",
   "icons": [
@@ -17,5 +17,4 @@
       "type": "image/png"
     }
   ]
-
 }

@@ -1,21 +1,3 @@
-const CACHE_NAME = 'katsu-inventory-v1';
-const urlsToCache = [
-  './',
-  './index.html',
-  './logo.png',
-  './manifest.json'
-];
-
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
-  );
-});
-
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => response || fetch(event.request))
-  );
+self.addEventListener('fetch', function(event) {
+    // 브라우저가 PWA(앱)로 인식하도록 최소한의 fetch 이벤트만 열어둡니다.
 });
