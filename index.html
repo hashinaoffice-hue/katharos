@@ -182,6 +182,7 @@
         .schedule-box.type-apply { background-color: var(--yellow-bg); border-color: transparent; } .schedule-box.type-apply .sch-name { color: var(--yellow-color); } .schedule-box.type-apply .sch-type { color: var(--yellow-color); background-color: #fff; border-color: var(--yellow-border); }
         .schedule-empty { text-align: center; color: var(--gray-400); padding: 30px; font-size: 14px; font-weight:500;}
 
+        /* 매장관리/설정 탭 공용 */
         .store-sub-view, .settings-sub-view { display: none; animation: fadeIn 0.3s ease; flex-direction: column; height: 100%; width: 100%;}
         .store-sub-view.active, .settings-sub-view.active { display: flex; }
         
@@ -380,13 +381,16 @@
 
     <div id="login-overlay">
         <img src="logo2.png" alt="로고" style="width:240px; margin-bottom:40px;" onerror="this.style.display='none'">
+        
         <input type="email" id="login-email" class="form-input" placeholder="이메일" style="margin-bottom:12px;">
         <input type="password" id="login-pw" class="form-input" placeholder="비밀번호" style="margin-bottom:16px;">
+        
         <label style="display:flex; align-items:center; gap:10px; margin-bottom:24px; cursor:pointer; width:100%; justify-content:flex-start; padding-left:4px;">
             <input type="checkbox" id="login-remember" class="hygiene-check" checked>
             <div class="custom-chk"></div>
             <span style="font-size:15px; font-weight:600; color:var(--text-main);">자동 로그인 유지</span>
         </label>
+
         <button class="btn-submit" onclick="handleLogin()" style="margin-top:0;">로그인</button>
     </div>
 
@@ -533,7 +537,9 @@
                     </div>
                     <h3 id="check-store-title" style="font-size:19px; font-weight:800; margin-bottom:0;">매장명 평가표</h3>
                 </div>
+                
                 <div id="checklist-accordion" class="scroll-area" style="padding-top:0; padding-bottom: 110px;"></div>
+
                 <div class="score-bar">
                     <div class="total-box">
                         <div class="total">총점: <b id="check-total-score">0점</b></div>
@@ -660,7 +666,7 @@
                         </div>
                         <div class="settings-item" style="cursor:default;">
                             <span style="padding-left:10px;">앱 버전</span>
-                            <span class="version">1.2.4</span>
+                            <span class="version">1.2.5</span>
                         </div>
                     </div>
                 </div>
@@ -824,7 +830,7 @@ const firebaseConfig = {
                     appContainer.style.display = 'flex';
                     void appContainer.offsetWidth; 
                     appContainer.style.opacity = '1';
-                    updateAllUIs(); 
+                    window.updateAllUIs(); 
                 }, 400);
             } else {
                 appContainer.style.opacity = '0';
@@ -843,11 +849,11 @@ const firebaseConfig = {
             try { renderConsultingList(); } catch(e) { console.error(e); }
             try { renderBlockMap(); } catch(e) { console.error(e); }
             try { if(document.getElementById('store-manage').classList.contains('active')) renderStoreList(); } catch(e){}
-            try { if(document.getElementById('settings-stock').classList.contains('active')) renderStockTable(); } catch(e){}
-            try { if(document.getElementById('settings-orders').classList.contains('active')) renderOrderList(); } catch(e){}
-            try { if(document.getElementById('settings-manage-items').classList.contains('active')) renderManageItemsList(); } catch(e){}
-            try { if(document.getElementById('settings-manage-vendors').classList.contains('active')) renderManageVendorsList(); } catch(e){}
-            try { updateDropdowns(); } catch(e){}
+            try { if(document.getElementById('settings-stock').classList.contains('active')) window.renderStockTable(); } catch(e){}
+            try { if(document.getElementById('settings-orders').classList.contains('active')) window.renderOrderList(); } catch(e){}
+            try { if(document.getElementById('settings-manage-items').classList.contains('active')) window.renderManageItemsList(); } catch(e){}
+            try { if(document.getElementById('settings-manage-vendors').classList.contains('active')) window.renderManageVendorsList(); } catch(e){}
+            try { window.updateDropdowns(); } catch(e){}
         }
 
         function initRealtimeSync() {
@@ -866,14 +872,14 @@ const firebaseConfig = {
                 } else {
                     storesData = []; ordersData = [];
                 }
-                updateAllUIs();
+                window.updateAllUIs();
             }, (error) => {
                 console.error("Realtime sync error:", error);
             });
         }
 
         window.manualRefresh = async function() {
-            if(!currentUser || !db) return showToast("로그인이 필요합니다.");
+            if(!currentUser || !db) return window.showToast("로그인이 필요합니다.");
             const icon = document.getElementById('refresh-icon');
             icon.parentElement.classList.add('spinning'); 
             try {
@@ -888,11 +894,11 @@ const firebaseConfig = {
                 } else {
                     storesData = []; ordersData = [];
                 }
-                updateAllUIs();
-                showToast("데이터를 성공적으로 최신화했습니다.");
+                window.updateAllUIs();
+                window.showToast("데이터를 성공적으로 최신화했습니다.");
             } catch(e) {
                 console.error("새로고침 에러", e);
-                showToast("새로고침 실패. 네트워크를 확인해주세요.");
+                window.showToast("새로고침 실패. 네트워크를 확인해주세요.");
             } finally {
                 setTimeout(() => { icon.parentElement.classList.remove('spinning'); }, 500); 
             }
@@ -904,7 +910,7 @@ const firebaseConfig = {
                 await db.collection('users').doc(currentUser.uid).set({ stores: storesData, orders: ordersData, customItems: customItems, customVendors: customVendors });
             } catch(e) {
                 console.error("저장 실패", e);
-                showToast("서버 저장에 실패했습니다.");
+                window.showToast("서버 저장에 실패했습니다.");
             }
         }
         
@@ -926,27 +932,30 @@ const firebaseConfig = {
                 const pw = document.getElementById('login-pw').value;
                 const remember = document.getElementById('login-remember').checked;
 
-                if(!email || !pw) return showToast("이메일과 비밀번호를 모두 입력해주세요.");
-                if(!auth) return showToast("서버 초기화에 실패했습니다. 키를 확인하세요.");
+                if(!email || !pw) return window.showToast("이메일과 비밀번호를 모두 입력해주세요.");
+                if(!auth) return window.showToast("서버 초기화에 실패했습니다. 키를 확인하세요.");
                 
-                showToast("로그인 중...");
+                window.showToast("로그인 중...");
+
                 let pStr = remember ? 'local' : 'session';
                 try { await auth.setPersistence(pStr); } catch(e) { console.warn("Persistence Error:", e); }
+
                 await auth.signInWithEmailAndPassword(email, pw);
-                // 로그인 성공 토스트는 onAuthStateChanged 또는 화면 전환 후에 자연스럽게.
+                
+                window.showToast("로그인 성공!");
 
             } catch(error) {
                 console.error("Login Error:", error);
-                if(error.code === 'auth/invalid-email') showToast("이메일 형식이 올바르지 않습니다.");
-                else if(error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') showToast("이메일 또는 비밀번호가 틀렸습니다.");
-                else showToast("로그인 실패: " + error.message);
+                if(error.code === 'auth/invalid-email') window.showToast("이메일 형식이 올바르지 않습니다.");
+                else if(error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') window.showToast("이메일 또는 비밀번호가 틀렸습니다.");
+                else window.showToast("로그인 실패: " + error.message);
             }
         };
 
         window.handleLogout = function() {
             if(!auth) return;
             auth.signOut().then(() => {
-                showToast("로그아웃 되었습니다.");
+                window.showToast("로그아웃 되었습니다.");
                 storesData = []; ordersData = [];
                 document.getElementById('login-pw').value = '';
             });
@@ -1172,11 +1181,11 @@ const firebaseConfig = {
                 viewSections.forEach(section => { section.classList.remove('active'); });
                 document.getElementById(targetId).classList.add('active');
                 
-                // 탭 진입 시 안전하게 렌더링
-                if(targetId === 'view-calendar') setTimeout(() => { try{ renderCalendar(); }catch(e){} }, 50);
-                if(targetId === 'view-store') { openStoreView('main'); try{ renderBlockMap(); }catch(e){} }
-                if(targetId === 'view-consulting') { try{ renderConsultingList(); }catch(e){} }
-                if(targetId === 'view-settings') openSettingsSub('settings-main');
+                // 탭 진입 시 안전하게 렌더링하도록 래핑
+                if(targetId === 'view-calendar') { setTimeout(() => { try{ renderCalendar(); }catch(err){console.error(err);} }, 50); }
+                if(targetId === 'view-store') { window.openStoreView('main'); try{ renderBlockMap(); }catch(err){} }
+                if(targetId === 'view-consulting') { try{ renderConsultingList(); }catch(err){} }
+                if(targetId === 'view-settings') { window.openSettingsSub('settings-main'); }
             });
         });
 
@@ -1192,7 +1201,7 @@ const firebaseConfig = {
                 else {
                     matched.forEach(store => {
                         const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`;
-                        card.onclick = () => { document.querySelector('.nav-item[data-target="view-store"]').click(); openStoreView('manage', [store.status]); openEditStore(store.id); };
+                        card.onclick = () => { document.querySelector('.nav-item[data-target="view-store"]').click(); window.openStoreView('manage', [store.status]); window.openEditStore(store.id); };
                         card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>지역</span> <strong>${store.region}</strong></div>`;
                         resWrap.appendChild(card);
                     });
@@ -1231,10 +1240,10 @@ const firebaseConfig = {
 
         // --- 6. 매장 관리 ---
         let currentListFilters = []; let isSelectionMode = false; let selectedStoreIds = new Set();
-        window.goBackToStoreManage = function() { openStoreView('manage', currentListFilters && currentListFilters.length ? currentListFilters : ['진행중']); };
+        window.goBackToStoreManage = function() { window.openStoreView('manage', currentListFilters && currentListFilters.length ? currentListFilters : ['진행중']); };
 
         window.openStoreView = function(viewName, filters = null) {
-            document.querySelectorAll('.store-sub-view').forEach(s => s.classList.remove('active')); cancelSelectionMode();
+            document.querySelectorAll('.store-sub-view').forEach(s => s.classList.remove('active')); window.cancelSelectionMode();
             if (filters) currentListFilters = filters; 
             if (viewName === 'main') { document.getElementById('store-main-view').classList.add('active'); renderBlockMap(); }
             if (viewName === 'register') document.getElementById('store-register').classList.add('active');
@@ -1267,24 +1276,24 @@ const firebaseConfig = {
                 applyDate: document.getElementById('date-apply').value, consult1: "", consult2: "", inspect: "",
                 checklistData: null, memo: "", providedItems: {}, documents: {}
             };
-            storesData.unshift(newStore); saveData(); updateAllUIs(); 
-            showToast(`[${newStore.name}] 등록되었습니다.`);
+            storesData.unshift(newStore); saveData(); window.updateAllUIs(); 
+            window.showToast("저장되었습니다.");
             this.reset(); citySelect.innerHTML = '<option value="" disabled selected>시/군/구</option>'; citySelect.disabled = true;
-            openStoreView('manage', ['진행중']); 
+            window.openStoreView('manage', ['진행중']); 
         });
 
         function getStatusClass(status) {
             if(status === '합격') return 'status-pass'; if(status === '불합격') return 'status-fail'; if(status === '보류') return 'status-pending'; return 'status-progress';
         }
 
-        window.activateSelectionMode = function(firstId) { isSelectionMode = true; selectedStoreIds.add(firstId); renderStoreList(); updateSelectionBar(); };
+        window.activateSelectionMode = function(firstId) { isSelectionMode = true; selectedStoreIds.add(firstId); renderStoreList(); window.updateSelectionBar(); };
         window.cancelSelectionMode = function() { isSelectionMode = false; selectedStoreIds.clear(); document.getElementById('selection-bar').classList.remove('active'); renderStoreList(); };
         window.updateSelectionBar = function() {
             const bar = document.getElementById('selection-bar');
             if(isSelectionMode) { bar.classList.add('active'); document.getElementById('selection-count').textContent = `${selectedStoreIds.size}개 선택됨`; } else bar.classList.remove('active');
         };
 
-        // 삭제 비밀번호 검증 공용
+        // 삭제 비밀번호 공용 함수
         let pwTargetAction = null; let deleteTargetId = null;
 
         window.checkPwAndOpenAction = function(action, id = null) {
@@ -1299,7 +1308,7 @@ const firebaseConfig = {
         window.openDeletePwModal = function(type) {
             if(type === 'store' && selectedStoreIds.size === 0) return;
             if(type === 'order' && selectedOrderIds.size === 0) return;
-            checkPwAndOpenAction('delete_' + type);
+            window.checkPwAndOpenAction('delete_' + type);
         };
 
         window.closePwModal = function() {
@@ -1310,18 +1319,19 @@ const firebaseConfig = {
         window.confirmPwAction = function() {
             const inputPw = document.getElementById('del-pw-input').value;
             if(inputPw === adminPw) {
-                closePwModal();
-                if(pwTargetAction === 'delete_store') { storesData = storesData.filter(s => !selectedStoreIds.has(s.id)); cancelSelectionMode(); saveData(); updateAllUIs(); showToast("삭제되었습니다."); } 
-                else if(pwTargetAction === 'delete_order') { ordersData = ordersData.filter(o => !selectedOrderIds.has(o.id)); cancelOrderSelectionMode(); saveData(); updateAllUIs(); showToast("삭제되었습니다."); }
-                else if(pwTargetAction === 'delete_item') { customItems = customItems.filter((_, idx) => idx !== deleteTargetId); saveData(); updateAllUIs(); showToast("삭제되었습니다."); }
-                else if(pwTargetAction === 'delete_vendor') { customVendors = customVendors.filter((_, idx) => idx !== deleteTargetId); saveData(); updateAllUIs(); showToast("삭제되었습니다."); }
-                else if(pwTargetAction === 'open_manage_items') { openSettingsSub('settings-manage-items'); }
-                else if(pwTargetAction === 'open_manage_vendors') { openSettingsSub('settings-manage-vendors'); }
-            } else { showToast("비밀번호가 일치하지 않습니다."); }
+                window.closePwModal();
+                if(pwTargetAction === 'delete_store') { storesData = storesData.filter(s => !selectedStoreIds.has(s.id)); window.cancelSelectionMode(); saveData(); window.updateAllUIs(); window.showToast("삭제되었습니다."); } 
+                else if(pwTargetAction === 'delete_order') { ordersData = ordersData.filter(o => !selectedOrderIds.has(o.id)); window.cancelOrderSelectionMode(); saveData(); window.updateAllUIs(); window.showToast("삭제되었습니다."); }
+                else if(pwTargetAction === 'delete_item') { customItems = customItems.filter((_, idx) => idx !== deleteTargetId); saveData(); window.updateAllUIs(); window.showToast("삭제되었습니다."); }
+                else if(pwTargetAction === 'delete_vendor') { customVendors = customVendors.filter((_, idx) => idx !== deleteTargetId); saveData(); window.updateAllUIs(); window.showToast("삭제되었습니다."); }
+                else if(pwTargetAction === 'open_manage_items') { window.openSettingsSub('settings-manage-items'); }
+                else if(pwTargetAction === 'open_manage_vendors') { window.openSettingsSub('settings-manage-vendors'); }
+            } else { window.showToast("비밀번호가 일치하지 않습니다."); }
         };
 
         function renderStoreList() {
             const container = document.getElementById('store-list-container');
+            if(!container) return;
             container.innerHTML = ''; container.classList.toggle('selection-mode-active', isSelectionMode);
 
             const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
@@ -1339,7 +1349,7 @@ const firebaseConfig = {
                 card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>지역</span> <strong>${store.region}</strong></div><div class="store-info-line"><span>신청일</span> <strong>${store.applyDate || '-'}</strong></div>${balanceHtml}<div class="select-indicator"></div>`;
 
                 let tPressTimer; let tIsPressing = false; let startY = 0;
-                const cStartPress = (e) => { if(isSelectionMode) return; tIsPressing = true; startY = e.touches ? e.touches[0].clientY : e.clientY; tPressTimer = setTimeout(() => { tIsPressing = false; activateSelectionMode(store.id); if(navigator.vibrate){ try{ navigator.vibrate(50); }catch(err){} } }, 1500); };
+                const cStartPress = (e) => { if(isSelectionMode) return; tIsPressing = true; startY = e.touches ? e.touches[0].clientY : e.clientY; tPressTimer = setTimeout(() => { tIsPressing = false; window.activateSelectionMode(store.id); if(navigator.vibrate){ try{ navigator.vibrate(50); }catch(err){} } }, 1500); };
                 const cCancelPress = () => { clearTimeout(tPressTimer); tIsPressing = false; };
                 const movePress = (e) => { const currentY = e.touches ? e.touches[0].clientY : e.clientY; if(Math.abs(currentY - startY) > 10) cCancelPress(); };
 
@@ -1348,8 +1358,8 @@ const firebaseConfig = {
                 card.addEventListener('mouseup', cCancelPress); card.addEventListener('mouseleave', cCancelPress); card.addEventListener('touchend', cCancelPress);
 
                 card.addEventListener('click', () => {
-                    if (isSelectionMode) { if (selectedStoreIds.has(store.id)) selectedStoreIds.delete(store.id); else selectedStoreIds.add(store.id); renderStoreList(); updateSelectionBar(); }
-                    else openEditStore(store.id);
+                    if (isSelectionMode) { if (selectedStoreIds.has(store.id)) selectedStoreIds.delete(store.id); else selectedStoreIds.add(store.id); renderStoreList(); window.updateSelectionBar(); }
+                    else window.openEditStore(store.id);
                 }); container.appendChild(card);
             });
         }
@@ -1369,7 +1379,7 @@ const firebaseConfig = {
             const viewBtn = document.getElementById('btn-view-checklist');
             if(store.checklistData || store.memo || (store.providedItems && Object.keys(store.providedItems).length > 0) || (store.documents && Object.keys(store.documents).length > 0)) {
                 viewBtn.style.display = 'block';
-                viewBtn.onclick = () => { document.querySelector('.nav-item[data-target="view-consulting"]').click(); openChecklist(store.id); };
+                viewBtn.onclick = () => { document.querySelector('.nav-item[data-target="view-consulting"]').click(); window.openChecklist(store.id); };
             } else { viewBtn.style.display = 'none'; }
 
             document.querySelectorAll('.store-sub-view').forEach(s => s.classList.remove('active')); document.getElementById('store-edit').classList.add('active');
@@ -1387,7 +1397,7 @@ const firebaseConfig = {
                 store.consult1 = document.getElementById('edit-date-consult1').value; 
                 store.consult2 = document.getElementById('edit-date-consult2').value; 
                 store.inspect = document.getElementById('edit-date-inspect').value;
-                saveData(); updateAllUIs(); showToast("저장되었습니다."); goBackToStoreManage(); 
+                saveData(); window.updateAllUIs(); window.showToast("저장되었습니다."); window.goBackToStoreManage(); 
             }
         });
 
@@ -1400,9 +1410,9 @@ const firebaseConfig = {
         window.confirmChangePw = function() {
             const current = document.getElementById('current-pw-input').value; const newPw = document.getElementById('new-pw-input').value;
             if(current === adminPw) {
-                if(newPw.length < 4) { showToast("새 비밀번호는 4자리 이상 입력해주세요."); return; }
-                adminPw = newPw; localStorage.setItem('kadarosAdminPw', adminPw); closeChangePwModal(); showToast("비밀번호가 성공적으로 변경되었습니다.");
-            } else { showToast("현재 비밀번호가 틀립니다."); }
+                if(newPw.length < 4) { window.showToast("새 비밀번호는 4자리 이상 입력해주세요."); return; }
+                adminPw = newPw; localStorage.setItem('kadarosAdminPw', adminPw); window.closeChangePwModal(); window.showToast("비밀번호가 성공적으로 변경되었습니다.");
+            } else { window.showToast("현재 비밀번호가 틀립니다."); }
         };
 
         // 지도 탭
@@ -1413,7 +1423,9 @@ const firebaseConfig = {
 
         function renderBlockMap() {
             const drawBlocks = (targetId, dataArr) => {
-                const grid = document.getElementById(targetId); grid.innerHTML = '';
+                const grid = document.getElementById(targetId);
+                if(!grid) return;
+                grid.innerHTML = '';
                 dataArr.forEach(cityName => {
                     const count = storesData.filter(s => s.region.includes(cityName)).length;
                     const block = document.createElement('div'); block.className = `map-block ${count > 0 ? (count > 2 ? 'has-store-dense' : 'has-store') : ''}`; block.innerHTML = cityName + (count > 0 ? `<div class="badge">${count}</div>` : '');
@@ -1425,7 +1437,7 @@ const firebaseConfig = {
                         if(matched.length === 0) list.innerHTML = '<div class="store-empty" style="margin-top:20px;">등록된 매장이 없습니다.</div>';
                         else {
                             matched.forEach(store => {
-                                const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`; card.style.marginBottom = '10px'; card.onclick = () => { closeMapOverlay(); openStoreView('manage', [store.status]); openEditStore(store.id); };
+                                const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`; card.style.marginBottom = '10px'; card.onclick = () => { window.closeMapOverlay(); window.openStoreView('manage', [store.status]); window.openEditStore(store.id); };
                                 
                                 const bal = (store.priceTotal || 0) - (store.priceDeposit || 0);
                                 let balHtml = bal > 0 ? `<strong style="color:var(--red-color)">미수금 ${bal.toLocaleString()}원</strong>` : `<strong style="color:var(--brand-color)">결제 완료</strong>`;
@@ -1508,7 +1520,7 @@ const firebaseConfig = {
 
         window.openYearModal = function() { document.getElementById('year-input').value = currentDate.getFullYear(); document.getElementById('year-modal').style.display = 'flex'; void document.getElementById('year-modal').offsetWidth; document.getElementById('year-modal').classList.add('show'); };
         window.closeYearModal = function() { document.getElementById('year-modal').classList.remove('show'); setTimeout(()=> {document.getElementById('year-modal').style.display = 'none';}, 200); };
-        window.applyYear = function() { const newYear = document.getElementById('year-input').value; if (newYear && !isNaN(newYear)) { currentDate.setFullYear(parseInt(newYear)); renderCalendar(); closeYearModal(); } };
+        window.applyYear = function() { const newYear = document.getElementById('year-input').value; if (newYear && !isNaN(newYear)) { currentDate.setFullYear(parseInt(newYear)); renderCalendar(); window.closeYearModal(); } };
 
         // 컨설팅 탭 및 평가
         let currentChecklistStoreId = null;
@@ -1520,7 +1532,7 @@ const firebaseConfig = {
             const inProgress = storesData.filter(s => s.status === '진행중' || s.status === '보류');
             if(inProgress.length === 0) { list.innerHTML = '<div class="store-empty">진행중인 매장이 없습니다.</div>'; return; }
             inProgress.forEach(store => {
-                const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`; card.onclick = () => openChecklist(store.id);
+                const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`; card.onclick = () => window.openChecklist(store.id);
                 card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>신청일</span> <strong>${store.applyDate || '-'}</strong></div>`; list.appendChild(card);
             });
         }
@@ -1567,7 +1579,7 @@ const firebaseConfig = {
                 });
                 html += `</div>`; itemDiv.innerHTML = html; accordion.appendChild(itemDiv);
             });
-            calcTotal();
+            window.calcTotal();
         };
 
         window.closeChecklist = function() { renderConsultingList(); };
@@ -1575,7 +1587,7 @@ const firebaseConfig = {
         window.toggleNA = function(btn) {
             const row = btn.closest('.check-item-row'); const chk = row.querySelector('.hygiene-check'); const isNA = row.dataset.na === 'true';
             if (isNA) { row.dataset.na = 'false'; btn.classList.remove('active'); chk.disabled = false; } else { row.dataset.na = 'true'; btn.classList.add('active'); chk.disabled = true; chk.checked = false; }
-            calcTotal();
+            window.calcTotal();
         };
 
         window.calcTotal = function() {
@@ -1612,7 +1624,7 @@ const firebaseConfig = {
                 else newData[chk.dataset.id] = chk.checked ? chk.value : '0';
             });
             store.checklistData = newData; store.memo = document.getElementById('memo-textarea').value;
-            saveData(); showToast("저장되었습니다."); closeChecklist();
+            saveData(); window.showToast("저장되었습니다."); window.closeChecklist();
         };
 
         window.openMemo = function() { document.getElementById('memo-modal').classList.add('active'); };
@@ -1620,7 +1632,7 @@ const firebaseConfig = {
         window.saveMemo = function() { 
             const store = storesData.find(s => s.id === currentChecklistStoreId);
             if(store) { store.memo = document.getElementById('memo-textarea').value; saveData(); }
-            closeMemo(); showToast("저장되었습니다."); 
+            window.closeMemo(); window.showToast("저장되었습니다."); 
         };
 
         // 제공 물품 모달
@@ -1677,7 +1689,7 @@ const firebaseConfig = {
                 }
             });
             store.providedItems = pItems;
-            saveData(); closeItemsModal(); showToast("저장되었습니다.");
+            saveData(); window.closeItemsModal(); window.showToast("저장되었습니다.");
         };
 
         window.openDocModal = function() {
@@ -1692,9 +1704,23 @@ const firebaseConfig = {
             const docs = {};
             document.querySelectorAll('.doc-chk').forEach(chk => { docs[chk.value] = chk.checked; });
             store.documents = docs;
-            saveData(); closeDocModal(); showToast("저장되었습니다.");
+            saveData(); window.closeDocModal(); window.showToast("저장되었습니다.");
         };
 
+        window.updateDropdowns = function() {
+            const itemSel = document.getElementById('order-item-sel');
+            const vendorSel = document.getElementById('order-vendor-sel');
+            if(itemSel) {
+                itemSel.innerHTML = '';
+                customItems.forEach(item => { const opt = document.createElement('option'); opt.value = item; opt.textContent = item; itemSel.appendChild(opt); });
+            }
+            if(vendorSel) {
+                vendorSel.innerHTML = '';
+                customVendors.forEach(vendor => { const opt = document.createElement('option'); opt.value = vendor; opt.textContent = vendor; vendorSel.appendChild(opt); });
+            }
+        };
+
+        // 서비스 워커 등록
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js').catch(()=>{});
