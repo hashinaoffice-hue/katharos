@@ -30,7 +30,6 @@
             --blue-bg: #E8F3FF; --dark-gray-bg: #333D4B;
         }
 
-        /* 기기/브라우저 강제 다크모드 방어 */
         @media (prefers-color-scheme: dark) {
             :root {
                 --brand-color: #036eb8; 
@@ -58,7 +57,6 @@
             overflow: hidden; touch-action: none; transition: background-color 0.4s ease, color 0.4s ease; 
         }
 
-        /* 앱 메인 컨테이너 (로그인 성공 시 나타남) */
         #app-container { 
             display: none; width: 100%; height: calc(100dvh - var(--nav-height) - env(safe-area-inset-bottom)); 
             flex-direction: column; position: relative; opacity: 0; transition: opacity 0.4s ease-in-out;
@@ -78,17 +76,14 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 토스트 알림창 */
         .toast {
             position: fixed; bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 24px); left: 50%; transform: translateX(-50%) translateY(50px);
             background: rgba(25, 31, 40, 0.9); color: white; padding: 14px 24px; border-radius: 20px; font-size: 14px; font-weight: 600; opacity: 0; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 9999; pointer-events: none; box-shadow: 0 8px 24px rgba(0,0,0,0.15); white-space: nowrap;
         }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-        /* 물리엔진 파티클용 캔버스 */
         #fx-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 10000; pointer-events: none; display: none; }
 
-        /* 로그인 오버레이 (기본 노출) */
         #login-overlay { 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-color); 
             background-image: linear-gradient(var(--bg-color), var(--bg-color)); z-index: 9000; 
@@ -129,7 +124,6 @@
         .helper-character.face-happy::before, .helper-character.face-happy::after { border-top: 3px solid #fff; background: transparent; height: 8px; width: 12px; border-radius: 50% 50% 0 0; top: 24px; transform: none;} 
         .helper-character.face-happy .smile { width: 20px; height: 12px; bottom: 12px; border: none; border-bottom: 2.5px solid #fff; border-radius: 0 0 20px 20px; background: transparent; transform: translateX(-50%);}
         
-        /* 볼 빵빵 표정 */
         .helper-character.face-puff::before, .helper-character.face-puff::after { height: 6px; width: 6px; top: 22px; background: #fff; border-radius: 50%; border: none; transform: none;} 
         .helper-character.face-puff::before { left: 10px; }
         .helper-character.face-puff::after { right: 10px; }
@@ -152,7 +146,6 @@
         .dash-value { font-size: 14px; font-weight: 600; color: var(--text-main); line-height: 1.4; word-break: keep-all;}
         .dash-value b { color: var(--brand-color); font-size: 20px; font-weight: 800; margin-right: 2px;}
 
-        /* 새로고침 버튼 스타일 */
         .btn-refresh { cursor: pointer; display: flex; align-items: center; justify-content: center; background: var(--gray-100); padding: 6px; border-radius: 10px; transition: all 0.2s; border: none; }
         .btn-refresh:active { background: var(--gray-200); transform: scale(0.95); }
         .btn-refresh svg { width: 18px; height: 18px; fill: var(--gray-600); }
@@ -190,9 +183,11 @@
         .schedule-box.type-apply { background-color: var(--yellow-bg); border-color: transparent; } .schedule-box.type-apply .sch-name { color: var(--yellow-color); } .schedule-box.type-apply .sch-type { color: var(--yellow-color); background-color: #fff; border-color: var(--yellow-border); }
         .schedule-empty { text-align: center; color: var(--gray-400); padding: 30px; font-size: 14px; font-weight:500;}
 
-        /* 매장관리 탭 */
+        /* 매장관리 / 설정 서브 탭 공통 */
         .store-sub-view { display: none; animation: fadeIn 0.3s ease; flex-direction: column; height: 100%; width: 100%;}
         .store-sub-view.active { display: flex; }
+        .settings-sub-view { display: none; animation: fadeIn 0.3s ease; flex-direction: column; height: 100%; width: 100%;}
+        .settings-sub-view.active { display: flex; }
         
         .store-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;}
         .store-menu-card { background-color: var(--gray-50); border: 1px solid var(--gray-100); border-radius: 24px; padding: 24px 16px; text-align: center; font-size: 15px; font-weight: 700; color: var(--text-main); cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; gap: 12px; }
@@ -223,7 +218,7 @@
         .btn-submit:active { transform: scale(0.98); }
         .btn-action { background-color: var(--gray-800); margin-top: 0;}
 
-        /* 매장 리스트 카드 */
+        /* 매장 및 발주 리스트 카드 */
         .store-list-wrap { display: flex; flex-direction: column; gap: 16px; }
         .store-card { background-color: white; border: 1px solid var(--gray-100); border-radius: 24px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); position: relative; cursor: pointer; transition: transform 0.2s;}
         .store-card:active { transform: scale(0.98); }
@@ -337,11 +332,16 @@
         .modal-bottom-actions { display: flex; gap: 12px; flex-shrink:0;}
         .modal-bottom-actions button { flex: 1; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; }
         
-        /* 제공 물품 & 서류 리스트 영역 */
+        /* 모달 리스트 (서류, 메모 등) */
         .items-scroll-area { flex: 1; overflow-y: auto; margin-bottom: 24px; -ms-overflow-style: none; scrollbar-width: none; }
         .items-scroll-area::-webkit-scrollbar { display: none; }
         .items-group-title { font-size: 15px; font-weight: 800; color: var(--brand-color); margin: 24px 0 12px 0; border-bottom: 2px solid var(--gray-100); padding-bottom: 8px; }
         .items-group-title:first-child { margin-top: 0; }
+        
+        /* 지급 물품 리스트(숫자 기입)용 row */
+        .item-chk-row-qty { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--gray-50); }
+        .item-chk-row-qty span { font-size: 15px; color: var(--text-main); font-weight: 600; flex: 1; word-break: keep-all; }
+        
         .item-chk-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--gray-50); cursor: pointer;}
         .item-chk-row span { font-size: 15px; color: var(--text-main); font-weight: 600;}
         .doc-desc { font-size:12px; color:var(--gray-400); text-align:center; margin-top:16px; font-weight:600;}
@@ -356,6 +356,12 @@
         .settings-item .version { color: var(--brand-color); font-weight: 800;}
         .settings-icon-wrap { display: flex; align-items: center; gap: 14px; }
         .settings-icon-wrap svg { width: 24px; height: 24px; fill: var(--brand-color); }
+
+        /* 재고 관리 표 */
+        .stock-table { width: 100%; border-collapse: collapse; text-align: center; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.02); border: 1px solid var(--gray-100); margin-bottom: 24px;}
+        .stock-table th { background: var(--gray-50); padding: 14px 8px; font-size: 13px; font-weight: 700; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); word-break: keep-all;}
+        .stock-table td { padding: 14px 8px; font-size: 14px; font-weight: 600; color: var(--text-main); border-bottom: 1px solid var(--gray-100); }
+        .stock-table tr:last-child td { border-bottom: none; }
 
         /* 하단 고정 메뉴바 */
         .bottom-nav {
@@ -441,21 +447,9 @@
 
     <div id="items-modal" class="bottom-modal">
         <div class="modal-bottom-content">
-            <h3>제공 물품 리스트</h3>
-            <div class="items-scroll-area">
-                <div class="items-group-title">1차 제공 물품</div>
-                <label class="item-chk-row"><span>각종 스티커</span><input type="checkbox" class="hygiene-check item-chk" value="각종 스티커"><div class="custom-chk"></div></label>
-                <label class="item-chk-row"><span>계란보관함</span><input type="checkbox" class="hygiene-check item-chk" value="계란보관함"><div class="custom-chk"></div></label>
-                <label class="item-chk-row"><span>쎄니크로</span><input type="checkbox" class="hygiene-check item-chk" value="쎄니크로"><div class="custom-chk"></div></label>
-                <label class="item-chk-row"><span>손소독/손세정제</span><input type="checkbox" class="hygiene-check item-chk" value="손소독/손세정제"><div class="custom-chk"></div></label>
-                
-                <div class="items-group-title" style="margin-top:24px;">2차 제공 물품</div>
-                <label class="item-chk-row"><span>업소용 클린매트</span><input type="checkbox" class="hygiene-check item-chk" value="업소용 클린매트"><div class="custom-chk"></div></label>
-                <label class="item-chk-row"><span>식기 덮개용 천</span><input type="checkbox" class="hygiene-check item-chk" value="식기 덮개용 천"><div class="custom-chk"></div></label>
-                <label class="item-chk-row"><span>이격판</span><input type="checkbox" class="hygiene-check item-chk" value="이격판"><div class="custom-chk"></div></label>
-                <label class="item-chk-row"><span>외부화보관함</span><input type="checkbox" class="hygiene-check item-chk" value="외부화보관함"><div class="custom-chk"></div></label>
-                <label class="item-chk-row"><span>산가측정지</span><input type="checkbox" class="hygiene-check item-chk" value="산가측정지"><div class="custom-chk"></div></label>
-            </div>
+            <h3>제공 물품 수량 기록</h3>
+            <div class="items-scroll-area" id="items-modal-list">
+                </div>
             <div class="modal-bottom-actions">
                 <button class="btn-cancel-sel" onclick="closeItemsModal()">닫기</button>
                 <button style="background:var(--brand-color); color:white;" onclick="saveItems()">저장하기</button>
@@ -638,26 +632,79 @@
         </div>
 
         <div id="view-settings" class="view-section" style="padding: 0;">
-            <div class="view-header" style="padding-bottom:0;"><h2 class="greeting" style="text-align:left; margin-bottom:20px;">설정</h2></div>
-            <div class="scroll-area">
-                <div class="settings-menu">
-                    <div class="settings-item" onclick="openChangePwModal()">
-                        <div class="settings-icon-wrap">
-                            <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/></svg>
-                            <span>관리자 비밀번호 변경</span>
+            <div id="settings-main" class="settings-sub-view active" style="width:100%;">
+                <div class="view-header" style="padding-bottom:0;"><h2 class="greeting" style="text-align:left; margin-bottom:20px;">설정</h2></div>
+                <div class="scroll-area">
+                    <div class="settings-menu">
+                        <div class="settings-item" onclick="openSettingsSub('settings-stock')">
+                            <div class="settings-icon-wrap">
+                                <svg viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18-.21 0-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18.21 0 .41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15zM5 15.91l6 3.38v-6.71L5 9.19v6.72zm14 0v-6.72l-6 3.39v6.71l6-3.38z"/></svg>
+                                <span>재고 확인</span>
+                            </div>
+                            <svg style="width:20px;height:20px;fill:var(--gray-400);" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
                         </div>
-                        <svg style="width:20px;height:20px;fill:var(--gray-400);" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-                    </div>
-                    <div class="settings-item" onclick="handleLogout()">
-                        <div class="settings-icon-wrap">
-                            <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
-                            <span style="color:var(--red-color)">로그아웃</span>
+                        <div class="settings-item" onclick="openSettingsSub('settings-orders')">
+                            <div class="settings-icon-wrap">
+                                <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                <span>발주 기록</span>
+                            </div>
+                            <svg style="width:20px;height:20px;fill:var(--gray-400);" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                        </div>
+                        <div class="settings-item" onclick="openChangePwModal()">
+                            <div class="settings-icon-wrap">
+                                <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/></svg>
+                                <span>관리자 비밀번호 변경</span>
+                            </div>
+                            <svg style="width:20px;height:20px;fill:var(--gray-400);" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                        </div>
+                        <div class="settings-item" onclick="handleLogout()">
+                            <div class="settings-icon-wrap">
+                                <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+                                <span style="color:var(--red-color)">로그아웃</span>
+                            </div>
+                        </div>
+                        <div class="settings-item" style="cursor:default;">
+                            <span style="padding-left:10px;">앱 버전</span>
+                            <span class="version">1.2.1</span>
                         </div>
                     </div>
-                    <div class="settings-item" style="cursor:default;">
-                        <span style="padding-left:10px;">앱 버전</span>
-                        <span class="version">1.2.0</span>
-                    </div>
+                </div>
+            </div>
+
+            <div id="settings-stock" class="settings-sub-view" style="width:100%;">
+                <div class="view-header" style="padding-bottom:0;">
+                    <div class="back-nav" onclick="openSettingsSub('settings-main')"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 설정 메뉴</div>
+                    <h3 style="margin-bottom:16px; font-size:19px; font-weight:800;">실시간 재고 현황</h3>
+                </div>
+                <div class="scroll-area">
+                    <table class="stock-table">
+                        <thead><tr><th>품목명</th><th>총 발주</th><th>총 지급</th><th>현재 재고</th></tr></thead>
+                        <tbody id="stock-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="settings-orders" class="settings-sub-view" style="width:100%;">
+                <div class="view-header" style="padding-bottom:0;">
+                    <div class="back-nav" onclick="openSettingsSub('settings-main')"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 설정 메뉴</div>
+                    <h3 style="margin-bottom:16px; font-size:19px; font-weight:800;">물품 발주 기록</h3>
+                </div>
+                <div class="scroll-area">
+                    <form id="new-order-form" style="background:var(--gray-50); padding:20px; border-radius:20px; margin-bottom:24px; border:1px solid var(--gray-100);">
+                        <div class="form-group" style="margin-bottom:12px;">
+                            <label>품목 선택</label>
+                            <select id="order-item-sel" class="form-input" required></select>
+                        </div>
+                        <div class="row-group" style="margin-bottom:12px;">
+                            <div class="form-group" style="margin-bottom:0;"><label>수량 (개)</label><input type="number" id="order-qty-input" class="form-input" required min="1"></div>
+                            <div class="form-group" style="margin-bottom:0;"><label>총 금액 (원)</label><input type="number" id="order-price-input" class="form-input" required min="0"></div>
+                        </div>
+                        <div class="form-group" style="margin-bottom:16px;"><label>발주일</label><input type="date" id="order-date-input" class="form-input" required></div>
+                        <button type="submit" class="btn-submit" style="margin-top:0;">발주 추가</button>
+                    </form>
+                    
+                    <h4 style="font-size:15px; font-weight:800; color:var(--text-main); margin-bottom:12px;">최근 발주 내역</h4>
+                    <div id="order-list-container" class="store-list-wrap"></div>
                 </div>
             </div>
         </div>
@@ -673,7 +720,12 @@
 
     <div id="selection-bar" class="selection-bottom-bar">
         <span id="selection-count" class="selection-count">0개 선택됨</span>
-        <div class="selection-actions"><button class="btn-cancel-sel" onclick="cancelSelectionMode()">취소</button><button class="btn-delete-sel" onclick="openDeletePwModal()">삭제</button></div>
+        <div class="selection-actions"><button class="btn-cancel-sel" onclick="cancelSelectionMode()">취소</button><button class="btn-delete-sel" onclick="openDeletePwModal('store')">삭제</button></div>
+    </div>
+
+    <div id="order-selection-bar" class="selection-bottom-bar">
+        <span id="order-selection-count" class="selection-count">0개 선택됨</span>
+        <div class="selection-actions"><button class="btn-cancel-sel" onclick="cancelOrderSelectionMode()">취소</button><button class="btn-delete-sel" onclick="openDeletePwModal('order')">삭제</button></div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -702,12 +754,17 @@ const firebaseConfig = {
         
         let currentUser = null;
 
-        // 모바일 사파리/삼성인터넷 등에서 로컬 캐시 접근 차단 에러 방지
+        // 로컬 캐시 로드 (storesData & ordersData)
         let storesData = [];
+        let ordersData = [];
         let backup = null;
-        try { backup = localStorage.getItem('kadarosStoresBackup'); } catch(e) {}
+        try { backup = localStorage.getItem('kadarosDataBackup'); } catch(e) {}
         if(backup) {
-            try { storesData = JSON.parse(backup) || []; } catch(e){}
+            try { 
+                const parsed = JSON.parse(backup);
+                if (Array.isArray(parsed)) { storesData = parsed; } // 옛날 버전 호환
+                else { storesData = parsed.stores || []; ordersData = parsed.orders || []; }
+            } catch(e){}
         }
 
         let adminPw = '0000';
@@ -739,47 +796,49 @@ const firebaseConfig = {
             }
         }
 
+        // 실시간 동기화
         function initRealtimeSync() {
             if (!currentUser || !db) return;
             if(unsubscribeSnapshot) unsubscribeSnapshot();
 
             unsubscribeSnapshot = db.collection('users').doc(currentUser.uid).onSnapshot((doc) => {
                 if (doc.exists) {
-                    storesData = doc.data().stores || [];
-                    try { localStorage.setItem('kadarosStoresBackup', JSON.stringify(storesData)); } catch(e){}
+                    const data = doc.data();
+                    storesData = data.stores || [];
+                    ordersData = data.orders || [];
+                    try { localStorage.setItem('kadarosDataBackup', JSON.stringify({stores: storesData, orders: ordersData})); } catch(e){}
                 } else {
-                    storesData = [];
+                    storesData = []; ordersData = [];
                 }
                 
-                updateDashboard(); 
-                renderCalendar(); 
-                renderConsultingList(); 
-                renderBlockMap();
-                
-                if(document.getElementById('store-manage').classList.contains('active')) {
-                    renderStoreList();
-                }
+                updateDashboard(); renderCalendar(); renderConsultingList(); renderBlockMap();
+                if(document.getElementById('store-manage').classList.contains('active')) renderStoreList();
+                if(document.getElementById('settings-stock').classList.contains('active')) renderStockTable();
+                if(document.getElementById('settings-orders').classList.contains('active')) renderOrderList();
             }, (error) => {
                 console.error("Realtime sync error:", error);
             });
         }
 
+        // 수동 새로고침
         window.manualRefresh = async function() {
             if(!currentUser || !db) return showToast("로그인이 필요합니다.");
-            
             const icon = document.getElementById('refresh-icon');
             icon.parentElement.classList.add('spinning'); 
-            
             try {
                 const doc = await db.collection('users').doc(currentUser.uid).get({source: 'server'});
                 if(doc.exists) {
-                    storesData = doc.data().stores || [];
-                    try { localStorage.setItem('kadarosStoresBackup', JSON.stringify(storesData)); } catch(e){}
+                    const data = doc.data();
+                    storesData = data.stores || [];
+                    ordersData = data.orders || [];
+                    try { localStorage.setItem('kadarosDataBackup', JSON.stringify({stores: storesData, orders: ordersData})); } catch(e){}
                 } else {
-                    storesData = [];
+                    storesData = []; ordersData = [];
                 }
                 updateDashboard(); renderCalendar(); renderConsultingList(); renderBlockMap();
                 if(document.getElementById('store-manage').classList.contains('active')) renderStoreList();
+                if(document.getElementById('settings-stock').classList.contains('active')) renderStockTable();
+                if(document.getElementById('settings-orders').classList.contains('active')) renderOrderList();
                 showToast("데이터를 성공적으로 최신화했습니다.");
             } catch(e) {
                 console.error("새로고침 에러", e);
@@ -789,10 +848,11 @@ const firebaseConfig = {
             }
         };
 
-        async function saveStoresData() { 
+        // 데이터 통합 저장 (stores, orders)
+        async function saveData() { 
             if(!currentUser || !db) return;
             try {
-                await db.collection('users').doc(currentUser.uid).set({ stores: storesData });
+                await db.collection('users').doc(currentUser.uid).set({ stores: storesData, orders: ordersData });
             } catch(e) {
                 console.error("저장 실패", e);
                 showToast("서버 저장에 실패했습니다.");
@@ -802,21 +862,15 @@ const firebaseConfig = {
         if (auth) {
             auth.onAuthStateChanged(user => {
                 if(user) {
-                    currentUser = user;
-                    toggleAppUI(true);
-                    initRealtimeSync();
+                    currentUser = user; toggleAppUI(true); initRealtimeSync();
                 } else {
                     currentUser = null;
-                    if(unsubscribeSnapshot) {
-                        unsubscribeSnapshot(); 
-                        unsubscribeSnapshot = null;
-                    }
+                    if(unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
                     toggleAppUI(false);
                 }
             });
         }
 
-        // 🚨 모든 로그인 에러를 완벽하게 잡아내는 래퍼 🚨
         window.handleLogin = async function() {
             try {
                 const email = document.getElementById('login-email').value.trim();
@@ -827,14 +881,9 @@ const firebaseConfig = {
                 if(!auth) return showToast("서버 초기화에 실패했습니다. 키를 확인하세요.");
                 
                 showToast("로그인 중...");
-
-                // v10 Compat에서 지원되는 직접 문자열 주입 방식 (안전 처리)
                 let pStr = remember ? 'local' : 'session';
                 try { await auth.setPersistence(pStr); } catch(e) { console.warn("Persistence Error:", e); }
-
                 await auth.signInWithEmailAndPassword(email, pw);
-                
-                // 로그인 성공 시 onAuthStateChanged가 반응하여 화면 전환을 자동으로 해줌
                 showToast("로그인 성공!");
 
             } catch(error) {
@@ -849,7 +898,7 @@ const firebaseConfig = {
             if(!auth) return;
             auth.signOut().then(() => {
                 showToast("로그아웃 되었습니다.");
-                storesData = [];
+                storesData = []; ordersData = [];
                 document.getElementById('login-pw').value = '';
             });
         };
@@ -909,21 +958,20 @@ const firebaseConfig = {
             }
         ];
 
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg; toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 2500);
-        }
+        // --- 재고 관리용 품목 리스트 ---
+        const providedItemsList = [
+            "각종 스티커", "계란보관함", "쎄니크로", "손소독/손세정제",
+            "업소용 클린매트", "식기 덮개용 천", "이격판", "외부화보관함", "산가측정지"
+        ];
 
+        // 캔버스 사이즈 세팅
         const canvas = document.getElementById('fx-canvas');
         const ctx = canvas.getContext('2d');
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
+        // --- 캐릭터 애니메이션 (물리 엔진) ---
         const helperChar = document.getElementById('helper-char');
         const motions = ['motion-jump', 'motion-spin', 'motion-squish', 'motion-wiggle']; 
         const faces = ['face-happy', 'face-surprised', 'face-wink'];
@@ -953,7 +1001,7 @@ const firebaseConfig = {
 
                 let overlayAlpha = 0;
                 if (progress < 0.4) overlayAlpha = progress / 0.4;
-                else if (progress < 0.6) { overlayAlpha = 1; if (!canvas.dataset.swapped) { toggleThemeDOM(isToGolden); canvas.dataset.swapped = 'true'; if(navigator.vibrate) navigator.vibrate([100, 50, 100]); } }
+                else if (progress < 0.6) { overlayAlpha = 1; if (!canvas.dataset.swapped) { toggleThemeDOM(isToGolden); canvas.dataset.swapped = 'true'; if(navigator.vibrate) {try{navigator.vibrate([100, 50, 100]);}catch(e){}} } }
                 else overlayAlpha = 1 - ((progress - 0.6) / 0.4);
 
                 const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
@@ -993,19 +1041,10 @@ const firebaseConfig = {
             let pList = Array.from({length: 70}, () => {
                 const angle = Math.random() * Math.PI * 2;
                 const speed = Math.random() * 45 + 15; 
-                
                 let pColor = isGolden ? 
                     `rgba(${200 + Math.random()*55}, ${150 + Math.random()*50}, 30, 1)` : 
                     `rgba(${10 + Math.random()*20}, ${90 + Math.random()*40}, ${170 + Math.random()*50}, 1)`;
-
-                return {
-                    x: centerX, y: centerY,
-                    vx: Math.cos(angle) * speed,
-                    vy: Math.sin(angle) * speed,
-                    size: Math.random() * 14 + 4,
-                    friction: 0.80 + Math.random() * 0.08,
-                    color: pColor
-                };
+                return { x: centerX, y: centerY, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, size: Math.random() * 14 + 4, friction: 0.80 + Math.random() * 0.08, color: pColor };
             });
 
             let pStartTime = performance.now();
@@ -1018,105 +1057,58 @@ const firebaseConfig = {
 
                 pList.forEach(p => {
                     if (elapsed < 800) {
-                        p.x += p.vx;
-                        p.y += p.vy;
-                        p.vx *= p.friction;
-                        p.vy *= p.friction;
-                        allGathered = false;
-                    } 
-                    else if (elapsed >= 800 && elapsed < 1800) {
-                        const dx = centerX - p.x;
-                        const dy = centerY - p.y;
-                        const dist = Math.sqrt(dx*dx + dy*dy);
-                        
+                        p.x += p.vx; p.y += p.vy; p.vx *= p.friction; p.vy *= p.friction; allGathered = false;
+                    } else if (elapsed >= 800 && elapsed < 1800) {
+                        const dx = centerX - p.x; const dy = centerY - p.y; const dist = Math.sqrt(dx*dx + dy*dy);
                         if (dist > 8) {
                             allGathered = false;
                             const gatherForce = Math.pow((elapsed - 800) / 1000, 2) * 0.4; 
-                            p.vx += dx * gatherForce;
-                            p.vy += dy * gatherForce;
-                            p.vx *= 0.88;
-                            p.vy *= 0.88;
-                            
-                            p.x += p.vx;
-                            p.y += p.vy;
-                        } else {
-                            p.x = centerX;
-                            p.y = centerY;
-                            p.vx = 0; p.vy = 0;
-                        }
+                            p.vx += dx * gatherForce; p.vy += dy * gatherForce; p.vx *= 0.88; p.vy *= 0.88;
+                            p.x += p.vx; p.y += p.vy;
+                        } else { p.x = centerX; p.y = centerY; p.vx = 0; p.vy = 0; }
                     }
 
                     const speedSq = p.vx*p.vx + p.vy*p.vy;
                     const stretch = Math.max(1, speedSq * 0.015);
                     const angle = Math.atan2(p.vy, p.vx);
 
-                    ctx.save();
-                    ctx.translate(p.x, p.y);
-                    ctx.rotate(angle);
-                    ctx.beginPath();
+                    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(angle); ctx.beginPath();
                     ctx.ellipse(0, 0, p.size * stretch, p.size, 0, 0, Math.PI * 2);
-                    ctx.fillStyle = p.color;
-                    ctx.fill();
-                    ctx.restore();
+                    ctx.fillStyle = p.color; ctx.fill(); ctx.restore();
                 });
 
-                if (elapsed < 1800 || !allGathered) {
-                    rafId = requestAnimationFrame(renderPop);
-                } else {
+                if (elapsed < 1800 || !allGathered) { rafId = requestAnimationFrame(renderPop); } 
+                else {
                     canvas.style.display = 'none';
-                    
                     helperChar.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s';
-                    helperChar.style.opacity = '1';
-                    helperChar.style.transform = 'scale(1)';
-                    
-                    if(navigator.vibrate) { try{ navigator.vibrate(40); }catch(e){} }
-
-                    setTimeout(() => {
-                        isPopped = false;
-                        helperChar.style.transition = 'transform 0.4s ease'; 
-                        helperChar.style.transform = '';
-                    }, 600);
+                    helperChar.style.opacity = '1'; helperChar.style.transform = 'scale(1)';
+                    if(navigator.vibrate) {try{navigator.vibrate(40);}catch(e){}}
+                    setTimeout(() => { isPopped = false; helperChar.style.transition = 'transform 0.4s ease'; helperChar.style.transform = ''; }, 600);
                 }
             }
-            
-            if(navigator.vibrate) { try{ navigator.vibrate([80, 40, 80]); }catch(e){} }
+            if(navigator.vibrate) {try{navigator.vibrate([80, 40, 80]);}catch(e){}} 
             rafId = requestAnimationFrame(renderPop);
         }
 
         const startPress = (e) => { 
             if (isTransitioning || isPopped) return; 
-            isPressing = true; 
-            pressStartTime = Date.now();
-            
+            isPressing = true; pressStartTime = Date.now();
             pressTimer = setTimeout(() => { 
                 if(!isPressing) return;
-                isInflating = true;
-                helperChar.classList.add('face-puff');
-                
+                isInflating = true; helperChar.classList.add('face-puff');
                 helperChar.style.transition = 'transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
                 helperChar.style.transform = 'scale(2.5)';
-                
-                explodeTimer = setTimeout(() => { 
-                    if(isInflating) triggerLiquidPop();
-                }, 1500); 
-
+                explodeTimer = setTimeout(() => { if(isInflating) triggerLiquidPop(); }, 1500); 
             }, 500); 
         };
 
         const cancelPress = (e) => { 
             if(!isPressing) return;
-            isPressing = false; 
-            clearTimeout(pressTimer);
-            clearTimeout(explodeTimer);
-            
+            isPressing = false; clearTimeout(pressTimer); clearTimeout(explodeTimer);
             const holdDuration = Date.now() - pressStartTime;
-
-            if(holdDuration < 500 && !isPopped && !isTransitioning) {
-                doClickAction();
-            } 
+            if(holdDuration < 500 && !isPopped && !isTransitioning) { doClickAction(); } 
             else if (isInflating && !isPopped) {
-                isInflating = false;
-                helperChar.classList.remove('face-puff');
+                isInflating = false; helperChar.classList.remove('face-puff');
                 helperChar.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
                 helperChar.style.transform = 'scale(1)';
             }
@@ -1127,6 +1119,7 @@ const firebaseConfig = {
         helperChar.addEventListener('touchend', cancelPress); helperChar.addEventListener('touchcancel', cancelPress);
 
 
+        // 네비게이션
         const navItems = document.querySelectorAll('.nav-item');
         const viewSections = document.querySelectorAll('.view-section');
         navItems.forEach(item => {
@@ -1140,9 +1133,11 @@ const firebaseConfig = {
                 if(targetId === 'view-calendar') renderCalendar();
                 if(targetId === 'view-store') { openStoreView('main'); renderBlockMap(); }
                 if(targetId === 'view-consulting') renderConsultingList();
+                if(targetId === 'view-settings') openSettingsSub('settings-main');
             });
         });
 
+        // 홈 화면 기능
         document.getElementById('home-search-input').addEventListener('input', function(e) {
             const query = e.target.value.trim().toLowerCase();
             const dash = document.getElementById('dashboard'); const dashHeader = document.getElementById('home-dash-header'); const resWrap = document.getElementById('home-search-results');
@@ -1191,16 +1186,13 @@ const firebaseConfig = {
             document.getElementById('dash-next-week').innerHTML = `<b>${nextWeekCount}</b>번의 방문<br>일정이 있어요!`;
         }
 
+        // 매장 관리 기능
         let currentListFilters = []; let isSelectionMode = false; let selectedStoreIds = new Set();
-
-        window.goBackToStoreManage = function() { 
-            openStoreView('manage', currentListFilters && currentListFilters.length ? currentListFilters : ['진행중']); 
-        };
+        window.goBackToStoreManage = function() { openStoreView('manage', currentListFilters && currentListFilters.length ? currentListFilters : ['진행중']); };
 
         window.openStoreView = function(viewName, filters = null) {
             document.querySelectorAll('.store-sub-view').forEach(s => s.classList.remove('active')); cancelSelectionMode();
             if (filters) currentListFilters = filters; 
-            
             if (viewName === 'main') { document.getElementById('store-main-view').classList.add('active'); renderBlockMap(); }
             if (viewName === 'register') document.getElementById('store-register').classList.add('active');
             if (viewName === 'manage') {
@@ -1225,7 +1217,6 @@ const firebaseConfig = {
             e.preventDefault();
             const price = Number(document.getElementById('store-price').value) || 0;
             const deposit = Number(document.getElementById('store-deposit').value) || 0;
-            
             const newStore = {
                 id: Date.now(), name: document.getElementById('store-name').value, status: '진행중', 
                 region: `${document.getElementById('region-province').value} ${document.getElementById('region-city').value}`,
@@ -1233,7 +1224,7 @@ const firebaseConfig = {
                 applyDate: document.getElementById('date-apply').value, consult1: "", consult2: "", inspect: "",
                 checklistData: null, memo: "", providedItems: {}, documents: {}
             };
-            storesData.unshift(newStore); saveStoresData(); updateDashboard(); renderBlockMap();
+            storesData.unshift(newStore); saveData(); updateDashboard(); renderBlockMap();
             showToast(`[${newStore.name}] 등록되었습니다.`);
             this.reset(); citySelect.innerHTML = '<option value="" disabled selected>시/군/구</option>'; citySelect.disabled = true;
             openStoreView('manage', ['진행중']); 
@@ -1250,8 +1241,12 @@ const firebaseConfig = {
             if(isSelectionMode) { bar.classList.add('active'); document.getElementById('selection-count').textContent = `${selectedStoreIds.size}개 선택됨`; } else bar.classList.remove('active');
         };
 
-        window.openDeletePwModal = function() {
-            if(selectedStoreIds.size === 0) return;
+        // --- 공통 삭제 로직 (매장 & 발주) ---
+        let deleteTargetType = 'store';
+        window.openDeletePwModal = function(type) {
+            deleteTargetType = type;
+            if(type === 'store' && selectedStoreIds.size === 0) return;
+            if(type === 'order' && selectedOrderIds.size === 0) return;
             document.getElementById('del-pw-input').value = '';
             document.getElementById('pw-modal').style.display = 'flex';
             void document.getElementById('pw-modal').offsetWidth;
@@ -1264,12 +1259,17 @@ const firebaseConfig = {
         window.confirmDelete = function() {
             const inputPw = document.getElementById('del-pw-input').value;
             if(inputPw === adminPw) {
-                storesData = storesData.filter(s => !selectedStoreIds.has(s.id));
-                cancelSelectionMode(); saveStoresData(); updateDashboard(); renderCalendar(); renderBlockMap();
+                if(deleteTargetType === 'store') {
+                    storesData = storesData.filter(s => !selectedStoreIds.has(s.id));
+                    cancelSelectionMode();
+                } else if(deleteTargetType === 'order') {
+                    ordersData = ordersData.filter(o => !selectedOrderIds.has(o.id));
+                    cancelOrderSelectionMode();
+                }
+                saveData(); updateDashboard(); renderCalendar(); renderBlockMap();
+                if(deleteTargetType === 'order') renderOrderList();
                 closePwModal(); showToast("성공적으로 삭제되었습니다.");
-            } else {
-                showToast("비밀번호가 일치하지 않습니다.");
-            }
+            } else { showToast("비밀번호가 일치하지 않습니다."); }
         };
 
         function renderStoreList() {
@@ -1291,7 +1291,7 @@ const firebaseConfig = {
                 card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>지역</span> <strong>${store.region}</strong></div><div class="store-info-line"><span>신청일</span> <strong>${store.applyDate || '-'}</strong></div>${balanceHtml}<div class="select-indicator"></div>`;
 
                 let tPressTimer; let tIsPressing = false; let startY = 0;
-                const cStartPress = (e) => { if(isSelectionMode) return; tIsPressing = true; startY = e.touches ? e.touches[0].clientY : e.clientY; tPressTimer = setTimeout(() => { tIsPressing = false; activateSelectionMode(store.id); if(navigator.vibrate){ try{ navigator.vibrate(50); }catch(err){} } }, 2000); };
+                const cStartPress = (e) => { if(isSelectionMode) return; tIsPressing = true; startY = e.touches ? e.touches[0].clientY : e.clientY; tPressTimer = setTimeout(() => { tIsPressing = false; activateSelectionMode(store.id); if(navigator.vibrate){ try{ navigator.vibrate(50); }catch(err){} } }, 1500); };
                 const cCancelPress = () => { clearTimeout(tPressTimer); tIsPressing = false; };
                 const movePress = (e) => { const currentY = e.touches ? e.touches[0].clientY : e.clientY; if(Math.abs(currentY - startY) > 10) cCancelPress(); };
 
@@ -1339,8 +1339,7 @@ const firebaseConfig = {
                 store.consult1 = document.getElementById('edit-date-consult1').value; 
                 store.consult2 = document.getElementById('edit-date-consult2').value; 
                 store.inspect = document.getElementById('edit-date-inspect').value;
-                
-                saveStoresData(); updateDashboard(); renderBlockMap(); showToast("저장되었습니다."); goBackToStoreManage(); renderCalendar(); 
+                saveData(); updateDashboard(); renderBlockMap(); showToast("저장되었습니다."); goBackToStoreManage(); renderCalendar(); 
             }
         });
 
@@ -1377,10 +1376,8 @@ const firebaseConfig = {
                         else {
                             matched.forEach(store => {
                                 const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`; card.style.marginBottom = '10px'; card.onclick = () => { closeMapOverlay(); openStoreView('manage', [store.status]); openEditStore(store.id); };
-                                
                                 const bal = (store.priceTotal || 0) - (store.priceDeposit || 0);
                                 let balHtml = bal > 0 ? `<strong style="color:var(--red-color)">미수금 ${bal.toLocaleString()}원</strong>` : `<strong style="color:var(--brand-color)">결제 완료</strong>`;
-                                
                                 card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>결제현황</span> ${balHtml}</div>`; list.appendChild(card);
                             });
                         }
@@ -1392,7 +1389,6 @@ const firebaseConfig = {
         }
         window.closeMapOverlay = function() { document.querySelectorAll('.map-block').forEach(b => b.classList.remove('popped')); document.getElementById('dimmer').classList.remove('active'); document.getElementById('top-sheet').classList.remove('active'); };
 
-        let currentDate = new Date(); let selectedDateStr = null;
         function getSchedulesForDate(dateStr) {
             let results = [];
             storesData.forEach(store => {
@@ -1454,16 +1450,8 @@ const firebaseConfig = {
             } 
         });
 
-        window.openYearModal = function() { 
-            document.getElementById('year-input').value = currentDate.getFullYear(); 
-            document.getElementById('year-modal').style.display = 'flex'; 
-            void document.getElementById('year-modal').offsetWidth;
-            document.getElementById('year-modal').classList.add('show'); 
-        };
-        window.closeYearModal = function() { 
-            document.getElementById('year-modal').classList.remove('show'); 
-            setTimeout(()=> {document.getElementById('year-modal').style.display = 'none';}, 200);
-        };
+        window.openYearModal = function() { document.getElementById('year-input').value = currentDate.getFullYear(); document.getElementById('year-modal').style.display = 'flex'; void document.getElementById('year-modal').offsetWidth; document.getElementById('year-modal').classList.add('show'); };
+        window.closeYearModal = function() { document.getElementById('year-modal').classList.remove('show'); setTimeout(()=> {document.getElementById('year-modal').style.display = 'none';}, 200); };
         window.applyYear = function() { const newYear = document.getElementById('year-input').value; if (newYear && !isNaN(newYear)) { currentDate.setFullYear(parseInt(newYear)); renderCalendar(); closeYearModal(); } };
 
         let currentChecklistStoreId = null;
@@ -1567,30 +1555,72 @@ const firebaseConfig = {
                 else newData[chk.dataset.id] = chk.checked ? chk.value : '0';
             });
             store.checklistData = newData; store.memo = document.getElementById('memo-textarea').value;
-            saveStoresData(); showToast("평가 결과가 저장되었습니다."); closeChecklist();
+            saveData(); showToast("평가 결과가 저장되었습니다."); closeChecklist();
         };
 
         window.openMemo = function() { document.getElementById('memo-modal').classList.add('active'); };
         window.closeMemo = function() { document.getElementById('memo-modal').classList.remove('active'); };
         window.saveMemo = function() { 
             const store = storesData.find(s => s.id === currentChecklistStoreId);
-            if(store) { store.memo = document.getElementById('memo-textarea').value; saveStoresData(); }
+            if(store) { store.memo = document.getElementById('memo-textarea').value; saveData(); }
             closeMemo(); showToast("메모가 저장되었습니다."); 
         };
 
+        // --- 제공 물품 모달 및 수량 입력 ---
         window.openItemsModal = function() {
             const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
             const pItems = store.providedItems || {};
-            document.querySelectorAll('.item-chk').forEach(chk => { chk.checked = !!pItems[chk.value]; });
+            
+            const listContainer = document.getElementById('items-modal-list');
+            listContainer.innerHTML = '';
+
+            providedItemsList.forEach(itemName => {
+                const isChecked = pItems[itemName] && pItems[itemName] > 0;
+                const qty = isChecked ? pItems[itemName] : '';
+                const display = isChecked ? 'block' : 'none';
+
+                listContainer.innerHTML += `
+                    <div class="item-chk-row-qty">
+                        <span>${itemName}</span>
+                        <input type="number" class="item-qty-input form-input" style="width:70px; padding:8px; margin-right:12px; text-align:center; display:${display};" min="1" placeholder="수량" value="${qty}">
+                        <label style="display:flex; align-items:center; cursor:pointer;">
+                            <input type="checkbox" class="hygiene-check item-chk" value="${itemName}" ${isChecked ? 'checked' : ''} onchange="toggleItemQty(this)">
+                            <div class="custom-chk"></div>
+                        </label>
+                    </div>
+                `;
+            });
+            
             document.getElementById('items-modal').classList.add('active');
         };
+
+        window.toggleItemQty = function(chk) {
+            const row = chk.closest('.item-chk-row-qty');
+            const qtyInput = row.querySelector('.item-qty-input');
+            if(chk.checked) {
+                qtyInput.style.display = 'block';
+                if(!qtyInput.value) qtyInput.value = 1;
+            } else {
+                qtyInput.style.display = 'none';
+                qtyInput.value = '';
+            }
+        };
+
         window.closeItemsModal = function() { document.getElementById('items-modal').classList.remove('active'); };
+        
         window.saveItems = function() {
             const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
             const pItems = {};
-            document.querySelectorAll('.item-chk').forEach(chk => { pItems[chk.value] = chk.checked; });
+            document.querySelectorAll('.item-chk-row-qty').forEach(row => {
+                const chk = row.querySelector('.item-chk');
+                const qtyInput = row.querySelector('.item-qty-input');
+                if(chk.checked && qtyInput.value) {
+                    const qty = parseInt(qtyInput.value) || 0;
+                    if(qty > 0) pItems[chk.value] = qty;
+                }
+            });
             store.providedItems = pItems;
-            saveStoresData(); closeItemsModal(); showToast("제공물품이 저장되었습니다.");
+            saveData(); closeItemsModal(); showToast("제공물품 수량이 저장되었습니다.");
         };
 
         window.openDocModal = function() {
@@ -1605,7 +1635,136 @@ const firebaseConfig = {
             const docs = {};
             document.querySelectorAll('.doc-chk').forEach(chk => { docs[chk.value] = chk.checked; });
             store.documents = docs;
-            saveStoresData(); closeDocModal(); showToast("서류 체크가 저장되었습니다.");
+            saveData(); closeDocModal(); showToast("서류 체크가 저장되었습니다.");
+        };
+
+        // --- 설정 탭 메뉴 전환 ---
+        window.openSettingsSub = function(viewId) {
+            document.querySelectorAll('.settings-sub-view').forEach(el => el.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            if(viewId === 'settings-stock') renderStockTable();
+            if(viewId === 'settings-orders') renderOrderList();
+        }
+
+        // --- 재고 확인 렌더링 ---
+        window.renderStockTable = function() {
+            const tbody = document.getElementById('stock-table-body');
+            tbody.innerHTML = '';
+            
+            providedItemsList.forEach(itemName => {
+                let totalOrdered = 0;
+                ordersData.forEach(order => {
+                    if(order.itemName === itemName) totalOrdered += order.qty;
+                });
+                
+                let totalProvided = 0;
+                storesData.forEach(store => {
+                    if(store.providedItems && store.providedItems[itemName]) {
+                        totalProvided += store.providedItems[itemName];
+                    }
+                });
+                
+                let currentStock = totalOrdered - totalProvided;
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${itemName}</td>
+                        <td style="color:var(--brand-color);">${totalOrdered}</td>
+                        <td style="color:var(--gray-600);">${totalProvided}</td>
+                        <td style="font-weight:800; color:${currentStock < 0 ? 'var(--red-color)' : 'var(--text-main)'}">${currentStock}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // --- 발주 기록 폼 및 렌더링 ---
+        const sel = document.getElementById('order-item-sel');
+        providedItemsList.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item; opt.textContent = item;
+            sel.appendChild(opt);
+        });
+
+        document.getElementById('new-order-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newOrder = {
+                id: Date.now(),
+                itemName: document.getElementById('order-item-sel').value,
+                qty: parseInt(document.getElementById('order-qty-input').value),
+                price: parseInt(document.getElementById('order-price-input').value),
+                date: document.getElementById('order-date-input').value
+            };
+            ordersData.unshift(newOrder);
+            saveData(); renderOrderList(); 
+            this.reset(); showToast("발주 기록이 추가되었습니다.");
+        });
+
+        let selectedOrderIds = new Set();
+        let isOrderSelectionMode = false;
+
+        window.activateOrderSelectionMode = function(firstId) {
+            isOrderSelectionMode = true; selectedOrderIds.add(firstId); 
+            renderOrderList(); updateOrderSelectionBar(); 
+        };
+        window.cancelOrderSelectionMode = function() { 
+            isOrderSelectionMode = false; selectedOrderIds.clear(); 
+            document.getElementById('order-selection-bar').classList.remove('active'); 
+            renderOrderList(); 
+        };
+        window.updateOrderSelectionBar = function() {
+            const bar = document.getElementById('order-selection-bar');
+            if(isOrderSelectionMode) { 
+                bar.classList.add('active'); 
+                document.getElementById('order-selection-count').textContent = `${selectedOrderIds.size}개 선택됨`; 
+            } else {
+                bar.classList.remove('active');
+            }
+        };
+
+        window.renderOrderList = function() {
+            const container = document.getElementById('order-list-container');
+            container.innerHTML = '';
+            container.classList.toggle('selection-mode-active', isOrderSelectionMode);
+
+            if(ordersData.length === 0) {
+                container.innerHTML = '<div class="store-empty" style="padding:30px;">발주 기록이 없습니다.</div>'; return;
+            }
+
+            const sorted = [...ordersData].sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            sorted.forEach(order => {
+                const card = document.createElement('div'); 
+                card.className = `store-card`;
+                if (selectedOrderIds.has(order.id)) card.classList.add('is-selected');
+
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <h3 style="margin:0; font-size:17px;">${order.itemName}</h3>
+                        <span style="font-weight:800; color:var(--brand-color); font-size:16px;">${order.qty} 개</span>
+                    </div>
+                    <div class="store-info-line"><span>발주일</span> <strong>${order.date}</strong></div>
+                    <div class="store-info-line"><span>결제금액</span> <strong>${(order.price || 0).toLocaleString()}원</strong></div>
+                    <div class="select-indicator"></div>
+                `;
+
+                let tPressTimer; let tIsPressing = false; let startY = 0;
+                const cStartPress = (e) => { if(isOrderSelectionMode) return; tIsPressing = true; startY = e.touches ? e.touches[0].clientY : e.clientY; tPressTimer = setTimeout(() => { tIsPressing = false; activateOrderSelectionMode(order.id); if(navigator.vibrate){ try{ navigator.vibrate(50); }catch(err){} } }, 1500); };
+                const cCancelPress = () => { clearTimeout(tPressTimer); tIsPressing = false; };
+                const movePress = (e) => { const currentY = e.touches ? e.touches[0].clientY : e.clientY; if(Math.abs(currentY - startY) > 10) cCancelPress(); };
+
+                card.addEventListener('mousedown', cStartPress); card.addEventListener('touchstart', cStartPress, {passive:true});
+                card.addEventListener('mousemove', movePress); card.addEventListener('touchmove', movePress, {passive:true});
+                card.addEventListener('mouseup', cCancelPress); card.addEventListener('mouseleave', cCancelPress); card.addEventListener('touchend', cCancelPress);
+
+                card.addEventListener('click', () => {
+                    if (isOrderSelectionMode) { 
+                        if (selectedOrderIds.has(order.id)) selectedOrderIds.delete(order.id); 
+                        else selectedOrderIds.add(order.id); 
+                        renderOrderList(); updateOrderSelectionBar(); 
+                    }
+                }); 
+                container.appendChild(card);
+            });
         };
 
         if ('serviceWorker' in navigator) {
