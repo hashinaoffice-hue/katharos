@@ -9,10 +9,6 @@
 
     <title>카다로스 업무 도우미</title>
     
-    <meta name="theme-color" content="#ffffff">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
 
@@ -211,7 +207,7 @@
         .top-icon-btn { background: var(--gray-100); color: var(--gray-800); border: none; padding: 8px 14px; border-radius: 14px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s;}
         .top-icon-btn:active { background: var(--gray-200); transform: scale(0.95);}
 
-        /* 폼 */
+        /* 폼 (Z플립 대응 Flex 구조) */
         .form-group { margin-bottom: 20px; width: 100%;}
         .form-group label { display: block; font-size: 13px; font-weight: 700; color: var(--gray-600); margin-bottom: 6px; }
         .form-input { width: 100%; padding: 14px 16px; border: 1px solid transparent; border-radius: 14px; background-color: var(--gray-50); font-size: 15px; color: var(--text-main); outline: none; box-sizing: border-box; font-weight: 500; transition: all 0.2s;}
@@ -685,7 +681,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // 파이어베이스 설정 영역
 const firebaseConfig = {
   apiKey: "AIzaSyCoIdXuPX_FAm6crm5yQmRPlIKMVNICVtw",
   authDomain: "katharos-kr.firebaseapp.com",
@@ -695,19 +690,29 @@ const firebaseConfig = {
   appId: "1:909642763442:web:341913955905f08b99cdab",
   measurementId: "G-3Y61WBHX26"
 };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        
+        let auth, db;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            auth = firebase.auth();
+            db = firebase.firestore();
+        } catch(e) {
+            console.error("Firebase Init Error:", e);
+        }
+        
         let currentUser = null;
 
-        // 초기 앱 시작 시 로컬 캐시에서 즉시 데이터 로드하여 0표시 방지
+        // 모바일 사파리/삼성인터넷 등에서 로컬 캐시 접근 차단 에러 방지
         let storesData = [];
-        const backup = localStorage.getItem('kadarosStoresBackup');
+        let backup = null;
+        try { backup = localStorage.getItem('kadarosStoresBackup'); } catch(e) {}
         if(backup) {
-            try { storesData = JSON.parse(backup); } catch(e){}
+            try { storesData = JSON.parse(backup) || []; } catch(e){}
         }
 
-        let adminPw = localStorage.getItem('kadarosAdminPw') || '0000';
+        let adminPw = '0000';
+        try { adminPw = localStorage.getItem('kadarosAdminPw') || '0000'; } catch(e) {}
+        
         let unsubscribeSnapshot = null;
 
         function toggleAppUI(isLoggedIn) {
@@ -734,15 +739,14 @@ const firebaseConfig = {
             }
         }
 
-        // 실시간 동기화 및 로컬 캐시 저장
         function initRealtimeSync() {
-            if (!currentUser) return;
+            if (!currentUser || !db) return;
             if(unsubscribeSnapshot) unsubscribeSnapshot();
 
             unsubscribeSnapshot = db.collection('users').doc(currentUser.uid).onSnapshot((doc) => {
                 if (doc.exists) {
                     storesData = doc.data().stores || [];
-                    localStorage.setItem('kadarosStoresBackup', JSON.stringify(storesData));
+                    try { localStorage.setItem('kadarosStoresBackup', JSON.stringify(storesData)); } catch(e){}
                 } else {
                     storesData = [];
                 }
@@ -760,9 +764,8 @@ const firebaseConfig = {
             });
         }
 
-        // 수동 새로고침 버튼 로직 (서버 데이터 강제 호출)
         window.manualRefresh = async function() {
-            if(!currentUser) return showToast("로그인이 필요합니다.");
+            if(!currentUser || !db) return showToast("로그인이 필요합니다.");
             
             const icon = document.getElementById('refresh-icon');
             icon.parentElement.classList.add('spinning'); 
@@ -771,7 +774,7 @@ const firebaseConfig = {
                 const doc = await db.collection('users').doc(currentUser.uid).get({source: 'server'});
                 if(doc.exists) {
                     storesData = doc.data().stores || [];
-                    localStorage.setItem('kadarosStoresBackup', JSON.stringify(storesData));
+                    try { localStorage.setItem('kadarosStoresBackup', JSON.stringify(storesData)); } catch(e){}
                 } else {
                     storesData = [];
                 }
@@ -787,7 +790,7 @@ const firebaseConfig = {
         };
 
         async function saveStoresData() { 
-            if(!currentUser) return;
+            if(!currentUser || !db) return;
             try {
                 await db.collection('users').doc(currentUser.uid).set({ stores: storesData });
             } catch(e) {
@@ -796,46 +799,54 @@ const firebaseConfig = {
             }
         }
         
-        auth.onAuthStateChanged(user => {
-            if(user) {
-                currentUser = user;
-                toggleAppUI(true);
-                initRealtimeSync();
-            } else {
-                currentUser = null;
-                if(unsubscribeSnapshot) {
-                    unsubscribeSnapshot(); 
-                    unsubscribeSnapshot = null;
+        if (auth) {
+            auth.onAuthStateChanged(user => {
+                if(user) {
+                    currentUser = user;
+                    toggleAppUI(true);
+                    initRealtimeSync();
+                } else {
+                    currentUser = null;
+                    if(unsubscribeSnapshot) {
+                        unsubscribeSnapshot(); 
+                        unsubscribeSnapshot = null;
+                    }
+                    toggleAppUI(false);
                 }
-                toggleAppUI(false);
+            });
+        }
+
+        // 🚨 모든 로그인 에러를 완벽하게 잡아내는 래퍼 🚨
+        window.handleLogin = async function() {
+            try {
+                const email = document.getElementById('login-email').value.trim();
+                const pw = document.getElementById('login-pw').value;
+                const remember = document.getElementById('login-remember').checked;
+
+                if(!email || !pw) return showToast("이메일과 비밀번호를 모두 입력해주세요.");
+                if(!auth) return showToast("서버 초기화에 실패했습니다. 키를 확인하세요.");
+                
+                showToast("로그인 중...");
+
+                // v10 Compat에서 지원되는 직접 문자열 주입 방식 (안전 처리)
+                let pStr = remember ? 'local' : 'session';
+                try { await auth.setPersistence(pStr); } catch(e) { console.warn("Persistence Error:", e); }
+
+                await auth.signInWithEmailAndPassword(email, pw);
+                
+                // 로그인 성공 시 onAuthStateChanged가 반응하여 화면 전환을 자동으로 해줌
+                showToast("로그인 성공!");
+
+            } catch(error) {
+                console.error("Login Error:", error);
+                if(error.code === 'auth/invalid-email') showToast("이메일 형식이 올바르지 않습니다.");
+                else if(error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') showToast("이메일 또는 비밀번호가 틀렸습니다.");
+                else showToast("로그인 실패: " + error.message);
             }
-        });
-
-        // 🚨 에러 유발 코드를 호환 버전에 맞게 수정 🚨
-        window.handleLogin = function() {
-            const email = document.getElementById('login-email').value;
-            const pw = document.getElementById('login-pw').value;
-            const remember = document.getElementById('login-remember').checked;
-
-            if(!email || !pw) return showToast("이메일과 비밀번호를 모두 입력해주세요.");
-            
-            // v9/v10 Compat에서 안전한 직접 문자열 주입 방식
-            const persistence = remember ? 'local' : 'session';
-
-            auth.setPersistence(persistence)
-                .then(() => {
-                    return auth.signInWithEmailAndPassword(email, pw);
-                })
-                .then(() => {
-                    showToast("로그인 되었습니다.");
-                })
-                .catch(error => {
-                    showToast("로그인 실패: 로그인 정보를 확인해주세요.");
-                    console.error(error);
-                });
         };
 
         window.handleLogout = function() {
+            if(!auth) return;
             auth.signOut().then(() => {
                 showToast("로그아웃 되었습니다.");
                 storesData = [];
@@ -1058,7 +1069,7 @@ const firebaseConfig = {
                     helperChar.style.opacity = '1';
                     helperChar.style.transform = 'scale(1)';
                     
-                    if(navigator.vibrate) navigator.vibrate(40);
+                    if(navigator.vibrate) { try{ navigator.vibrate(40); }catch(e){} }
 
                     setTimeout(() => {
                         isPopped = false;
@@ -1068,7 +1079,7 @@ const firebaseConfig = {
                 }
             }
             
-            if(navigator.vibrate) navigator.vibrate([80, 40, 80]); 
+            if(navigator.vibrate) { try{ navigator.vibrate([80, 40, 80]); }catch(e){} }
             rafId = requestAnimationFrame(renderPop);
         }
 
@@ -1280,7 +1291,7 @@ const firebaseConfig = {
                 card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>지역</span> <strong>${store.region}</strong></div><div class="store-info-line"><span>신청일</span> <strong>${store.applyDate || '-'}</strong></div>${balanceHtml}<div class="select-indicator"></div>`;
 
                 let tPressTimer; let tIsPressing = false; let startY = 0;
-                const cStartPress = (e) => { if(isSelectionMode) return; tIsPressing = true; startY = e.touches ? e.touches[0].clientY : e.clientY; tPressTimer = setTimeout(() => { tIsPressing = false; activateSelectionMode(store.id); if(navigator.vibrate) navigator.vibrate(50); }, 2000); };
+                const cStartPress = (e) => { if(isSelectionMode) return; tIsPressing = true; startY = e.touches ? e.touches[0].clientY : e.clientY; tPressTimer = setTimeout(() => { tIsPressing = false; activateSelectionMode(store.id); if(navigator.vibrate){ try{ navigator.vibrate(50); }catch(err){} } }, 2000); };
                 const cCancelPress = () => { clearTimeout(tPressTimer); tIsPressing = false; };
                 const movePress = (e) => { const currentY = e.touches ? e.touches[0].clientY : e.clientY; if(Math.abs(currentY - startY) > 10) cCancelPress(); };
 
@@ -1604,8 +1615,6 @@ const firebaseConfig = {
                     .catch(err => console.log('Service Worker 등록 실패', err));
             });
         }
-        
-    });
     </script>
 </body>
 </html>
