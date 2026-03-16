@@ -182,7 +182,6 @@
         .schedule-box.type-apply { background-color: var(--yellow-bg); border-color: transparent; } .schedule-box.type-apply .sch-name { color: var(--yellow-color); } .schedule-box.type-apply .sch-type { color: var(--yellow-color); background-color: #fff; border-color: var(--yellow-border); }
         .schedule-empty { text-align: center; color: var(--gray-400); padding: 30px; font-size: 14px; font-weight:500;}
 
-        /* 공통 서브 뷰 */
         .store-sub-view, .settings-sub-view { display: none; animation: fadeIn 0.3s ease; flex-direction: column; height: 100%; width: 100%;}
         .store-sub-view.active, .settings-sub-view.active { display: flex; }
         
@@ -214,7 +213,6 @@
         .btn-submit:active { transform: scale(0.98); }
         .btn-action { background-color: var(--gray-800); margin-top: 0;}
 
-        /* 매장 및 발주 리스트 카드 */
         .store-list-wrap { display: flex; flex-direction: column; gap: 16px; }
         .store-card { background-color: white; border: 1px solid var(--gray-100); border-radius: 24px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); position: relative; cursor: pointer; transition: transform 0.2s;}
         .store-card:active { transform: scale(0.98); }
@@ -232,7 +230,6 @@
         .store-card.status-pending { background-color: var(--yellow-bg); border-color: transparent; } .store-card.status-pending h3 { color: var(--yellow-color); } .store-card.status-pending .status-badge { background: #fff; color: var(--yellow-color); }
         .store-card.status-pass { background-color: var(--dark-gray-bg); border-color: transparent; color: #F9FAFB;} .store-card.status-pass h3, .store-card.status-pass strong { color: #FFFFFF; } .store-card.status-pass .status-badge { background: rgba(255,255,255,0.2); color: #fff; } .store-card.status-pass .store-info-line { color: #D1D6DB; }
 
-        /* 다중 선택 UI */
         .select-indicator { position: absolute; top: 50%; right: 24px; transform: translateY(-50%); width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--gray-300); display: none; align-items: center; justify-content: center; background-color: var(--bg-color); }
         .selection-mode-active .store-card { padding-right: 60px; } .selection-mode-active .select-indicator { display: flex; }
         .store-card.is-selected .select-indicator { background-color: var(--brand-color); border-color: var(--brand-color); }
@@ -247,7 +244,6 @@
         .selection-actions button { padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 700; border: none; cursor: pointer;}
         .btn-cancel-sel { background-color: var(--gray-100); color: var(--gray-800); margin-right: 8px;} .btn-delete-sel { background-color: var(--red-color); color: white; }
 
-        /* 블록 인포그래픽 맵 */
         .map-section-title { font-size: 18px; font-weight: 800; margin: 24px 0 16px 0; color: var(--text-main); display: flex; justify-content: space-between; align-items: flex-end;}
         .map-section-desc { font-size: 13px; font-weight: 600; color: var(--gray-600); }
         .map-tabs { display: flex; background: var(--gray-50); border-radius: 16px; padding: 6px; margin-bottom: 20px; }
@@ -279,14 +275,12 @@
         .ts-content { overflow-y: auto; flex: 1; padding-bottom: 10px; -ms-overflow-style: none; scrollbar-width: none;}
         .ts-content::-webkit-scrollbar { display: none; }
 
-        /* 체크박스 공통 */
         .hygiene-check { display: none; }
         .custom-chk { width: 22px; height: 22px; border: 2px solid var(--gray-300); border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; background: #fff; flex-shrink: 0;}
         .hygiene-check:checked + .custom-chk { background-color: var(--brand-color); border-color: var(--brand-color); }
         .hygiene-check:checked + .custom-chk::after { content: ''; width: 5px; height: 10px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-bottom: 2px; }
         .hygiene-check:disabled + .custom-chk { background-color: var(--gray-100); border-color: var(--gray-200); opacity: 0.5; }
 
-        /* 컨설팅 탭 */
         .accordion-item { background: white; border: 1px solid var(--gray-100); border-radius: 20px; margin-bottom: 12px; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.02);}
         .accordion-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 16px; color: var(--text-main); cursor: pointer; background: var(--gray-50);}
         .accordion-header svg { width: 20px; height: 20px; transition: transform 0.2s; }
@@ -303,7 +297,6 @@
         .btn-na { background: var(--gray-100); color: var(--gray-600); border: none; padding: 5px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
         .btn-na.active { background: var(--gray-800); color: white; }
 
-        /* 하단 고정 점수 & 저장 바 */
         .score-bar {
             position: absolute; bottom: 0; left: 0; width: 100%;
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
@@ -317,7 +310,6 @@
         .score-bar .breakdown { font-size: 13px; color: var(--gray-600); font-weight: 600;}
         .score-bar button { padding: 16px 32px; border-radius: 16px; font-size: 16px; font-weight: 800; background: var(--brand-color); color: white; border: none; cursor: pointer;}
 
-        /* 모달 공통 */
         .bottom-modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
             display: none; align-items: flex-end; z-index: 2000;
@@ -331,7 +323,6 @@
         .modal-bottom-actions { display: flex; gap: 12px; flex-shrink:0;}
         .modal-bottom-actions button { flex: 1; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; }
         
-        /* 물품/서류 모달 */
         .items-scroll-area { flex: 1; overflow-y: auto; margin-bottom: 24px; -ms-overflow-style: none; scrollbar-width: none; }
         .items-scroll-area::-webkit-scrollbar { display: none; }
         
@@ -342,7 +333,6 @@
         .item-chk-row span { font-size: 15px; color: var(--text-main); font-weight: 600;}
         .doc-desc { font-size:12px; color:var(--gray-400); text-align:center; margin-top:16px; font-weight:600;}
 
-        /* 설정 탭 메뉴 */
         .settings-menu { display: flex; flex-direction: column; gap: 12px; margin-top: 10px;}
         .settings-item {
             background: white; padding: 24px 20px; border-radius: 20px; font-size: 16px; font-weight: 700; 
@@ -353,13 +343,11 @@
         .settings-icon-wrap { display: flex; align-items: center; gap: 14px; }
         .settings-icon-wrap svg { width: 24px; height: 24px; fill: var(--brand-color); }
 
-        /* 재고 관리 표 */
         .stock-table { width: 100%; border-collapse: collapse; text-align: center; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.02); border: 1px solid var(--gray-100); margin-bottom: 24px;}
         .stock-table th { background: var(--gray-50); padding: 14px 16px; font-size: 14px; font-weight: 700; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); word-break: keep-all;}
         .stock-table td { padding: 16px; font-size: 15px; font-weight: 600; color: var(--text-main); border-bottom: 1px solid var(--gray-100); }
         .stock-table tr:last-child td { border-bottom: none; }
 
-        /* 하단 고정 메뉴바 */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; height: calc(var(--nav-height) + env(safe-area-inset-bottom));
             background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
@@ -373,7 +361,6 @@
         .nav-item svg { width: 24px; height: 24px; fill: currentColor; }
         .nav-item span { font-size: 11px; font-weight: 800; }
         
-        /* 중앙 팝업 모달 */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); display: none; align-items: center; justify-content: center; z-index: 4000; opacity: 0; transition: opacity 0.2s ease; }
         .modal-overlay.show { display: flex !important; opacity: 1; pointer-events: auto;}
         .modal-content { background: white; width: 80%; max-width: 340px; border-radius: 24px; padding: 32px 24px; text-align: center; transform: scale(0.95); transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: 0 20px 40px rgba(0,0,0,0.1);}
@@ -393,16 +380,13 @@
 
     <div id="login-overlay">
         <img src="logo2.png" alt="로고" style="width:240px; margin-bottom:40px;" onerror="this.style.display='none'">
-        
         <input type="email" id="login-email" class="form-input" placeholder="이메일" style="margin-bottom:12px;">
         <input type="password" id="login-pw" class="form-input" placeholder="비밀번호" style="margin-bottom:16px;">
-        
         <label style="display:flex; align-items:center; gap:10px; margin-bottom:24px; cursor:pointer; width:100%; justify-content:flex-start; padding-left:4px;">
             <input type="checkbox" id="login-remember" class="hygiene-check" checked>
             <div class="custom-chk"></div>
             <span style="font-size:15px; font-weight:600; color:var(--text-main);">자동 로그인 유지</span>
         </label>
-
         <button class="btn-submit" onclick="handleLogin()" style="margin-top:0;">로그인</button>
     </div>
 
@@ -480,6 +464,7 @@
     </div>
 
     <div id="app-container">
+        
         <div id="view-home" class="view-section active">
             <div class="view-header">
                 <div class="helper-container" id="helper-wrap">
@@ -548,9 +533,7 @@
                     </div>
                     <h3 id="check-store-title" style="font-size:19px; font-weight:800; margin-bottom:0;">매장명 평가표</h3>
                 </div>
-                
                 <div id="checklist-accordion" class="scroll-area" style="padding-top:0; padding-bottom: 110px;"></div>
-
                 <div class="score-bar">
                     <div class="total-box">
                         <div class="total">총점: <b id="check-total-score">0점</b></div>
@@ -677,7 +660,7 @@
                         </div>
                         <div class="settings-item" style="cursor:default;">
                             <span style="padding-left:10px;">앱 버전</span>
-                            <span class="version">1.2.3</span>
+                            <span class="version">1.2.4</span>
                         </div>
                     </div>
                 </div>
@@ -776,6 +759,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // --- 1. 파이어베이스 초기화 및 데이터 로드 ---
 const firebaseConfig = {
   apiKey: "AIzaSyCoIdXuPX_FAm6crm5yQmRPlIKMVNICVtw",
   authDomain: "katharos-kr.firebaseapp.com",
@@ -796,8 +781,8 @@ const firebaseConfig = {
         }
         
         let currentUser = null;
+        let unsubscribeSnapshot = null;
 
-        // 로컬 캐시 데이터 초기화 (이전 버전 호환성 완벽 처리)
         let storesData = [];
         let ordersData = [];
         let customItems = ["식품관리라벨(+@)", "계란보관함", "쎄니크로", "손소독/손세정제", "업소용 클린매트", "식기 덮개용 천", "이격판", "외부화보관함", "산가측정지"];
@@ -820,10 +805,14 @@ const firebaseConfig = {
 
         let adminPw = '0000';
         try { adminPw = localStorage.getItem('kadarosAdminPw') || '0000'; } catch(e) {}
-        
-        let unsubscribeSnapshot = null;
 
-        // UI 전환 시 캘린더 등 리플로우 강제 (에러 방어용 try-catch 래핑)
+        // --- 2. 코어 유틸 함수 ---
+        window.showToast = function(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg; toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 2500);
+        }
+
         function toggleAppUI(isLoggedIn) {
             const appContainer = document.getElementById('app-container');
             const loginOverlay = document.getElementById('login-overlay');
@@ -848,18 +837,17 @@ const firebaseConfig = {
             }
         }
 
-        // 모든 화면 렌더링 함수들을 한번에 호출 (어떤 에러가 발생해도 중단되지 않게 개별 Try Catch)
-        function updateAllUIs() {
+        window.updateAllUIs = function() {
             try { updateDashboard(); } catch(e) { console.error(e); }
             try { renderCalendar(); } catch(e) { console.error(e); }
             try { renderConsultingList(); } catch(e) { console.error(e); }
             try { renderBlockMap(); } catch(e) { console.error(e); }
-            try { if(document.getElementById('store-manage').classList.contains('active')) renderStoreList(); } catch(e) {}
-            try { if(document.getElementById('settings-stock').classList.contains('active')) renderStockTable(); } catch(e) {}
-            try { if(document.getElementById('settings-orders').classList.contains('active')) renderOrderList(); } catch(e) {}
-            try { if(document.getElementById('settings-manage-items').classList.contains('active')) renderManageItemsList(); } catch(e) {}
-            try { if(document.getElementById('settings-manage-vendors').classList.contains('active')) renderManageVendorsList(); } catch(e) {}
-            try { updateDropdowns(); } catch(e) {}
+            try { if(document.getElementById('store-manage').classList.contains('active')) renderStoreList(); } catch(e){}
+            try { if(document.getElementById('settings-stock').classList.contains('active')) renderStockTable(); } catch(e){}
+            try { if(document.getElementById('settings-orders').classList.contains('active')) renderOrderList(); } catch(e){}
+            try { if(document.getElementById('settings-manage-items').classList.contains('active')) renderManageItemsList(); } catch(e){}
+            try { if(document.getElementById('settings-manage-vendors').classList.contains('active')) renderManageVendorsList(); } catch(e){}
+            try { updateDropdowns(); } catch(e){}
         }
 
         function initRealtimeSync() {
@@ -910,7 +898,6 @@ const firebaseConfig = {
             }
         };
 
-        // 데이터 통합 저장
         async function saveData() { 
             if(!currentUser || !db) return;
             try {
@@ -933,33 +920,27 @@ const firebaseConfig = {
             });
         }
 
-        // 로그인 래퍼
-        window.handleLogin = function() {
-            const email = document.getElementById('login-email').value.trim();
-            const pw = document.getElementById('login-pw').value;
-            const remember = document.getElementById('login-remember').checked;
+        window.handleLogin = async function() {
+            try {
+                const email = document.getElementById('login-email').value.trim();
+                const pw = document.getElementById('login-pw').value;
+                const remember = document.getElementById('login-remember').checked;
 
-            if(!email || !pw) return showToast("이메일과 비밀번호를 모두 입력해주세요.");
-            if(!auth) return showToast("서버 초기화에 실패했습니다. 키를 확인하세요.");
-            
-            showToast("로그인 중...");
-            
-            // v9 호환성 모드를 위한 안전한 Persistence 지정
-            const pType = remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
+                if(!email || !pw) return showToast("이메일과 비밀번호를 모두 입력해주세요.");
+                if(!auth) return showToast("서버 초기화에 실패했습니다. 키를 확인하세요.");
+                
+                showToast("로그인 중...");
+                let pStr = remember ? 'local' : 'session';
+                try { await auth.setPersistence(pStr); } catch(e) { console.warn("Persistence Error:", e); }
+                await auth.signInWithEmailAndPassword(email, pw);
+                // 로그인 성공 토스트는 onAuthStateChanged 또는 화면 전환 후에 자연스럽게.
 
-            auth.setPersistence(pType)
-                .then(() => {
-                    return auth.signInWithEmailAndPassword(email, pw);
-                })
-                .then(() => {
-                    showToast("로그인 성공!");
-                })
-                .catch(error => {
-                    console.error("Login Error:", error);
-                    if(error.code === 'auth/invalid-email') showToast("이메일 형식이 올바르지 않습니다.");
-                    else if(error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') showToast("이메일 또는 비밀번호가 틀렸습니다.");
-                    else showToast("로그인 실패: " + error.message);
-                });
+            } catch(error) {
+                console.error("Login Error:", error);
+                if(error.code === 'auth/invalid-email') showToast("이메일 형식이 올바르지 않습니다.");
+                else if(error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') showToast("이메일 또는 비밀번호가 틀렸습니다.");
+                else showToast("로그인 실패: " + error.message);
+            }
         };
 
         window.handleLogout = function() {
@@ -971,6 +952,7 @@ const firebaseConfig = {
             });
         };
 
+        // --- 3. 데이터 세팅 ---
         const regionData = {
             "서울특별시": ["강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구", "성동구", "성북구", "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"],
             "경기도": ["수원시", "성남시", "고양시", "용인시", "부천시", "안산시", "안양시", "남양주시", "화성시", "평택시", "의정부시", "시흥시", "파주시", "광명시", "김포시", "군포시", "광주시", "이천시", "양주시", "오산시", "구리시", "안성시", "포천시", "의왕시", "하남시", "여주시", "양평군", "동두천시", "과천시", "가평군", "연천군"]
@@ -1026,13 +1008,287 @@ const firebaseConfig = {
             }
         ];
 
-        // --- 공용 모달/삭제 연동 시스템 ---
-        let pwTargetAction = null;
-        let deleteTargetId = null;
+        // --- 4. 캐릭터 캔버스 및 물리엔진 ---
+        const canvas = document.getElementById('fx-canvas');
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const helperChar = document.getElementById('helper-char');
+        const motions = ['motion-jump', 'motion-spin', 'motion-squish', 'motion-wiggle']; 
+        const faces = ['face-happy', 'face-surprised', 'face-wink'];
+        
+        let isGolden = false; let isTransitioning = false; 
+        let pressTimer = null; let explodeTimer = null; let isPressing = false; 
+        let isInflating = false; let isPopped = false;
+        let pressStartTime = 0; let rafId = null;
+
+        function doClickAction() {
+            if (!isGolden && Math.random() < 0.03) { 
+                isTransitioning = true; isGolden = true; playMotionGraphicWipe(true); return; 
+            }
+            helperChar.classList.remove(...motions, ...faces, 'face-puff'); void helperChar.offsetWidth; 
+            const rm = motions[Math.floor(Math.random() * motions.length)]; const rf = faces[Math.floor(Math.random() * faces.length)];
+            helperChar.classList.add(rm, rf); setTimeout(() => { helperChar.classList.remove(rm, rf); }, 600);
+        }
+
+        function playMotionGraphicWipe(isToGolden) {
+            canvas.style.display = 'block'; 
+            let start = null; const duration = 2000;
+            const particles = Array.from({length: 100}, () => ({ x: Math.random() * canvas.width, y: -Math.random()*canvas.height, size: Math.random() * 4 + 1.5, speedY: Math.random() * 15 + 10, speedX: Math.random() * 4 - 2, opacity: Math.random() * 0.8 + 0.2 }));
+
+            function render(time) {
+                if (!start) start = time; const elapsed = time - start; const progress = Math.min(elapsed / duration, 1);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                let overlayAlpha = 0;
+                if (progress < 0.4) overlayAlpha = progress / 0.4;
+                else if (progress < 0.6) { overlayAlpha = 1; if (!canvas.dataset.swapped) { toggleThemeDOM(isToGolden); canvas.dataset.swapped = 'true'; if(navigator.vibrate) {try{navigator.vibrate([100, 50, 100]);}catch(e){}} } }
+                else overlayAlpha = 1 - ((progress - 0.6) / 0.4);
+
+                const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                if (isToGolden) { gradient.addColorStop(0, `rgba(255, 223, 0, ${overlayAlpha})`); gradient.addColorStop(1, `rgba(212, 175, 55, ${overlayAlpha})`); }
+                else { gradient.addColorStop(0, `rgba(3, 110, 184, ${overlayAlpha})`); gradient.addColorStop(1, `rgba(0, 80, 150, ${overlayAlpha})`); }
+                ctx.fillStyle = gradient; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                particles.forEach(p => { p.y += p.speedY * (progress * 2); p.x += Math.sin(progress * 10 + p.speedX) * 2; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fillStyle = isToGolden ? `rgba(255, 255, 255, ${p.opacity})` : `rgba(150, 200, 255, ${p.opacity})`; ctx.shadowBlur = 10; ctx.shadowColor = isToGolden ? "#FFF" : "#00FFFF"; ctx.fill(); });
+
+                if (progress < 1) requestAnimationFrame(render);
+                else { canvas.style.display = 'none'; canvas.dataset.swapped = ''; isTransitioning = false; }
+            }
+            requestAnimationFrame(render);
+        }
+
+        function toggleThemeDOM(toGolden) {
+            const greeting = document.getElementById('main-greeting');
+            if (toGolden) { document.body.classList.add('golden-theme'); helperChar.classList.add('golden'); greeting.innerHTML = "✨ 앗! 황금이 발견! ✨<br>오늘 하루 대박나실 거예요!"; }
+            else { document.body.classList.remove('golden-theme'); helperChar.classList.remove('golden'); greeting.innerHTML = "카다로스 업무 도우미입니다.<br>무엇을 도와드릴까요?"; }
+        }
+
+        function triggerLiquidPop() {
+            isPopped = true;
+            isInflating = false;
+            
+            helperChar.style.transition = 'none';
+            helperChar.style.opacity = '0';
+            helperChar.style.transform = 'scale(0)';
+            helperChar.classList.remove('face-puff');
+
+            canvas.style.display = 'block';
+
+            const rect = helperChar.parentElement.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            let pList = Array.from({length: 70}, () => {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 45 + 15; 
+                let pColor = isGolden ? 
+                    `rgba(${200 + Math.random()*55}, ${150 + Math.random()*50}, 30, 1)` : 
+                    `rgba(${10 + Math.random()*20}, ${90 + Math.random()*40}, ${170 + Math.random()*50}, 1)`;
+                return { x: centerX, y: centerY, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, size: Math.random() * 14 + 4, friction: 0.80 + Math.random() * 0.08, color: pColor };
+            });
+
+            let pStartTime = performance.now();
+
+            function renderPop(time) {
+                const elapsed = time - pStartTime;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                let allGathered = true;
+
+                pList.forEach(p => {
+                    if (elapsed < 800) {
+                        p.x += p.vx; p.y += p.vy; p.vx *= p.friction; p.vy *= p.friction; allGathered = false;
+                    } else if (elapsed >= 800 && elapsed < 1800) {
+                        const dx = centerX - p.x; const dy = centerY - p.y; const dist = Math.sqrt(dx*dx + dy*dy);
+                        if (dist > 8) {
+                            allGathered = false;
+                            const gatherForce = Math.pow((elapsed - 800) / 1000, 2) * 0.4; 
+                            p.vx += dx * gatherForce; p.vy += dy * gatherForce; p.vx *= 0.88; p.vy *= 0.88;
+                            p.x += p.vx; p.y += p.vy;
+                        } else { p.x = centerX; p.y = centerY; p.vx = 0; p.vy = 0; }
+                    }
+
+                    const speedSq = p.vx*p.vx + p.vy*p.vy;
+                    const stretch = Math.max(1, speedSq * 0.015);
+                    const angle = Math.atan2(p.vy, p.vx);
+
+                    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(angle); ctx.beginPath();
+                    ctx.ellipse(0, 0, p.size * stretch, p.size, 0, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color; ctx.fill(); ctx.restore();
+                });
+
+                if (elapsed < 1800 || !allGathered) { rafId = requestAnimationFrame(renderPop); } 
+                else {
+                    canvas.style.display = 'none';
+                    helperChar.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s';
+                    helperChar.style.opacity = '1'; helperChar.style.transform = 'scale(1)';
+                    if(navigator.vibrate) {try{navigator.vibrate(40);}catch(e){}}
+                    setTimeout(() => { isPopped = false; helperChar.style.transition = 'transform 0.4s ease'; helperChar.style.transform = ''; }, 600);
+                }
+            }
+            if(navigator.vibrate) {try{navigator.vibrate([80, 40, 80]);}catch(e){}} 
+            rafId = requestAnimationFrame(renderPop);
+        }
+
+        const startPress = (e) => { 
+            if (isTransitioning || isPopped) return; 
+            isPressing = true; pressStartTime = Date.now();
+            pressTimer = setTimeout(() => { 
+                if(!isPressing) return;
+                isInflating = true; helperChar.classList.add('face-puff');
+                helperChar.style.transition = 'transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                helperChar.style.transform = 'scale(2.5)';
+                explodeTimer = setTimeout(() => { if(isInflating) triggerLiquidPop(); }, 1500); 
+            }, 500); 
+        };
+
+        const cancelPress = (e) => { 
+            if(!isPressing) return;
+            isPressing = false; clearTimeout(pressTimer); clearTimeout(explodeTimer);
+            const holdDuration = Date.now() - pressStartTime;
+            if(holdDuration < 500 && !isPopped && !isTransitioning) { doClickAction(); } 
+            else if (isInflating && !isPopped) {
+                isInflating = false; helperChar.classList.remove('face-puff');
+                helperChar.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                helperChar.style.transform = 'scale(1)';
+            }
+        };
+
+        helperChar.addEventListener('mousedown', startPress); helperChar.addEventListener('touchstart', startPress, {passive: true});
+        helperChar.addEventListener('mouseup', cancelPress); helperChar.addEventListener('mouseleave', cancelPress);
+        helperChar.addEventListener('touchend', cancelPress); helperChar.addEventListener('touchcancel', cancelPress);
+
+        // --- 5. 화면 및 네비게이션 로직 ---
+        const navItems = document.querySelectorAll('.nav-item');
+        const viewSections = document.querySelectorAll('.view-section');
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                navItems.forEach(nav => nav.classList.remove('active')); this.classList.add('active');
+                const targetId = this.getAttribute('data-target');
+                viewSections.forEach(section => { section.classList.remove('active'); });
+                document.getElementById(targetId).classList.add('active');
+                
+                // 탭 진입 시 안전하게 렌더링
+                if(targetId === 'view-calendar') setTimeout(() => { try{ renderCalendar(); }catch(e){} }, 50);
+                if(targetId === 'view-store') { openStoreView('main'); try{ renderBlockMap(); }catch(e){} }
+                if(targetId === 'view-consulting') { try{ renderConsultingList(); }catch(e){} }
+                if(targetId === 'view-settings') openSettingsSub('settings-main');
+            });
+        });
+
+        // 홈 화면 검색
+        document.getElementById('home-search-input').addEventListener('input', function(e) {
+            const query = e.target.value.trim().toLowerCase();
+            const dash = document.getElementById('dashboard'); const dashHeader = document.getElementById('home-dash-header'); const resWrap = document.getElementById('home-search-results');
+            if (query) {
+                dash.style.display = 'none'; dashHeader.parentElement.style.display = 'none'; resWrap.style.display = 'flex'; resWrap.innerHTML = '';
+                const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
+                const matched = storesData.filter(s => s.name.toLowerCase().includes(query)).sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
+                if (matched.length === 0) resWrap.innerHTML = '<div class="store-empty">검색 결과가 없습니다.</div>';
+                else {
+                    matched.forEach(store => {
+                        const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`;
+                        card.onclick = () => { document.querySelector('.nav-item[data-target="view-store"]').click(); openStoreView('manage', [store.status]); openEditStore(store.id); };
+                        card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>지역</span> <strong>${store.region}</strong></div>`;
+                        resWrap.appendChild(card);
+                    });
+                }
+            } else { dash.style.display = 'grid'; dashHeader.parentElement.style.display = 'flex'; resWrap.style.display = 'none'; }
+        });
+
+        function updateDashboard() {
+            let inProgressCount = 0; let passedCount = 0; let failedCount = 0; let thisWeekCount = 0; let nextWeekCount = 0;
+            const now = new Date(); now.setHours(0,0,0,0);
+            const endOfWeek = new Date(now); const diff = now.getDay() === 0 ? 0 : 7 - now.getDay(); endOfWeek.setDate(now.getDate() + diff); endOfWeek.setHours(23,59,59,999);
+            const nextWeekStart = new Date(endOfWeek); nextWeekStart.setDate(nextWeekStart.getDate() + 1); nextWeekStart.setHours(0,0,0,0);
+            const nextWeekEnd = new Date(nextWeekStart); nextWeekEnd.setDate(nextWeekStart.getDate() + 6); nextWeekEnd.setHours(23,59,59,999);
+
+            storesData.forEach(store => {
+                if (store.status === '진행중' || store.status === '보류') inProgressCount++;
+                if (store.status === '합격') passedCount++;
+                if (store.status === '불합격') failedCount++;
+                
+                [store.consult1, store.consult2].filter(d => d).forEach(dStr => {
+                    const d = new Date(dStr);
+                    if(d >= now && d <= endOfWeek) thisWeekCount++;
+                    if(d >= nextWeekStart && d <= nextWeekEnd) nextWeekCount++;
+                });
+            });
+
+            const completedCount = passedCount + failedCount;
+            const successRate = completedCount === 0 ? 0 : Math.round((passedCount / completedCount) * 100);
+
+            document.getElementById('dash-inprogress').innerHTML = `<b>${inProgressCount}</b>개의 매장을 진행중이에요.`;
+            document.getElementById('dash-completed').innerHTML = `<b>${completedCount}</b>개의 매장을<br>완료했어요.`;
+            document.getElementById('dash-success').innerHTML = `컨설팅 성공률은<br><b>${successRate}</b>%에요.`;
+            document.getElementById('dash-this-week').innerHTML = `<b>${thisWeekCount}</b>번의 방문<br>일정이 있어요!`;
+            document.getElementById('dash-next-week').innerHTML = `<b>${nextWeekCount}</b>번의 방문<br>일정이 있어요!`;
+        }
+
+        // --- 6. 매장 관리 ---
+        let currentListFilters = []; let isSelectionMode = false; let selectedStoreIds = new Set();
+        window.goBackToStoreManage = function() { openStoreView('manage', currentListFilters && currentListFilters.length ? currentListFilters : ['진행중']); };
+
+        window.openStoreView = function(viewName, filters = null) {
+            document.querySelectorAll('.store-sub-view').forEach(s => s.classList.remove('active')); cancelSelectionMode();
+            if (filters) currentListFilters = filters; 
+            if (viewName === 'main') { document.getElementById('store-main-view').classList.add('active'); renderBlockMap(); }
+            if (viewName === 'register') document.getElementById('store-register').classList.add('active');
+            if (viewName === 'manage') {
+                if(!currentListFilters || currentListFilters.length === 0) currentListFilters = ['진행중', '보류', '합격', '불합격'];
+                document.getElementById('store-manage').classList.add('active');
+                let titleStr = "매장 목록";
+                if(currentListFilters.includes('진행중') && currentListFilters.length===1) titleStr = "진행 매장 관리";
+                if(currentListFilters.includes('보류') && currentListFilters.length===1) titleStr = "보류 매장 관리";
+                if(currentListFilters.includes('합격')) titleStr = "완료 매장 관리";
+                document.getElementById('store-list-title').textContent = titleStr;
+                renderStoreList();
+            }
+        };
+
+        const provSelect = document.getElementById('region-province'); const citySelect = document.getElementById('region-city');
+        provSelect.addEventListener('change', function() {
+            const selected = this.value; citySelect.innerHTML = '<option value="" disabled selected>시/군/구</option>';
+            if(regionData[selected]) { regionData[selected].forEach(city => { const option = document.createElement('option'); option.value = city; option.textContent = city; citySelect.appendChild(option); }); citySelect.disabled = false; } else citySelect.disabled = true;
+        });
+
+        document.getElementById('new-store-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const price = Number(document.getElementById('store-price').value) || 0;
+            const deposit = Number(document.getElementById('store-deposit').value) || 0;
+            const newStore = {
+                id: Date.now(), name: document.getElementById('store-name').value, status: '진행중', 
+                region: `${document.getElementById('region-province').value} ${document.getElementById('region-city').value}`,
+                priceTotal: price, priceDeposit: deposit, vat: document.querySelector('input[name="vat"]:checked').value,
+                applyDate: document.getElementById('date-apply').value, consult1: "", consult2: "", inspect: "",
+                checklistData: null, memo: "", providedItems: {}, documents: {}
+            };
+            storesData.unshift(newStore); saveData(); updateAllUIs(); 
+            showToast(`[${newStore.name}] 등록되었습니다.`);
+            this.reset(); citySelect.innerHTML = '<option value="" disabled selected>시/군/구</option>'; citySelect.disabled = true;
+            openStoreView('manage', ['진행중']); 
+        });
+
+        function getStatusClass(status) {
+            if(status === '합격') return 'status-pass'; if(status === '불합격') return 'status-fail'; if(status === '보류') return 'status-pending'; return 'status-progress';
+        }
+
+        window.activateSelectionMode = function(firstId) { isSelectionMode = true; selectedStoreIds.add(firstId); renderStoreList(); updateSelectionBar(); };
+        window.cancelSelectionMode = function() { isSelectionMode = false; selectedStoreIds.clear(); document.getElementById('selection-bar').classList.remove('active'); renderStoreList(); };
+        window.updateSelectionBar = function() {
+            const bar = document.getElementById('selection-bar');
+            if(isSelectionMode) { bar.classList.add('active'); document.getElementById('selection-count').textContent = `${selectedStoreIds.size}개 선택됨`; } else bar.classList.remove('active');
+        };
+
+        // 삭제 비밀번호 검증 공용
+        let pwTargetAction = null; let deleteTargetId = null;
 
         window.checkPwAndOpenAction = function(action, id = null) {
-            pwTargetAction = action;
-            deleteTargetId = id;
+            pwTargetAction = action; deleteTargetId = id;
             document.getElementById('pw-modal-title').textContent = "관리자 비밀번호 입력";
             document.getElementById('del-pw-input').value = '';
             document.getElementById('pw-modal').style.display = 'flex';
@@ -1055,229 +1311,14 @@ const firebaseConfig = {
             const inputPw = document.getElementById('del-pw-input').value;
             if(inputPw === adminPw) {
                 closePwModal();
-                if(pwTargetAction === 'delete_store') {
-                    storesData = storesData.filter(s => !selectedStoreIds.has(s.id));
-                    cancelSelectionMode(); saveData(); updateAllUIs(); showToast("삭제되었습니다.");
-                } 
-                else if(pwTargetAction === 'delete_order') {
-                    ordersData = ordersData.filter(o => !selectedOrderIds.has(o.id));
-                    cancelOrderSelectionMode(); saveData(); updateAllUIs(); showToast("삭제되었습니다.");
-                }
-                else if(pwTargetAction === 'delete_item') {
-                    customItems = customItems.filter((_, idx) => idx !== deleteTargetId);
-                    saveData(); updateAllUIs(); showToast("삭제되었습니다.");
-                }
-                else if(pwTargetAction === 'delete_vendor') {
-                    customVendors = customVendors.filter((_, idx) => idx !== deleteTargetId);
-                    saveData(); updateAllUIs(); showToast("삭제되었습니다.");
-                }
-                else if(pwTargetAction === 'open_manage_items') {
-                    openSettingsSub('settings-manage-items');
-                }
-                else if(pwTargetAction === 'open_manage_vendors') {
-                    openSettingsSub('settings-manage-vendors');
-                }
-            } else { 
-                showToast("비밀번호가 일치하지 않습니다."); 
-            }
+                if(pwTargetAction === 'delete_store') { storesData = storesData.filter(s => !selectedStoreIds.has(s.id)); cancelSelectionMode(); saveData(); updateAllUIs(); showToast("삭제되었습니다."); } 
+                else if(pwTargetAction === 'delete_order') { ordersData = ordersData.filter(o => !selectedOrderIds.has(o.id)); cancelOrderSelectionMode(); saveData(); updateAllUIs(); showToast("삭제되었습니다."); }
+                else if(pwTargetAction === 'delete_item') { customItems = customItems.filter((_, idx) => idx !== deleteTargetId); saveData(); updateAllUIs(); showToast("삭제되었습니다."); }
+                else if(pwTargetAction === 'delete_vendor') { customVendors = customVendors.filter((_, idx) => idx !== deleteTargetId); saveData(); updateAllUIs(); showToast("삭제되었습니다."); }
+                else if(pwTargetAction === 'open_manage_items') { openSettingsSub('settings-manage-items'); }
+                else if(pwTargetAction === 'open_manage_vendors') { openSettingsSub('settings-manage-vendors'); }
+            } else { showToast("비밀번호가 일치하지 않습니다."); }
         };
-
-        // --- 재고/발주 기능 연동 ---
-        function updateDropdowns() {
-            const itemSel = document.getElementById('order-item-sel');
-            const vendorSel = document.getElementById('order-vendor-sel');
-            if(itemSel) {
-                itemSel.innerHTML = '';
-                customItems.forEach(item => {
-                    const opt = document.createElement('option'); opt.value = item; opt.textContent = item; itemSel.appendChild(opt);
-                });
-            }
-            if(vendorSel) {
-                vendorSel.innerHTML = '';
-                customVendors.forEach(vendor => {
-                    const opt = document.createElement('option'); opt.value = vendor; opt.textContent = vendor; vendorSel.appendChild(opt);
-                });
-            }
-        }
-
-        window.openSettingsSub = function(viewId) {
-            document.querySelectorAll('.settings-sub-view').forEach(el => el.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-            if(viewId === 'settings-stock') renderStockTable();
-            if(viewId === 'settings-orders') { updateDropdowns(); renderOrderList(); }
-            if(viewId === 'settings-manage-items') renderManageItemsList();
-            if(viewId === 'settings-manage-vendors') renderManageVendorsList();
-        }
-
-        window.renderStockTable = function() {
-            const tbody = document.getElementById('stock-table-body');
-            tbody.innerHTML = '';
-            
-            customItems.forEach(itemName => {
-                let totalOrdered = 0;
-                ordersData.forEach(order => { if(order.itemName === itemName) totalOrdered += order.qty; });
-                
-                let totalProvided = 0;
-                storesData.forEach(store => {
-                    if(store.providedItems && store.providedItems[itemName]) { totalProvided += store.providedItems[itemName]; }
-                });
-                
-                let currentStock = totalOrdered - totalProvided;
-                if(currentStock < 0) currentStock = 0;
-
-                let isRed = false;
-                if (itemName === '식품관리라벨(+@)' && currentStock <= 200) isRed = true;
-                else if (itemName !== '식품관리라벨(+@)' && currentStock <= 2) isRed = true;
-                
-                tbody.innerHTML += `
-                    <tr>
-                        <td style="text-align:left; padding-left:16px;">${itemName}</td>
-                        <td style="font-weight:800; color:${isRed ? 'var(--red-color)' : 'var(--brand-color)'}; font-size:16px;">${currentStock} 개</td>
-                    </tr>
-                `;
-            });
-        }
-
-        window.renderManageItemsList = function() {
-            const container = document.getElementById('manage-items-list');
-            container.innerHTML = '';
-            customItems.forEach((item, idx) => {
-                container.innerHTML += `
-                    <div class="list-item-card">
-                        <span>${item}</span>
-                        <button class="btn-sm-del" onclick="checkPwAndOpenAction('delete_item', ${idx})">삭제</button>
-                    </div>
-                `;
-            });
-        }
-
-        window.addCustomItem = function() {
-            const input = document.getElementById('new-custom-item-input');
-            const val = input.value.trim();
-            if(!val) return showToast("품목명을 입력하세요.");
-            if(customItems.includes(val)) return showToast("이미 존재하는 품목입니다.");
-            
-            customItems.push(val);
-            saveData(); updateAllUIs(); input.value = ''; showToast("품목이 추가되었습니다.");
-        }
-
-        window.renderManageVendorsList = function() {
-            const container = document.getElementById('manage-vendors-list');
-            container.innerHTML = '';
-            customVendors.forEach((vendor, idx) => {
-                container.innerHTML += `
-                    <div class="list-item-card">
-                        <span>${vendor}</span>
-                        <button class="btn-sm-del" onclick="checkPwAndOpenAction('delete_vendor', ${idx})">삭제</button>
-                    </div>
-                `;
-            });
-        }
-
-        window.addCustomVendor = function() {
-            const input = document.getElementById('new-custom-vendor-input');
-            const val = input.value.trim();
-            if(!val) return showToast("발주처를 입력하세요.");
-            if(customVendors.includes(val)) return showToast("이미 존재하는 발주처입니다.");
-            
-            customVendors.push(val);
-            saveData(); updateAllUIs(); input.value = ''; showToast("발주처가 추가되었습니다.");
-        }
-
-        document.getElementById('new-order-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const newOrder = {
-                id: Date.now(),
-                itemName: document.getElementById('order-item-sel').value,
-                vendorName: document.getElementById('order-vendor-sel').value,
-                qty: parseInt(document.getElementById('order-qty-input').value),
-                price: parseInt(document.getElementById('order-price-input').value),
-                date: document.getElementById('order-date-input').value
-            };
-            ordersData.unshift(newOrder);
-            saveData(); updateAllUIs(); 
-            this.reset(); showToast("발주 기록이 추가되었습니다.");
-        });
-
-        let selectedOrderIds = new Set();
-        let isOrderSelectionMode = false;
-
-        window.activateOrderSelectionMode = function(firstId) {
-            isOrderSelectionMode = true; selectedOrderIds.add(firstId); 
-            renderOrderList(); updateOrderSelectionBar(); 
-        };
-        window.cancelOrderSelectionMode = function() { 
-            isOrderSelectionMode = false; selectedOrderIds.clear(); 
-            document.getElementById('order-selection-bar').classList.remove('active'); 
-            renderOrderList(); 
-        };
-        window.updateOrderSelectionBar = function() {
-            const bar = document.getElementById('order-selection-bar');
-            if(isOrderSelectionMode) { 
-                bar.classList.add('active'); 
-                document.getElementById('order-selection-count').textContent = `${selectedOrderIds.size}개 선택됨`; 
-            } else {
-                bar.classList.remove('active');
-            }
-        };
-
-        window.renderOrderList = function() {
-            const container = document.getElementById('order-list-container');
-            container.innerHTML = '';
-            container.classList.toggle('selection-mode-active', isOrderSelectionMode);
-
-            if(ordersData.length === 0) {
-                container.innerHTML = '<div class="store-empty" style="padding:30px;">발주 기록이 없습니다.</div>'; return;
-            }
-
-            const sorted = [...ordersData].sort((a,b) => new Date(b.date) - new Date(a.date));
-
-            sorted.forEach(order => {
-                const card = document.createElement('div'); 
-                card.className = `store-card`;
-                if (selectedOrderIds.has(order.id)) card.classList.add('is-selected');
-
-                card.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                        <h3 style="margin:0; font-size:17px;"><span style="color:var(--gray-600); font-weight:600; font-size:13px; margin-right:4px;">[${order.vendorName}]</span>${order.itemName}</h3>
-                        <span style="font-weight:800; color:var(--brand-color); font-size:16px;">${order.qty} 개</span>
-                    </div>
-                    <div class="store-info-line"><span>발주일</span> <strong>${order.date}</strong></div>
-                    <div class="store-info-line"><span>결제금액</span> <strong>${(order.price || 0).toLocaleString()}원</strong></div>
-                    <div class="select-indicator"></div>
-                `;
-
-                let tPressTimer; let tIsPressing = false; let startY = 0;
-                const cStartPress = (e) => { if(isOrderSelectionMode) return; tIsPressing = true; startY = e.touches ? e.touches[0].clientY : e.clientY; tPressTimer = setTimeout(() => { tIsPressing = false; activateOrderSelectionMode(order.id); if(navigator.vibrate){ try{ navigator.vibrate(50); }catch(err){} } }, 1500); };
-                const cCancelPress = () => { clearTimeout(tPressTimer); tIsPressing = false; };
-                const movePress = (e) => { const currentY = e.touches ? e.touches[0].clientY : e.clientY; if(Math.abs(currentY - startY) > 10) cCancelPress(); };
-
-                card.addEventListener('mousedown', cStartPress); card.addEventListener('touchstart', cStartPress, {passive:true});
-                card.addEventListener('mousemove', movePress); card.addEventListener('touchmove', movePress, {passive:true});
-                card.addEventListener('mouseup', cCancelPress); card.addEventListener('mouseleave', cCancelPress); card.addEventListener('touchend', cCancelPress);
-
-                card.addEventListener('click', () => {
-                    if (isOrderSelectionMode) { 
-                        if (selectedOrderIds.has(order.id)) selectedOrderIds.delete(order.id); 
-                        else selectedOrderIds.add(order.id); 
-                        renderOrderList(); updateOrderSelectionBar(); 
-                    }
-                }); 
-                container.appendChild(card);
-            });
-        };
-
-        // --- 그 외 각종 기능 렌더링 코드 ---
-        function renderConsultingList() {
-            document.getElementById('consult-check-view').style.display = 'none'; document.getElementById('consult-list-view').style.display = 'flex';
-            const list = document.getElementById('consult-store-list'); list.innerHTML = '';
-            const inProgress = storesData.filter(s => s.status === '진행중' || s.status === '보류');
-            if(inProgress.length === 0) { list.innerHTML = '<div class="store-empty">진행중인 매장이 없습니다.</div>'; return; }
-            inProgress.forEach(store => {
-                const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`; card.onclick = () => openChecklist(store.id);
-                card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>신청일</span> <strong>${store.applyDate || '-'}</strong></div>`; list.appendChild(card);
-            });
-        }
 
         function renderStoreList() {
             const container = document.getElementById('store-list-container');
@@ -1310,6 +1351,177 @@ const firebaseConfig = {
                     if (isSelectionMode) { if (selectedStoreIds.has(store.id)) selectedStoreIds.delete(store.id); else selectedStoreIds.add(store.id); renderStoreList(); updateSelectionBar(); }
                     else openEditStore(store.id);
                 }); container.appendChild(card);
+            });
+        }
+
+        window.openEditStore = function(id) {
+            const store = storesData.find(s => s.id === id); if(!store) return;
+            document.getElementById('edit-store-id').value = store.id; 
+            document.getElementById('edit-store-status').value = store.status; 
+            document.getElementById('edit-store-name').value = store.name; 
+            document.getElementById('edit-store-price').value = store.priceTotal || 0;
+            document.getElementById('edit-store-deposit').value = store.priceDeposit || 0;
+            document.getElementById('edit-date-apply').value = store.applyDate; 
+            document.getElementById('edit-date-consult1').value = store.consult1; 
+            document.getElementById('edit-date-consult2').value = store.consult2; 
+            document.getElementById('edit-date-inspect').value = store.inspect;
+            
+            const viewBtn = document.getElementById('btn-view-checklist');
+            if(store.checklistData || store.memo || (store.providedItems && Object.keys(store.providedItems).length > 0) || (store.documents && Object.keys(store.documents).length > 0)) {
+                viewBtn.style.display = 'block';
+                viewBtn.onclick = () => { document.querySelector('.nav-item[data-target="view-consulting"]').click(); openChecklist(store.id); };
+            } else { viewBtn.style.display = 'none'; }
+
+            document.querySelectorAll('.store-sub-view').forEach(s => s.classList.remove('active')); document.getElementById('store-edit').classList.add('active');
+        };
+
+        document.getElementById('edit-store-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const store = storesData.find(s => s.id === parseInt(document.getElementById('edit-store-id').value));
+            if(store) {
+                store.status = document.getElementById('edit-store-status').value; 
+                store.name = document.getElementById('edit-store-name').value; 
+                store.priceTotal = Number(document.getElementById('edit-store-price').value) || 0;
+                store.priceDeposit = Number(document.getElementById('edit-store-deposit').value) || 0;
+                store.applyDate = document.getElementById('edit-date-apply').value; 
+                store.consult1 = document.getElementById('edit-date-consult1').value; 
+                store.consult2 = document.getElementById('edit-date-consult2').value; 
+                store.inspect = document.getElementById('edit-date-inspect').value;
+                saveData(); updateAllUIs(); showToast("저장되었습니다."); goBackToStoreManage(); 
+            }
+        });
+
+        // 비밀번호 설정 모달
+        window.openChangePwModal = function() {
+            document.getElementById('current-pw-input').value = ''; document.getElementById('new-pw-input').value = '';
+            document.getElementById('change-pw-modal').style.display = 'flex'; void document.getElementById('change-pw-modal').offsetWidth; document.getElementById('change-pw-modal').classList.add('show');
+        };
+        window.closeChangePwModal = function() { document.getElementById('change-pw-modal').classList.remove('show'); setTimeout(() => document.getElementById('change-pw-modal').style.display = 'none', 200); };
+        window.confirmChangePw = function() {
+            const current = document.getElementById('current-pw-input').value; const newPw = document.getElementById('new-pw-input').value;
+            if(current === adminPw) {
+                if(newPw.length < 4) { showToast("새 비밀번호는 4자리 이상 입력해주세요."); return; }
+                adminPw = newPw; localStorage.setItem('kadarosAdminPw', adminPw); closeChangePwModal(); showToast("비밀번호가 성공적으로 변경되었습니다.");
+            } else { showToast("현재 비밀번호가 틀립니다."); }
+        };
+
+        // 지도 탭
+        window.switchMapTab = function(regionKey) {
+            document.querySelectorAll('.map-tab').forEach(t => t.classList.remove('active')); document.querySelector(`.map-tab[data-target="${regionKey}"]`).classList.add('active');
+            document.getElementById('block-map-seoul').style.display = regionKey === 'seoul' ? 'grid' : 'none'; document.getElementById('block-map-gyeonggi').style.display = regionKey === 'gyeonggi' ? 'grid' : 'none';
+        };
+
+        function renderBlockMap() {
+            const drawBlocks = (targetId, dataArr) => {
+                const grid = document.getElementById(targetId); grid.innerHTML = '';
+                dataArr.forEach(cityName => {
+                    const count = storesData.filter(s => s.region.includes(cityName)).length;
+                    const block = document.createElement('div'); block.className = `map-block ${count > 0 ? (count > 2 ? 'has-store-dense' : 'has-store') : ''}`; block.innerHTML = cityName + (count > 0 ? `<div class="badge">${count}</div>` : '');
+                    block.onclick = () => {
+                        document.querySelectorAll('.map-block').forEach(b => b.classList.remove('popped')); block.classList.add('popped'); document.getElementById('dimmer').classList.add('active');
+                        document.getElementById('ts-title').textContent = cityName + " 현황"; const list = document.getElementById('ts-content'); list.innerHTML = '';
+                        const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
+                        const matched = storesData.filter(s => s.region.includes(cityName)).sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
+                        if(matched.length === 0) list.innerHTML = '<div class="store-empty" style="margin-top:20px;">등록된 매장이 없습니다.</div>';
+                        else {
+                            matched.forEach(store => {
+                                const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`; card.style.marginBottom = '10px'; card.onclick = () => { closeMapOverlay(); openStoreView('manage', [store.status]); openEditStore(store.id); };
+                                
+                                const bal = (store.priceTotal || 0) - (store.priceDeposit || 0);
+                                let balHtml = bal > 0 ? `<strong style="color:var(--red-color)">미수금 ${bal.toLocaleString()}원</strong>` : `<strong style="color:var(--brand-color)">결제 완료</strong>`;
+                                
+                                card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>결제현황</span> ${balHtml}</div>`; list.appendChild(card);
+                            });
+                        }
+                        document.getElementById('top-sheet').classList.add('active');
+                    }; grid.appendChild(block);
+                });
+            };
+            drawBlocks('block-map-seoul', regionData["서울특별시"]); drawBlocks('block-map-gyeonggi', regionData["경기도"]);
+        }
+        window.closeMapOverlay = function() { document.querySelectorAll('.map-block').forEach(b => b.classList.remove('popped')); document.getElementById('dimmer').classList.remove('active'); document.getElementById('top-sheet').classList.remove('active'); };
+
+        // 캘린더
+        let currentDate = new Date(); let selectedDateStr = null;
+        function getSchedulesForDate(dateStr) {
+            let results = [];
+            storesData.forEach(store => {
+                if(store.applyDate === dateStr) results.push({ name: store.name, type: "신청일", typeClass: "type-apply" });
+                if(store.consult1 === dateStr) results.push({ name: store.name, type: "1차 컨설팅", typeClass: "" });
+                if(store.consult2 === dateStr) results.push({ name: store.name, type: "2차 컨설팅", typeClass: "" });
+                if(store.inspect === dateStr) results.push({ name: store.name, type: "심사일", typeClass: "type-inspect" });
+            }); return results;
+        }
+
+        function generateCalendarDOM() {
+            const year = currentDate.getFullYear(); const month = currentDate.getMonth(); const today = new Date();
+            document.getElementById('cal-year').textContent = year; document.getElementById('cal-month').textContent = (month + 1) + '월';
+            const firstDay = new Date(year, month, 1).getDay(); const daysInMonth = new Date(year, month + 1, 0).getDate();
+            let html = '';
+            for (let i = 0; i < firstDay; i++) { html += `<div class="calendar-cell empty"></div>`; }
+            for (let i = 1; i <= daysInMonth; i++) {
+                const cellDateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`; let cls = 'calendar-cell';
+                if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) { cls += ' today'; if(!selectedDateStr) selectDate(cellDateStr); }
+                if (cellDateStr === selectedDateStr) cls += ' selected';
+                let markers = ''; const schedules = getSchedulesForDate(cellDateStr);
+                if (schedules.length > 0) {
+                    markers += '<div class="marker-wrap">';
+                    schedules.slice(0, 3).forEach(sch => { let mcls = 'marker'; if(sch.type === '심사일') mcls += ' marker-red'; if(sch.type === '신청일') mcls += ' marker-yellow'; markers += `<div class="${mcls}"></div>`; });
+                    markers += '</div>';
+                }
+                html += `<div class="${cls}" data-date="${cellDateStr}">${i}${markers}</div>`;
+            } return html;
+        }
+
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid'); 
+            if(!grid) return;
+            grid.innerHTML = generateCalendarDOM();
+            grid.querySelectorAll('.calendar-cell:not(.empty)').forEach(cell => { cell.addEventListener('click', function() { document.querySelectorAll('.calendar-cell').forEach(c => c.classList.remove('selected')); this.classList.add('selected'); selectDate(this.dataset.date); }); });
+        }
+
+        function selectDate(dateStr) {
+            selectedDateStr = dateStr; const dateObj = new Date(dateStr); document.getElementById('selected-date-title').textContent = `${dateObj.getMonth()+1}월 ${dateObj.getDate()}일 일정`;
+            const listEl = document.getElementById('schedule-list'); listEl.innerHTML = ''; const schedules = getSchedulesForDate(dateStr);
+            if (schedules.length > 0) schedules.forEach(item => { listEl.innerHTML += `<div class="schedule-box ${item.typeClass}"><span class="sch-name">${item.name}</span><span class="sch-type">${item.type}</span></div>`; });
+            else listEl.innerHTML = '<div class="schedule-empty">등록된 일정이 없습니다.</div>';
+        }
+
+        const calWrap = document.getElementById('calendar-wrapper'); let isTwoFing = false; let sX = 0; let cX = 0;
+        calWrap.addEventListener('touchstart', (e) => { if (e.touches.length === 2) { isTwoFing = true; sX = (e.touches[0].clientX + e.touches[1].clientX) / 2; e.preventDefault(); } }, {passive: false});
+        calWrap.addEventListener('touchmove', (e) => { if (isTwoFing && e.touches.length === 2) { cX = (e.touches[0].clientX + e.touches[1].clientX) / 2; e.preventDefault(); } }, {passive: false});
+        calWrap.addEventListener('touchend', (e) => { 
+            if (isTwoFing) { 
+                let dX = sX - cX; 
+                if (Math.abs(dX) > 40 && cX !== 0) { 
+                    const grid = document.getElementById('calendar-grid');
+                    const outClass = dX > 0 ? 'slide-left-out' : 'slide-right-out'; const inClass = dX > 0 ? 'slide-right-in' : 'slide-left-in';
+                    grid.classList.add(outClass);
+                    setTimeout(() => {
+                        if (dX > 0) currentDate.setMonth(currentDate.getMonth() + 1); else currentDate.setMonth(currentDate.getMonth() - 1);
+                        grid.classList.remove(outClass); grid.innerHTML = generateCalendarDOM(); grid.classList.add(inClass);
+                        setTimeout(() => { grid.classList.remove(inClass); renderCalendar(); }, 50);
+                    }, 200);
+                } isTwoFing = false; sX = 0; cX = 0; 
+            } 
+        });
+
+        window.openYearModal = function() { document.getElementById('year-input').value = currentDate.getFullYear(); document.getElementById('year-modal').style.display = 'flex'; void document.getElementById('year-modal').offsetWidth; document.getElementById('year-modal').classList.add('show'); };
+        window.closeYearModal = function() { document.getElementById('year-modal').classList.remove('show'); setTimeout(()=> {document.getElementById('year-modal').style.display = 'none';}, 200); };
+        window.applyYear = function() { const newYear = document.getElementById('year-input').value; if (newYear && !isNaN(newYear)) { currentDate.setFullYear(parseInt(newYear)); renderCalendar(); closeYearModal(); } };
+
+        // 컨설팅 탭 및 평가
+        let currentChecklistStoreId = null;
+        let currentChecklistData = {};
+
+        function renderConsultingList() {
+            document.getElementById('consult-check-view').style.display = 'none'; document.getElementById('consult-list-view').style.display = 'flex';
+            const list = document.getElementById('consult-store-list'); list.innerHTML = '';
+            const inProgress = storesData.filter(s => s.status === '진행중' || s.status === '보류');
+            if(inProgress.length === 0) { list.innerHTML = '<div class="store-empty">진행중인 매장이 없습니다.</div>'; return; }
+            inProgress.forEach(store => {
+                const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`; card.onclick = () => openChecklist(store.id);
+                card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>신청일</span> <strong>${store.applyDate || '-'}</strong></div>`; list.appendChild(card);
             });
         }
 
@@ -1400,7 +1612,7 @@ const firebaseConfig = {
                 else newData[chk.dataset.id] = chk.checked ? chk.value : '0';
             });
             store.checklistData = newData; store.memo = document.getElementById('memo-textarea').value;
-            saveData(); showToast("평가 결과가 저장되었습니다."); closeChecklist();
+            saveData(); showToast("저장되었습니다."); closeChecklist();
         };
 
         window.openMemo = function() { document.getElementById('memo-modal').classList.add('active'); };
@@ -1411,6 +1623,7 @@ const firebaseConfig = {
             closeMemo(); showToast("저장되었습니다."); 
         };
 
+        // 제공 물품 모달
         window.openItemsModal = function() {
             const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
             const pItems = store.providedItems || {};
@@ -1482,82 +1695,12 @@ const firebaseConfig = {
             saveData(); closeDocModal(); showToast("저장되었습니다.");
         };
 
-        // --- 기타 렌더링 코드 ---
-        window.openEditStore = function(id) {
-            const store = storesData.find(s => s.id === id); if(!store) return;
-            document.getElementById('edit-store-id').value = store.id; 
-            document.getElementById('edit-store-status').value = store.status; 
-            document.getElementById('edit-store-name').value = store.name; 
-            document.getElementById('edit-store-price').value = store.priceTotal || 0;
-            document.getElementById('edit-store-deposit').value = store.priceDeposit || 0;
-            document.getElementById('edit-date-apply').value = store.applyDate; 
-            document.getElementById('edit-date-consult1').value = store.consult1; 
-            document.getElementById('edit-date-consult2').value = store.consult2; 
-            document.getElementById('edit-date-inspect').value = store.inspect;
-            
-            const viewBtn = document.getElementById('btn-view-checklist');
-            if(store.checklistData || store.memo || (store.providedItems && Object.keys(store.providedItems).length > 0) || (store.documents && Object.keys(store.documents).length > 0)) {
-                viewBtn.style.display = 'block';
-                viewBtn.onclick = () => { document.querySelector('.nav-item[data-target="view-consulting"]').click(); openChecklist(store.id); };
-            } else { viewBtn.style.display = 'none'; }
-
-            document.querySelectorAll('.store-sub-view').forEach(s => s.classList.remove('active')); document.getElementById('store-edit').classList.add('active');
-        };
-
-        window.openChangePwModal = function() {
-            document.getElementById('current-pw-input').value = ''; document.getElementById('new-pw-input').value = '';
-            document.getElementById('change-pw-modal').style.display = 'flex'; void document.getElementById('change-pw-modal').offsetWidth; document.getElementById('change-pw-modal').classList.add('show');
-        };
-        window.closeChangePwModal = function() { document.getElementById('change-pw-modal').classList.remove('show'); setTimeout(() => document.getElementById('change-pw-modal').style.display = 'none', 200); };
-        window.confirmChangePw = function() {
-            const current = document.getElementById('current-pw-input').value; const newPw = document.getElementById('new-pw-input').value;
-            if(current === adminPw) {
-                if(newPw.length < 4) { showToast("새 비밀번호는 4자리 이상 입력해주세요."); return; }
-                adminPw = newPw; localStorage.setItem('kadarosAdminPw', adminPw); closeChangePwModal(); showToast("비밀번호가 성공적으로 변경되었습니다.");
-            } else { showToast("현재 비밀번호가 틀립니다."); }
-        };
-
-        window.switchMapTab = function(regionKey) {
-            document.querySelectorAll('.map-tab').forEach(t => t.classList.remove('active')); document.querySelector(`.map-tab[data-target="${regionKey}"]`).classList.add('active');
-            document.getElementById('block-map-seoul').style.display = regionKey === 'seoul' ? 'grid' : 'none'; document.getElementById('block-map-gyeonggi').style.display = regionKey === 'gyeonggi' ? 'grid' : 'none';
-        };
-
-        function renderBlockMap() {
-            const drawBlocks = (targetId, dataArr) => {
-                const grid = document.getElementById(targetId); grid.innerHTML = '';
-                dataArr.forEach(cityName => {
-                    const count = storesData.filter(s => s.region.includes(cityName)).length;
-                    const block = document.createElement('div'); block.className = `map-block ${count > 0 ? (count > 2 ? 'has-store-dense' : 'has-store') : ''}`; block.innerHTML = cityName + (count > 0 ? `<div class="badge">${count}</div>` : '');
-                    block.onclick = () => {
-                        document.querySelectorAll('.map-block').forEach(b => b.classList.remove('popped')); block.classList.add('popped'); document.getElementById('dimmer').classList.add('active');
-                        document.getElementById('ts-title').textContent = cityName + " 현황"; const list = document.getElementById('ts-content'); list.innerHTML = '';
-                        const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
-                        const matched = storesData.filter(s => s.region.includes(cityName)).sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
-                        if(matched.length === 0) list.innerHTML = '<div class="store-empty" style="margin-top:20px;">등록된 매장이 없습니다.</div>';
-                        else {
-                            matched.forEach(store => {
-                                const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`; card.style.marginBottom = '10px'; card.onclick = () => { closeMapOverlay(); openStoreView('manage', [store.status]); openEditStore(store.id); };
-                                
-                                const bal = (store.priceTotal || 0) - (store.priceDeposit || 0);
-                                let balHtml = bal > 0 ? `<strong style="color:var(--red-color)">미수금 ${bal.toLocaleString()}원</strong>` : `<strong style="color:var(--brand-color)">결제 완료</strong>`;
-                                
-                                card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>결제현황</span> ${balHtml}</div>`; list.appendChild(card);
-                            });
-                        }
-                        document.getElementById('top-sheet').classList.add('active');
-                    }; grid.appendChild(block);
-                });
-            };
-            drawBlocks('block-map-seoul', regionData["서울특별시"]); drawBlocks('block-map-gyeonggi', regionData["경기도"]);
-        }
-        window.closeMapOverlay = function() { document.querySelectorAll('.map-block').forEach(b => b.classList.remove('popped')); document.getElementById('dimmer').classList.remove('active'); document.getElementById('top-sheet').classList.remove('active'); };
-
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js').catch(()=>{});
             });
         }
-        
+    });
     </script>
 </body>
 </html>
