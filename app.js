@@ -8,14 +8,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // --- 2. 파이어베이스 초기화 ---
-    const firebaseConfig = {
-        apiKey: "YOUR_API_KEY_HERE",
-        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_PROJECT_ID.appspot.com",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID"
-    };
+const firebaseConfig = {
+  apiKey: "AIzaSyCoIdXuPX_FAm6crm5yQmRPlIKMVNICVtw",
+  authDomain: "katharos-kr.firebaseapp.com",
+  projectId: "katharos-kr",
+  storageBucket: "katharos-kr.firebasestorage.app",
+  messagingSenderId: "909642763442",
+  appId: "1:909642763442:web:341913955905f08b99cdab",
+  measurementId: "G-3Y61WBHX26"
+};
     
     let auth, db;
     try {
