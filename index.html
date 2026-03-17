@@ -12,7 +12,384 @@
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
 
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --brand-color: #036eb8; 
+            --bg-color: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f2f4f6;
+            --gray-200: #e5e8eb;
+            --gray-300: #d1d6db;
+            --gray-400: #b0b8c1;
+            --gray-600: #8b95a1;
+            --gray-800: #333d4b;
+            --text-main: #191f28;
+            --nav-height: 64px;
+            
+            --red-color: #E53E3E; --red-bg: #FFF5F5; --red-border: #FED7D7;
+            --yellow-color: #D97706; --yellow-bg: #FFFBEB; --yellow-border: #FDE68A;
+            --blue-bg: #E8F3FF; --dark-gray-bg: #333D4B;
+        }
+
+        /* 기기/브라우저 강제 다크모드 방어 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --brand-color: #036eb8; 
+                --bg-color: #ffffff;
+                --gray-50: #f9fafb;
+                --gray-100: #f2f4f6;
+                --gray-200: #e5e8eb;
+                --gray-300: #d1d6db;
+                --gray-400: #b0b8c1;
+                --gray-600: #8b95a1;
+                --gray-800: #333d4b;
+                --text-main: #191f28;
+                --red-color: #E53E3E; --red-bg: #FFF5F5; --red-border: #FED7D7;
+                --yellow-color: #D97706; --yellow-bg: #FFFBEB; --yellow-border: #FDE68A;
+                --blue-bg: #E8F3FF; --dark-gray-bg: #333D4B;
+            }
+        }
+
+        body.golden-theme { --brand-color: #D4AF37; --blue-bg: #FFF9E6; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        body, html { 
+            width: 100vw; height: 100dvh; background-color: var(--bg-color); 
+            background-image: linear-gradient(var(--bg-color), var(--bg-color)); color: var(--text-main); 
+            overflow: hidden; touch-action: none; transition: background-color 0.4s ease, color 0.4s ease; 
+        }
+
+        #app-container { 
+            display: none; width: 100%; height: calc(100dvh - var(--nav-height) - env(safe-area-inset-bottom)); 
+            flex-direction: column; position: relative; opacity: 0; transition: opacity 0.4s ease-in-out;
+        }
+
+        .view-section {
+            display: none; flex: 1; flex-direction: column; width: 100%; height: 100%;
+            animation: fadeIn 0.3s ease; position: relative; background: var(--bg-color);
+        }
+        .view-section.active { display: flex; }
+        
+        .view-header { padding: 32px 24px 16px 24px; flex-shrink: 0; background: var(--bg-color); z-index: 10; }
+        #view-home .view-header { padding-top: 85px; padding-bottom: 12px; }
+
+        .scroll-area { flex: 1; overflow-y: auto; touch-action: pan-y; padding: 0 24px 32px 24px; -ms-overflow-style: none; scrollbar-width: none; }
+        .scroll-area::-webkit-scrollbar { display: none; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 토스트 알림창 */
+        .toast {
+            position: fixed; bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 24px); left: 50%; transform: translateX(-50%) translateY(50px);
+            background: rgba(25, 31, 40, 0.9); color: white; padding: 14px 24px; border-radius: 20px; font-size: 14px; font-weight: 600; opacity: 0; transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 9999; pointer-events: none; box-shadow: 0 8px 24px rgba(0,0,0,0.15); white-space: nowrap;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        #fx-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 10000; pointer-events: none; display: none; }
+
+        /* 로그인 오버레이 */
+        #login-overlay { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-color); 
+            background-image: linear-gradient(var(--bg-color), var(--bg-color)); z-index: 9000; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 32px;
+            transition: opacity 0.4s ease-in-out;
+        }
+        
+        /* 캐릭터 및 물리 모션 */
+        .helper-container { display: flex; justify-content: center; margin-bottom: 20px; position: relative; height: 66px; }
+        #helper-floater { animation: float 2.5s ease-in-out infinite; transform-origin: bottom center; }
+        
+        .helper-character {
+            width: 66px; height: 66px; background-color: var(--brand-color); border-radius: 30px 30px 20px 20px; position: relative;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1); cursor: pointer; transition: transform 0.4s ease; z-index: 10;
+            transform-origin: bottom center;
+        }
+        .helper-character::before, .helper-character::after { content: ''; position: absolute; background: #fff; width: 8px; height: 12px; border-radius: 50%; top: 22px; transition: all 0.2s ease; }
+        .helper-character::before { left: 14px; } .helper-character::after { right: 14px; }
+        .smile { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); width: 14px; height: 7px; border-bottom: 2.5px solid #fff; border-radius: 0 0 20px 20px; transition: all 0.2s ease; }
+
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+        .helper-character.golden { background: linear-gradient(135deg, #FFDF00, #D4AF37, #DAA520); background-size: 200% 200%; animation: shimmer 2s infinite linear; box-shadow: 0 0 24px rgba(212, 175, 55, 0.5); }
+        @keyframes shimmer { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        
+        @keyframes jump { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-25px) scale(0.9, 1.1); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes squish { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.2, 0.8) translateY(10px); } }
+        @keyframes wiggle { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-15deg); } 75% { transform: rotate(15deg); } }
+        @keyframes spin-refresh { 100% { transform: rotate(360deg); } }
+
+        .motion-jump { animation: jump 0.6s ease !important; } .motion-spin { animation: spin 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; } .motion-squish { animation: squish 0.5s ease !important; } .motion-wiggle { animation: wiggle 0.5s ease !important; }
+        .spinning { animation: spin-refresh 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite !important; }
+
+        .helper-character.face-surprised::before, .helper-character.face-surprised::after { height: 14px; width: 14px; top: 20px; border-top: none; background: #fff;} 
+        .helper-character.face-surprised .smile { width: 10px; height: 10px; border: 3px solid #fff; border-radius: 50%; bottom: 12px; background: transparent; transform: translateX(-50%); }
+        .helper-character.face-wink::before { transform: scaleY(0.2); border-top: none; background: #fff;} 
+        .helper-character.face-wink .smile { transform: translateX(-50%) scale(1.2) rotate(-5deg); border: none; border-bottom: 2.5px solid #fff; border-radius: 0 0 20px 20px; background: transparent; }
+        .helper-character.face-happy::before, .helper-character.face-happy::after { border-top: 3px solid #fff; background: transparent; height: 8px; width: 12px; border-radius: 50% 50% 0 0; top: 24px; transform: none;} 
+        .helper-character.face-happy .smile { width: 20px; height: 12px; bottom: 12px; border: none; border-bottom: 2.5px solid #fff; border-radius: 0 0 20px 20px; background: transparent; transform: translateX(-50%);}
+        
+        .helper-character.face-puff::before, .helper-character.face-puff::after { height: 6px; width: 6px; top: 22px; background: #fff; border-radius: 50%; border: none; transform: none;} 
+        .helper-character.face-puff::before { left: 10px; }
+        .helper-character.face-puff::after { right: 10px; }
+        .helper-character.face-puff .smile { width: 8px; height: 8px; bottom: 12px; border: none; background: #fff; border-radius: 50%; transform: translateX(-50%); }
+
+        .greeting { font-size: 21px; font-weight: 700; line-height: 1.4; margin-bottom: 20px; text-align: center; word-break: keep-all; letter-spacing: -0.5px; transition: color 0.4s ease; }
+
+        /* 검색 & 대시보드 */
+        .search-container { position: relative; margin-bottom: 20px; }
+        .search-container input { width: 100%; padding: 15px 20px 15px 48px; border: none; border-radius: 16px; background-color: var(--gray-100); font-size: 15px; color: var(--text-main); outline: none; transition: all 0.2s; }
+        .search-container input:focus { background-color: var(--gray-50); box-shadow: 0 0 0 2px var(--brand-color) inset; }
+        .search-container input::placeholder { color: var(--gray-600); }
+        .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; fill: var(--gray-600); }
+        
+        .dashboard-header { font-size: 17px; font-weight: 700; color: var(--text-main); margin-bottom: 0; }
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-bottom: 10px; }
+        .dash-card { background: var(--gray-50); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; border: 1px solid var(--gray-100); transition: all 0.4s ease; }
+        .dash-card.full { grid-column: 1 / -1; }
+        .dash-title { font-size: 13px; font-weight: 600; color: var(--gray-600); }
+        .dash-value { font-size: 14px; font-weight: 600; color: var(--text-main); line-height: 1.4; word-break: keep-all;}
+        .dash-value b { color: var(--brand-color); font-size: 20px; font-weight: 800; margin-right: 2px;}
+
+        .btn-refresh { cursor: pointer; display: flex; align-items: center; justify-content: center; background: var(--gray-100); padding: 6px; border-radius: 10px; transition: all 0.2s; border: none; }
+        .btn-refresh:active { background: var(--gray-200); transform: scale(0.95); }
+        .btn-refresh svg { width: 18px; height: 18px; fill: var(--gray-600); }
+
+        /* 캘린더 */
+        .calendar-header { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .calendar-month { font-size: 24px; font-weight: 800; }
+        .calendar-year { font-size: 16px; font-weight: 700; color: var(--gray-600); cursor: pointer; padding: 6px 12px; border-radius: 12px; background: var(--gray-50); transition: background 0.2s; }
+        .calendar-year:active { background-color: var(--gray-100); }
+        
+        .calendar-wrapper { background-color: white; border-radius: 24px; padding: 20px 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04); border: 1px solid var(--gray-100); overflow: hidden; position: relative; margin-bottom: 24px; min-height: 250px; }
+        .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: 700; color: var(--gray-600); font-size: 14px; margin-bottom: 12px; }
+        .calendar-days div:first-child { color: var(--red-color); } .calendar-days div:last-child { color: #3182ce; } 
+        
+        .calendar-grid-wrap { overflow: hidden; width: 100%; position: relative; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px 4px; transition: transform 0.25s ease-out, opacity 0.15s ease-out; width: 100%;}
+        .slide-left-out { transform: translateX(-60px); opacity: 0; } .slide-right-out { transform: translateX(60px); opacity: 0; }
+        .slide-left-in { transform: translateX(60px); opacity: 0; } .slide-right-in { transform: translateX(-60px); opacity: 0; }
+
+        .calendar-cell { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; position: relative; font-size: 16px; font-weight: 600; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+        .calendar-cell.empty { pointer-events: none; }
+        .calendar-cell.today { background-color: var(--gray-50); color: var(--brand-color); font-weight: 800; border: 1px solid var(--brand-color);}
+        .calendar-cell.selected { background-color: var(--brand-color); color: white; font-weight: 800; box-shadow: 0 4px 12px rgba(3,110,184, 0.3); border:none;}
+        .marker-wrap { position: absolute; bottom: 4px; display: flex; gap: 3px; }
+        .marker { width: 5px; height: 5px; border-radius: 50%; background-color: var(--brand-color); }
+        .marker.marker-red { background-color: var(--red-color); } .marker.marker-yellow { background-color: var(--yellow-color); }
+        .calendar-cell.selected .marker { background-color: white; }
+        
+        .gesture-hint { text-align: center; font-size: 13px; color: var(--gray-600); margin-top: 16px; font-weight: 500;}
+        .schedule-summary h4 { font-size: 17px; margin-bottom: 16px; color: var(--text-main); font-weight: 700; padding: 0 4px; }
+        .schedule-box { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; border-radius: 20px; margin-bottom: 12px; background-color: white; box-shadow: 0 4px 16px rgba(0,0,0,0.03); border: 1px solid var(--gray-100); }
+        .schedule-box .sch-name { font-size: 16px; font-weight: 700; color: var(--text-main); }
+        .schedule-box .sch-type { font-size: 13px; font-weight: 700; color: var(--brand-color); background-color: var(--bg-color); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--gray-200); }
+        .schedule-box.type-inspect { background-color: var(--red-bg); border-color: transparent; } .schedule-box.type-inspect .sch-name { color: var(--red-color); } .schedule-box.type-inspect .sch-type { color: var(--red-color); background-color: #fff; border-color: var(--red-border); }
+        .schedule-box.type-apply { background-color: var(--yellow-bg); border-color: transparent; } .schedule-box.type-apply .sch-name { color: var(--yellow-color); } .schedule-box.type-apply .sch-type { color: var(--yellow-color); background-color: #fff; border-color: var(--yellow-border); }
+        .schedule-empty { text-align: center; color: var(--gray-400); padding: 30px; font-size: 14px; font-weight:500;}
+
+        /* 매장관리 / 설정 탭 공용 */
+        .store-sub-view, .settings-sub-view { display: none; animation: fadeIn 0.3s ease; flex-direction: column; height: 100%; width: 100%;}
+        .store-sub-view.active, .settings-sub-view.active { display: flex; }
+        
+        .store-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;}
+        .store-menu-card { background-color: var(--gray-50); border: 1px solid var(--gray-100); border-radius: 24px; padding: 24px 16px; text-align: center; font-size: 15px; font-weight: 700; color: var(--text-main); cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .store-menu-card:active { transform: scale(0.97); background-color: var(--gray-100); }
+        .store-menu-card svg { width: 32px; height: 32px; fill: var(--brand-color); }
+
+        .back-nav { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: var(--gray-800); cursor: pointer; background: var(--gray-50); padding: 10px 16px 10px 12px; border-radius: 20px; transition: background 0.2s; margin-bottom: 24px;}
+        .back-nav:active { background: var(--gray-100); }
+        .back-nav svg { width: 20px; height: 20px; fill: currentColor; }
+        
+        .top-action-btns { display: flex; gap: 6px; }
+        .top-icon-btn { background: var(--gray-100); color: var(--gray-800); border: none; padding: 8px 14px; border-radius: 14px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s;}
+        .top-icon-btn:active { background: var(--gray-200); transform: scale(0.95);}
+
+        /* 폼 */
+        .form-group { margin-bottom: 20px; width: 100%;}
+        .form-group label { display: block; font-size: 13px; font-weight: 700; color: var(--gray-600); margin-bottom: 6px; }
+        .form-input { width: 100%; padding: 14px 16px; border: 1px solid transparent; border-radius: 14px; background-color: var(--gray-50); font-size: 15px; color: var(--text-main); outline: none; box-sizing: border-box; font-weight: 500; transition: all 0.2s;}
+        .form-input:focus { background-color: white; border-color: var(--brand-color); box-shadow: 0 0 0 3px rgba(3,110,184,0.1);}
+        
+        .row-group { display: flex; gap: 12px; width: 100%; } 
+        .row-group > div { flex: 1; min-width: 0; }
+        
+        .radio-group { display: flex; gap: 20px; align-items: center; margin-top: 10px; flex-wrap: wrap;}
+        .radio-label { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--text-main); cursor: pointer; }
+        .radio-label input[type="radio"] { accent-color: var(--brand-color); width: 18px; height: 18px; }
+        .btn-submit { width: 100%; padding: 18px; background-color: var(--brand-color); color: white; border: none; border-radius: 18px; font-size: 16px; font-weight: 700; margin-top: 12px; cursor: pointer; transition: transform 0.2s;}
+        .btn-submit:active { transform: scale(0.98); }
+
+        /* 매장 및 리스트 카드 */
+        .store-list-wrap { display: flex; flex-direction: column; gap: 16px; }
+        .store-card { background-color: white; border: 1px solid var(--gray-100); border-radius: 24px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); position: relative; cursor: pointer; transition: transform 0.2s;}
+        .store-card:active { transform: scale(0.98); }
+        .store-card h3 { font-size: 17px; font-weight: 800; margin-bottom: 12px; color: var(--text-main); display: flex; justify-content: space-between; align-items: center;}
+        .store-card .status-badge { font-size: 12px; padding: 4px 10px; border-radius: 10px; font-weight: 700; }
+        .store-info-line { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; color: var(--gray-600); font-weight: 500;}
+        .store-info-line strong { color: var(--text-main); font-weight: 700; }
+        .store-empty { text-align: center; padding: 40px 20px; color: var(--gray-400); font-size: 15px; background: var(--gray-50); border-radius: 20px; font-weight: 600;}
+
+        .list-item-card { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: white; border: 1px solid var(--gray-100); border-radius: 16px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .list-item-card span { font-size: 15px; font-weight: 700; color: var(--text-main); }
+        .list-item-card .btn-sm-del { background: var(--red-bg); color: var(--red-color); border: none; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; }
+
+        .store-card.status-progress { background-color: var(--blue-bg); border-color: transparent; } .store-card.status-progress h3 { color: var(--brand-color); } .store-card.status-progress .status-badge { background: #fff; color: var(--brand-color); }
+        .store-card.status-fail { background-color: var(--red-bg); border-color: transparent; } .store-card.status-fail h3 { color: var(--red-color); } .store-card.status-fail .status-badge { background: #fff; color: var(--red-color); }
+        .store-card.status-pending { background-color: var(--yellow-bg); border-color: transparent; } .store-card.status-pending h3 { color: var(--yellow-color); } .store-card.status-pending .status-badge { background: #fff; color: var(--yellow-color); }
+        .store-card.status-pass { background-color: var(--dark-gray-bg); border-color: transparent; color: #F9FAFB;} .store-card.status-pass h3, .store-card.status-pass strong { color: #FFFFFF; } .store-card.status-pass .status-badge { background: rgba(255,255,255,0.2); color: #fff; } .store-card.status-pass .store-info-line { color: #D1D6DB; }
+
+        /* 다중 선택 UI */
+        .select-indicator { position: absolute; top: 50%; right: 24px; transform: translateY(-50%); width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--gray-300); display: none; align-items: center; justify-content: center; background-color: var(--bg-color); }
+        .selection-mode-active .store-card { padding-right: 60px; } .selection-mode-active .select-indicator { display: flex; }
+        .store-card.is-selected .select-indicator { background-color: var(--brand-color); border-color: var(--brand-color); }
+        .store-card.is-selected .select-indicator::after { content: ''; width: 6px; height: 12px; border: solid white; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); margin-bottom: 2px; }
+
+        .selection-bottom-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--gray-200); padding: 16px 24px calc(16px + env(safe-area-inset-bottom)) 24px; display: flex; justify-content: space-between; align-items: center; transform: translateY(100%); transition: transform 0.3s ease; z-index: 1100; box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
+        }
+        .selection-bottom-bar.active { transform: translateY(0); }
+        .selection-count { font-size: 16px; font-weight: 800; color: var(--text-main); }
+        .selection-actions { display: flex; gap: 8px; }
+        .selection-actions button { padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 700; border: none; cursor: pointer;}
+        .btn-cancel-sel { background-color: var(--gray-100); color: var(--gray-800); margin-right: 8px;} .btn-delete-sel { background-color: var(--red-color); color: white; }
+
+        /* 블록 지도 */
+        .map-section-title { font-size: 18px; font-weight: 800; margin: 24px 0 16px 0; color: var(--text-main); display: flex; justify-content: space-between; align-items: flex-end;}
+        .map-section-desc { font-size: 13px; font-weight: 600; color: var(--gray-600); }
+        .map-tabs { display: flex; background: var(--gray-50); border-radius: 16px; padding: 6px; margin-bottom: 20px; }
+        .map-tab { flex: 1; text-align: center; padding: 12px; border-radius: 12px; font-size: 15px; font-weight: 700; color: var(--gray-600); cursor: pointer; transition: all 0.2s; }
+        .map-tab.active { background: white; color: var(--brand-color); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .block-map-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding-bottom: 24px;}
+        .map-block {
+            background: white; border: 1px solid var(--gray-100); border-radius: 14px; padding: 16px 4px; text-align: center;
+            font-size: 13px; font-weight: 700; color: var(--gray-600); cursor: pointer; position: relative; transition: all 0.2s;
+            word-break: keep-all; line-height: 1.2; box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+        .map-block.has-store { background: var(--blue-bg); color: var(--brand-color); border-color: transparent; }
+        .map-block.has-store-dense { background: rgba(3,110,184,0.25); color: var(--brand-color); border-color: transparent; }
+        .map-block .badge { position: absolute; top: -6px; right: -6px; background: var(--brand-color); color: white; font-size: 11px; font-weight: 800; min-width: 22px; height: 22px; padding: 0 4px; border-radius: 11px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+        .map-block.popped { transform: translateY(-6px) scale(1.05); background: var(--brand-color); color: white; box-shadow: 0 10px 24px rgba(3,110,184,0.3); z-index: 1502; border-color: transparent; }
+        .map-block.popped .badge { background: white; color: var(--brand-color); }
+
+        #dimmer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 1500; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        #dimmer.active { opacity: 1; pointer-events: all; }
+        #top-sheet {
+            position: fixed; top: 0; left: 0; width: 100%; background: white; border-radius: 0 0 32px 32px;
+            padding: 24px; padding-top: calc(24px + env(safe-area-inset-top)); transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 1501; box-shadow: 0 10px 40px rgba(0,0,0,0.15); max-height: 75vh; display: flex; flex-direction: column;
+        }
+        #top-sheet.active { transform: translateY(0); }
+        .ts-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0;}
+        .ts-header h3 { font-size: 20px; font-weight: 800; color: var(--brand-color); }
+        .btn-ts-close { background: var(--gray-50); color: var(--gray-800); border: none; padding: 10px 16px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 14px;}
+        .ts-content { overflow-y: auto; flex: 1; padding-bottom: 10px; -ms-overflow-style: none; scrollbar-width: none;}
+        .ts-content::-webkit-scrollbar { display: none; }
+
+        /* 체크박스 공통 UI */
+        .hygiene-check { display: none; }
+        .custom-chk { width: 22px; height: 22px; border: 2px solid var(--gray-300); border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; background: #fff; flex-shrink: 0;}
+        .hygiene-check:checked + .custom-chk { background-color: var(--brand-color); border-color: var(--brand-color); }
+        .hygiene-check:checked + .custom-chk::after { content: ''; width: 5px; height: 10px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-bottom: 2px; }
+        .hygiene-check:disabled + .custom-chk { background-color: var(--gray-100); border-color: var(--gray-200); opacity: 0.5; }
+
+        /* 컨설팅 평가 */
+        .accordion-item { background: white; border: 1px solid var(--gray-100); border-radius: 20px; margin-bottom: 12px; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.02);}
+        .accordion-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 16px; color: var(--text-main); cursor: pointer; background: var(--gray-50);}
+        .accordion-header svg { width: 20px; height: 20px; transition: transform 0.2s; }
+        .accordion-header.active svg { transform: rotate(180deg); }
+        .accordion-content { display: none; padding: 0 20px 20px 20px; margin-top: 4px; padding-top: 16px;}
+        .accordion-content.active { display: block; }
+
+        .check-item-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid var(--gray-100); cursor: pointer; }
+        .check-item-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .chk-info { flex: 1; padding-right: 16px; display: flex; flex-direction: column; gap: 6px; pointer-events: none;}
+        .chk-text { font-size: 14px; font-weight: 600; color: var(--text-main); line-height: 1.4; word-break: keep-all;}
+
+        .chk-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0;}
+        .btn-na { background: var(--gray-100); color: var(--gray-600); border: none; padding: 5px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-na.active { background: var(--gray-800); color: white; }
+
+        .score-bar {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            border-top: 1px solid var(--gray-100); padding: 16px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 200; border-radius: 32px 32px 0 0;
+        }
+        .score-bar .total-box { display: flex; flex-direction: column; gap: 4px;}
+        .score-bar .total { font-size: 15px; font-weight: 800; color: var(--gray-800); display:flex; align-items:center; gap:8px;}
+        .score-bar .total b { font-size: 26px; transition: color 0.3s; }
+        .score-bar .breakdown { font-size: 13px; color: var(--gray-600); font-weight: 600;}
+        .score-bar button { padding: 16px 32px; border-radius: 16px; font-size: 16px; font-weight: 800; background: var(--brand-color); color: white; border: none; cursor: pointer;}
+
+        /* 하단 팝업 모달 */
+        .bottom-modal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
+            display: none; align-items: flex-end; z-index: 2000;
+        }
+        .bottom-modal.active { display: flex; }
+        .modal-bottom-content { background: white; width: 100%; padding: 32px 24px; padding-bottom: calc(32px + env(safe-area-inset-bottom)); border-radius: 32px 32px 0 0; animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); max-height: 85vh; display: flex; flex-direction: column;}
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        .modal-bottom-content h3 { font-size: 19px; font-weight: 800; margin-bottom: 20px; flex-shrink:0; color: var(--text-main);}
+        .modal-bottom-content textarea { width: 100%; height: 160px; padding: 20px; border: 1px solid var(--gray-200); border-radius: 20px; background: var(--gray-50); font-size: 16px; outline: none; resize: none; margin-bottom: 20px; box-sizing: border-box; flex-shrink:0;}
+        .modal-bottom-actions { display: flex; gap: 12px; flex-shrink:0;}
+        .modal-bottom-actions button { flex: 1; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; }
+        
+        .items-scroll-area { flex: 1; overflow-y: auto; margin-bottom: 24px; -ms-overflow-style: none; scrollbar-width: none; }
+        .items-scroll-area::-webkit-scrollbar { display: none; }
+        
+        .item-chk-row-qty { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--gray-50); }
+        .item-chk-row-qty span { font-size: 15px; color: var(--text-main); font-weight: 600; flex: 1; word-break: keep-all; }
+        
+        .item-chk-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--gray-50); cursor: pointer;}
+        .item-chk-row span { font-size: 15px; color: var(--text-main); font-weight: 600;}
+        .doc-desc { font-size:12px; color:var(--gray-400); text-align:center; margin-top:16px; font-weight:600;}
+
+        /* 설정 탭 */
+        .settings-menu { display: flex; flex-direction: column; gap: 12px; margin-top: 10px;}
+        .settings-item {
+            background: white; padding: 24px 20px; border-radius: 20px; font-size: 16px; font-weight: 700; 
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid var(--gray-100); transition: all 0.2s; color: var(--text-main); box-shadow: 0 8px 24px rgba(0,0,0,0.02);
+        }
+        .settings-item:active { transform: scale(0.98); background: var(--gray-50); }
+        .settings-item .version { color: var(--brand-color); font-weight: 800;}
+        .settings-icon-wrap { display: flex; align-items: center; gap: 14px; }
+        .settings-icon-wrap svg { width: 24px; height: 24px; fill: var(--brand-color); }
+
+        .stock-table { width: 100%; border-collapse: collapse; text-align: center; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.02); border: 1px solid var(--gray-100); margin-bottom: 24px;}
+        .stock-table th { background: var(--gray-50); padding: 14px 16px; font-size: 14px; font-weight: 700; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); word-break: keep-all;}
+        .stock-table td { padding: 16px; font-size: 15px; font-weight: 600; color: var(--text-main); border-bottom: 1px solid var(--gray-100); }
+        .stock-table tr:last-child td { border-bottom: none; }
+
+        /* 하단 고정 메뉴바 */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: calc(var(--nav-height) + env(safe-area-inset-bottom));
+            background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            border-top: 1px solid var(--gray-100); display: flex; justify-content: space-around; align-items: center;
+            padding-bottom: env(safe-area-inset-bottom); z-index: 1000;
+        }
+        body.golden-theme .bottom-nav { background-color: rgba(255, 255, 255, 0.95); } 
+        
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 20%; height: var(--nav-height); text-decoration: none; color: var(--gray-300); gap: 6px; transition: color 0.2s; }
+        .nav-item.active { color: var(--text-main); }
+        .nav-item svg { width: 24px; height: 24px; fill: currentColor; }
+        .nav-item span { font-size: 11px; font-weight: 800; }
+        
+        /* 중앙 팝업 모달 */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); display: none; align-items: center; justify-content: center; z-index: 4000; opacity: 0; transition: opacity 0.2s ease; }
+        .modal-overlay.show { display: flex !important; opacity: 1; pointer-events: auto;}
+        .modal-content { background: white; width: 80%; max-width: 340px; border-radius: 24px; padding: 32px 24px; text-align: center; transform: scale(0.95); transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: 0 20px 40px rgba(0,0,0,0.1);}
+        .modal-overlay.show .modal-content { transform: scale(1); }
+        .modal-content h3 { margin-bottom: 24px; font-size: 19px; font-weight: 800; color: var(--text-main);}
+        .modal-content input { width: 100%; padding: 18px; font-size: 20px; font-weight: 700; text-align: center; border: 1px solid var(--gray-200); border-radius: 16px; margin-bottom: 24px; outline: none; box-sizing: border-box; letter-spacing: 2px; background: var(--gray-50); transition: 0.2s;}
+        .modal-content input:focus { background: white; border-color: var(--brand-color); box-shadow: 0 0 0 3px rgba(3,110,184,0.1);}
+        .modal-actions { display: flex; gap: 12px; }
+        .modal-actions button { flex: 1; padding: 16px; border-radius: 16px; border: none; font-size: 16px; font-weight: 800; cursor: pointer; }
+        .btn-cancel { background-color: var(--gray-100); color: var(--gray-800); }
+        .btn-confirm { background-color: var(--brand-color); color: white; }
+    </style>
 </head>
 <body>
     <canvas id="fx-canvas"></canvas>
@@ -30,7 +407,7 @@
             <span style="font-size:15px; font-weight:600; color:var(--text-main);">자동 로그인 유지</span>
         </label>
 
-        <button class="btn-submit" id="btn-login" style="margin-top:0;">로그인</button>
+        <button class="btn-submit" onclick="window.handleLogin()" style="margin-top:0;">로그인</button>
     </div>
 
     <div class="modal-overlay" id="pw-modal">
@@ -38,8 +415,8 @@
             <h3 id="pw-modal-title">관리자 비밀번호 입력</h3>
             <input type="password" id="del-pw-input" inputmode="numeric" placeholder="****">
             <div class="modal-actions">
-                <button class="btn-cancel" id="btn-close-pw-modal">취소</button>
-                <button class="btn-confirm" id="btn-confirm-pw-action">확인</button>
+                <button class="btn-cancel" onclick="window.closePwModal()">취소</button>
+                <button class="btn-confirm" onclick="window.confirmPwAction()">확인</button>
             </div>
         </div>
     </div>
@@ -49,20 +426,14 @@
             <h3 style="margin-bottom:16px;">비밀번호 변경</h3>
             <input type="password" id="current-pw-input" inputmode="numeric" placeholder="현재 비밀번호" style="margin-bottom: 12px; font-size:16px; letter-spacing:normal;">
             <input type="password" id="new-pw-input" inputmode="numeric" placeholder="새 비밀번호 (4자리)" style="font-size:16px; letter-spacing:normal;">
-            <div class="modal-actions">
-                <button class="btn-cancel" id="btn-close-change-pw">취소</button>
-                <button class="btn-confirm" id="btn-confirm-change-pw">변경</button>
-            </div>
+            <div class="modal-actions"><button class="btn-cancel" onclick="window.closeChangePwModal()">취소</button><button class="btn-confirm" onclick="window.confirmChangePw()">변경</button></div>
         </div>
     </div>
 
     <div class="modal-overlay" id="year-modal">
         <div class="modal-content">
             <h3>연도 이동</h3><input type="number" id="year-input" pattern="[0-9]*" inputmode="numeric">
-            <div class="modal-actions">
-                <button class="btn-cancel" id="btn-close-year-modal">취소</button>
-                <button class="btn-confirm" id="btn-apply-year">이동</button>
-            </div>
+            <div class="modal-actions"><button class="btn-cancel" onclick="window.closeYearModal()">취소</button><button class="btn-confirm" onclick="window.applyYear()">이동</button></div>
         </div>
     </div>
 
@@ -71,8 +442,8 @@
             <h3>현장 메모</h3>
             <textarea id="memo-textarea" placeholder="특이사항이나 보완점을 자유롭게 작성하세요."></textarea>
             <div class="modal-bottom-actions">
-                <button class="btn-cancel-sel" id="btn-close-memo">닫기</button>
-                <button style="background:var(--brand-color); color:white;" id="btn-save-memo">임시저장</button>
+                <button class="btn-cancel-sel" onclick="window.closeMemo()">닫기</button>
+                <button style="background:var(--brand-color); color:white;" onclick="window.saveMemo()">임시저장</button>
             </div>
         </div>
     </div>
@@ -82,8 +453,8 @@
             <h3>제공 물품 수량 기록</h3>
             <div class="items-scroll-area" id="items-modal-list"></div>
             <div class="modal-bottom-actions">
-                <button class="btn-cancel-sel" id="btn-close-items">닫기</button>
-                <button style="background:var(--brand-color); color:white;" id="btn-save-items">저장하기</button>
+                <button class="btn-cancel-sel" onclick="window.closeItemsModal()">닫기</button>
+                <button style="background:var(--brand-color); color:white;" onclick="window.saveItems()">저장하기</button>
             </div>
         </div>
     </div>
@@ -100,15 +471,15 @@
                 <div class="doc-desc">매장에서 준비할 필수서류</div>
             </div>
             <div class="modal-bottom-actions">
-                <button class="btn-cancel-sel" id="btn-close-docs">닫기</button>
-                <button style="background:var(--brand-color); color:white;" id="btn-save-docs">저장하기</button>
+                <button class="btn-cancel-sel" onclick="window.closeDocModal()">닫기</button>
+                <button style="background:var(--brand-color); color:white;" onclick="window.saveDocs()">저장하기</button>
             </div>
         </div>
     </div>
 
-    <div id="dimmer"></div>
+    <div id="dimmer" onclick="window.closeMapOverlay()"></div>
     <div id="top-sheet">
-        <div class="ts-header"><h3 id="ts-title">지역명</h3><button class="btn-ts-close" id="btn-close-map">닫기</button></div>
+        <div class="ts-header"><h3 id="ts-title">지역명</h3><button class="btn-ts-close" onclick="window.closeMapOverlay()">닫기</button></div>
         <div id="ts-content" class="ts-content store-list-wrap"></div>
     </div>
 
@@ -129,7 +500,7 @@
                 
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                     <div id="home-dash-header" class="dashboard-header" style="margin-bottom:0;">현황 대시보드</div>
-                    <button class="btn-refresh" id="btn-manual-refresh" aria-label="새로고침">
+                    <button class="btn-refresh" onclick="window.manualRefresh()" aria-label="새로고침">
                         <svg id="refresh-icon" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
                     </button>
                 </div>
@@ -150,7 +521,7 @@
         <div id="view-calendar" class="view-section">
             <div class="view-header" style="padding-bottom:0;">
                 <div class="calendar-header">
-                    <span class="calendar-month" id="cal-month"></span><span class="calendar-year" id="cal-year"></span>
+                    <span class="calendar-month" id="cal-month"></span><span class="calendar-year" id="cal-year" onclick="window.openYearModal()"></span>
                 </div>
                 <div class="calendar-wrapper" id="calendar-wrapper">
                     <div class="calendar-days"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
@@ -173,11 +544,11 @@
             <div id="consult-check-view" style="display:none; flex-direction:column; height:100%; position:relative; width:100%;">
                 <div class="view-header" style="padding-bottom:16px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:16px;">
-                        <div class="back-nav" id="btn-back-checklist" style="margin:0;"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 목록으로</div>
+                        <div class="back-nav" onclick="window.closeChecklist()" style="margin:0;"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 목록으로</div>
                         <div class="top-action-btns">
-                            <button class="top-icon-btn" id="btn-open-doc">서류</button>
-                            <button class="top-icon-btn" id="btn-open-items">물품</button>
-                            <button class="top-icon-btn" id="btn-open-memo">메모</button>
+                            <button class="top-icon-btn" onclick="window.openDocModal()">서류</button>
+                            <button class="top-icon-btn" onclick="window.openItemsModal()">물품</button>
+                            <button class="top-icon-btn" onclick="window.openMemo()">메모</button>
                         </div>
                     </div>
                     <h3 id="check-store-title" style="font-size:19px; font-weight:800; margin-bottom:0;">매장명 평가표</h3>
@@ -190,7 +561,7 @@
                         <div class="total">총점: <b id="check-total-score">0점</b></div>
                         <div class="breakdown" id="check-breakdown">(환산 0점 + 가점 0점)</div>
                     </div>
-                    <button id="btn-save-checklist">저장하기</button>
+                    <button onclick="window.saveChecklist()">저장하기</button>
                 </div>
             </div>
         </div>
@@ -200,18 +571,18 @@
                 <div class="view-header" style="padding-bottom:0;">
                     <h2 class="greeting" style="text-align:left; margin-bottom:20px;">매장관리</h2>
                     <div class="store-btn-grid" id="store-main-menu">
-                        <div class="store-menu-card" data-target-view="register"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> 신규 등록</div>
-                        <div class="store-menu-card" data-target-view="manage" data-filter="진행중"><svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg> 진행 매장</div>
-                        <div class="store-menu-card" data-target-view="manage" data-filter="보류"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> 보류 매장</div>
-                        <div class="store-menu-card" data-target-view="manage" data-filter="합격,불합격"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg> 완료 매장</div>
+                        <div class="store-menu-card" onclick="window.openStoreView('register')"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> 신규 등록</div>
+                        <div class="store-menu-card" onclick="window.openStoreView('manage', ['진행중'])"><svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg> 진행 매장</div>
+                        <div class="store-menu-card" onclick="window.openStoreView('manage', ['보류'])"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> 보류 매장</div>
+                        <div class="store-menu-card" onclick="window.openStoreView('manage', ['합격', '불합격'])"><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg> 완료 매장</div>
                     </div>
                 </div>
 
                 <div class="scroll-area" style="padding-top:0;">
                     <div class="map-section-title">지역별 현황 <span class="map-section-desc">블록을 눌러보세요</span></div>
                     <div class="map-tabs">
-                        <div class="map-tab active" data-target="seoul">서울</div>
-                        <div class="map-tab" data-target="gyeonggi">경기</div>
+                        <div class="map-tab active" data-target="seoul" onclick="window.switchMapTab('seoul')">서울</div>
+                        <div class="map-tab" data-target="gyeonggi" onclick="window.switchMapTab('gyeonggi')">경기</div>
                     </div>
                     <div id="block-map-seoul" class="block-map-grid"></div>
                     <div id="block-map-gyeonggi" class="block-map-grid" style="display:none;"></div>
@@ -219,7 +590,7 @@
             </div>
 
             <div id="store-register" class="store-sub-view" style="width:100%;">
-                <div class="view-header" style="padding-bottom:0;"><div class="back-nav" data-target-view="main"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 메인으로</div></div>
+                <div class="view-header" style="padding-bottom:0;"><div class="back-nav" onclick="window.openStoreView('main')"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 메인으로</div></div>
                 <div class="scroll-area">
                     <form id="new-store-form">
                         <div class="form-group"><label>매장명</label><input type="text" id="store-name" class="form-input" required></div>
@@ -238,14 +609,14 @@
 
             <div id="store-manage" class="store-sub-view" style="width:100%;">
                 <div class="view-header" style="padding-bottom:0;">
-                    <div class="back-nav" data-target-view="main"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 메인으로</div>
+                    <div class="back-nav" onclick="window.openStoreView('main')"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 메인으로</div>
                     <h3 id="store-list-title" style="margin-bottom:16px; font-size:19px; font-weight:800;">매장 목록</h3>
                 </div>
                 <div id="store-list-container" class="scroll-area store-list-wrap"></div>
             </div>
 
             <div id="store-edit" class="store-sub-view" style="width:100%;">
-                <div class="view-header" style="padding-bottom:0;"><div class="back-nav" id="btn-back-to-manage"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 목록으로</div></div>
+                <div class="view-header" style="padding-bottom:0;"><div class="back-nav" onclick="window.goBackToStoreManage()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 목록으로</div></div>
                 <div class="scroll-area">
                     <form id="edit-store-form">
                         <input type="hidden" id="edit-store-id">
@@ -256,7 +627,7 @@
                         <div class="row-group"><div><div class="form-group"><label>신청일</label><input type="date" id="edit-date-apply" class="form-input" required></div></div><div><div class="form-group"><label>심사일</label><input type="date" id="edit-date-inspect" class="form-input"></div></div></div>
                         <div class="row-group"><div><div class="form-group"><label>1차 컨설팅</label><input type="date" id="edit-date-consult1" class="form-input"></div></div><div><div class="form-group"><label>2차 컨설팅</label><input type="date" id="edit-date-consult2" class="form-input"></div></div></div>
                         
-                        <button type="button" id="btn-view-checklist" class="btn-submit btn-action" style="display:none; margin-bottom:12px;">컨설팅 기록 보기</button>
+                        <button type="button" id="btn-view-checklist" class="btn-submit btn-action" style="display:none; margin-bottom:12px;" onclick="window.viewSavedChecklist()">컨설팅 기록 보기</button>
                         <button type="submit" class="btn-submit" style="margin-top:0;">저장하기</button>
                     </form>
                 </div>
@@ -268,42 +639,42 @@
                 <div class="view-header" style="padding-bottom:0;"><h2 class="greeting" style="text-align:left; margin-bottom:20px;">설정</h2></div>
                 <div class="scroll-area">
                     <div class="settings-menu">
-                        <div class="settings-item" data-target-sub="settings-stock">
+                        <div class="settings-item" onclick="window.openSettingsSub('settings-stock')">
                             <div class="settings-icon-wrap">
                                 <svg viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18-.21 0-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18.21 0 .41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15zM5 15.91l6 3.38v-6.71L5 9.19v6.72zm14 0v-6.72l-6 3.39v6.71l6-3.38z"/></svg>
                                 <span>재고 확인</span>
                             </div>
                             <svg style="width:20px;height:20px;fill:var(--gray-400);" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
                         </div>
-                        <div class="settings-item" data-target-sub="settings-orders">
+                        <div class="settings-item" onclick="window.openSettingsSub('settings-orders')">
                             <div class="settings-icon-wrap">
                                 <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
                                 <span>발주 기록</span>
                             </div>
                             <svg style="width:20px;height:20px;fill:var(--gray-400);" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
                         </div>
-                        <div class="settings-item" id="btn-pw-manage-items">
+                        <div class="settings-item" onclick="window.checkPwAndOpenAction('open_manage_items')">
                             <div class="settings-icon-wrap">
                                 <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                                 <span>품목 리스트 관리</span>
                             </div>
                             <svg style="width:20px;height:20px;fill:var(--gray-400);" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
                         </div>
-                        <div class="settings-item" id="btn-pw-manage-vendors">
+                        <div class="settings-item" onclick="window.checkPwAndOpenAction('open_manage_vendors')">
                             <div class="settings-icon-wrap">
                                 <svg viewBox="0 0 24 24"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                                 <span>발주처 관리</span>
                             </div>
                             <svg style="width:20px;height:20px;fill:var(--gray-400);" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
                         </div>
-                        <div class="settings-item" id="btn-open-change-pw">
+                        <div class="settings-item" onclick="window.openChangePwModal()">
                             <div class="settings-icon-wrap">
                                 <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/></svg>
                                 <span>관리자 비밀번호 변경</span>
                             </div>
                             <svg style="width:20px;height:20px;fill:var(--gray-400);" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
                         </div>
-                        <div class="settings-item" id="btn-logout">
+                        <div class="settings-item" onclick="window.handleLogout()">
                             <div class="settings-icon-wrap">
                                 <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
                                 <span style="color:var(--red-color)">로그아웃</span>
@@ -311,7 +682,7 @@
                         </div>
                         <div class="settings-item" style="cursor:default;">
                             <span style="padding-left:10px;">앱 버전</span>
-                            <span class="version">1.2.9</span>
+                            <span class="version">1.3.1 (오류 수정본)</span>
                         </div>
                     </div>
                 </div>
@@ -319,7 +690,7 @@
 
             <div id="settings-stock" class="settings-sub-view" style="width:100%;">
                 <div class="view-header" style="padding-bottom:0;">
-                    <div class="back-nav" data-target-sub="settings-main"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 설정 메뉴</div>
+                    <div class="back-nav" onclick="window.openSettingsSub('settings-main')"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 설정 메뉴</div>
                     <h3 style="margin-bottom:16px; font-size:19px; font-weight:800;">실시간 재고 현황</h3>
                 </div>
                 <div class="scroll-area">
@@ -332,7 +703,7 @@
 
             <div id="settings-orders" class="settings-sub-view" style="width:100%;">
                 <div class="view-header" style="padding-bottom:0;">
-                    <div class="back-nav" data-target-sub="settings-main"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 설정 메뉴</div>
+                    <div class="back-nav" onclick="window.openSettingsSub('settings-main')"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 설정 메뉴</div>
                     <h3 style="margin-bottom:16px; font-size:19px; font-weight:800;">물품 발주 기록</h3>
                 </div>
                 <div class="scroll-area">
@@ -359,13 +730,13 @@
 
             <div id="settings-manage-items" class="settings-sub-view" style="width:100%;">
                 <div class="view-header" style="padding-bottom:0;">
-                    <div class="back-nav" data-target-sub="settings-main"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 설정 메뉴</div>
+                    <div class="back-nav" onclick="window.openSettingsSub('settings-main')"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 설정 메뉴</div>
                     <h3 style="margin-bottom:16px; font-size:19px; font-weight:800;">품목 리스트 편집</h3>
                 </div>
                 <div class="scroll-area">
                     <div style="display:flex; gap:8px; margin-bottom:20px;">
                         <input type="text" id="new-custom-item-input" class="form-input" placeholder="새 품목명 입력">
-                        <button class="btn-submit" id="btn-add-item" style="margin-top:0; width:auto; padding:0 20px; flex-shrink:0;">추가</button>
+                        <button class="btn-submit" style="margin-top:0; width:auto; padding:0 20px; flex-shrink:0;" onclick="window.addCustomItem()">추가</button>
                     </div>
                     <div id="manage-items-list" class="store-list-wrap"></div>
                 </div>
@@ -373,13 +744,13 @@
 
             <div id="settings-manage-vendors" class="settings-sub-view" style="width:100%;">
                 <div class="view-header" style="padding-bottom:0;">
-                    <div class="back-nav" data-target-sub="settings-main"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 설정 메뉴</div>
+                    <div class="back-nav" onclick="window.openSettingsSub('settings-main')"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg> 설정 메뉴</div>
                     <h3 style="margin-bottom:16px; font-size:19px; font-weight:800;">발주처 리스트 편집</h3>
                 </div>
                 <div class="scroll-area">
                     <div style="display:flex; gap:8px; margin-bottom:20px;">
                         <input type="text" id="new-custom-vendor-input" class="form-input" placeholder="새 발주처 입력">
-                        <button class="btn-submit" id="btn-add-vendor" style="margin-top:0; width:auto; padding:0 20px; flex-shrink:0;">추가</button>
+                        <button class="btn-submit" style="margin-top:0; width:auto; padding:0 20px; flex-shrink:0;" onclick="window.addCustomVendor()">추가</button>
                     </div>
                     <div id="manage-vendors-list" class="store-list-wrap"></div>
                 </div>
@@ -397,18 +768,1163 @@
 
     <div id="selection-bar" class="selection-bottom-bar">
         <span id="selection-count" class="selection-count">0개 선택됨</span>
-        <div class="selection-actions"><button class="btn-cancel-sel" id="btn-cancel-sel">취소</button><button class="btn-delete-sel" id="btn-delete-sel">삭제</button></div>
+        <div class="selection-actions"><button class="btn-cancel-sel" onclick="window.cancelSelectionMode()">취소</button><button class="btn-delete-sel" onclick="window.openDeletePwModal('store')">삭제</button></div>
     </div>
 
     <div id="order-selection-bar" class="selection-bottom-bar">
         <span id="order-selection-count" class="selection-count">0개 선택됨</span>
-        <div class="selection-actions"><button class="btn-cancel-sel" id="btn-cancel-order-sel">취소</button><button class="btn-delete-sel" id="btn-delete-order-sel">삭제</button></div>
+        <div class="selection-actions"><button class="btn-cancel-sel" onclick="window.cancelOrderSelectionMode()">취소</button><button class="btn-delete-sel" onclick="window.openDeletePwModal('order')">삭제</button></div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-    <script src="app.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        
+        window.showToast = function(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg; toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 2500);
+        }
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCoIdXuPX_FAm6crm5yQmRPlIKMVNICVtw",
+  authDomain: "katharos-kr.firebaseapp.com",
+  projectId: "katharos-kr",
+  storageBucket: "katharos-kr.firebasestorage.app",
+  messagingSenderId: "909642763442",
+  appId: "1:909642763442:web:341913955905f08b99cdab",
+  measurementId: "G-3Y61WBHX26"
+};
+        
+        let auth, db;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            auth = firebase.auth();
+            db = firebase.firestore();
+        } catch(e) {
+            console.error("Firebase Init Error:", e);
+        }
+        
+        let currentUser = null;
+        let unsubscribeSnapshot = null;
+
+        let storesData = [];
+        let ordersData = [];
+        let customItems = ["식품관리라벨(+@)", "계란보관함", "쎄니크로", "손소독/손세정제", "업소용 클린매트", "식기 덮개용 천", "이격판", "외부화보관함", "산가측정지"];
+        let customVendors = ["본사", "자체구매"];
+        
+        let backup = null;
+        try { backup = localStorage.getItem('kadarosDataBackup'); } catch(e) {}
+        if(backup) {
+            try { 
+                const parsed = JSON.parse(backup);
+                if (Array.isArray(parsed)) { storesData = parsed; } 
+                else { 
+                    storesData = parsed.stores || []; 
+                    ordersData = parsed.orders || []; 
+                    if(parsed.customItems) customItems = parsed.customItems;
+                    if(parsed.customVendors) customVendors = parsed.customVendors;
+                }
+            } catch(e){}
+        }
+
+        let adminPw = '0000';
+        try { adminPw = localStorage.getItem('kadarosAdminPw') || '0000'; } catch(e) {}
+
+        window.updateAllUIs = function() {
+            try { updateDashboard(); } catch(e) {}
+            try { window.renderCalendar(); } catch(e) {}
+            try { renderConsultingList(); } catch(e) {}
+            try { window.renderBlockMap(); } catch(e) {}
+            try { if(document.getElementById('store-manage').classList.contains('active')) renderStoreList(); } catch(e){}
+            try { if(document.getElementById('settings-stock').classList.contains('active')) window.renderStockTable(); } catch(e){}
+            try { if(document.getElementById('settings-orders').classList.contains('active')) window.renderOrderList(); } catch(e){}
+            try { if(document.getElementById('settings-manage-items').classList.contains('active')) window.renderManageItemsList(); } catch(e){}
+            try { if(document.getElementById('settings-manage-vendors').classList.contains('active')) window.renderManageVendorsList(); } catch(e){}
+            try { window.updateDropdowns(); } catch(e){}
+        }
+
+        function toggleAppUI(isLoggedIn) {
+            const appContainer = document.getElementById('app-container');
+            const loginOverlay = document.getElementById('login-overlay');
+            
+            if(isLoggedIn) {
+                loginOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    loginOverlay.style.display = 'none';
+                    appContainer.style.display = 'flex';
+                    void appContainer.offsetWidth; 
+                    appContainer.style.opacity = '1';
+                    window.updateAllUIs(); 
+                }, 400);
+            } else {
+                appContainer.style.opacity = '0';
+                setTimeout(() => {
+                    appContainer.style.display = 'none';
+                    loginOverlay.style.display = 'flex';
+                    void loginOverlay.offsetWidth;
+                    loginOverlay.style.opacity = '1';
+                }, 400);
+            }
+        }
+
+        function initRealtimeSync() {
+            if (!currentUser || !db) return;
+            if(unsubscribeSnapshot) unsubscribeSnapshot();
+
+            unsubscribeSnapshot = db.collection('users').doc(currentUser.uid).onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    storesData = data.stores || [];
+                    ordersData = data.orders || [];
+                    if(data.customItems) customItems = data.customItems;
+                    if(data.customVendors) customVendors = data.customVendors;
+                    
+                    try { localStorage.setItem('kadarosDataBackup', JSON.stringify({stores: storesData, orders: ordersData, customItems: customItems, customVendors: customVendors})); } catch(e){}
+                } else {
+                    storesData = []; ordersData = [];
+                }
+                window.updateAllUIs();
+            }, (error) => {
+                console.error("Realtime sync error:", error);
+            });
+        }
+
+        window.manualRefresh = async function() {
+            if(!currentUser || !db) return window.showToast("로그인이 필요합니다.");
+            const icon = document.getElementById('refresh-icon');
+            icon.parentElement.classList.add('spinning'); 
+            try {
+                const doc = await db.collection('users').doc(currentUser.uid).get({source: 'server'});
+                if(doc.exists) {
+                    const data = doc.data();
+                    storesData = data.stores || [];
+                    ordersData = data.orders || [];
+                    if(data.customItems) customItems = data.customItems;
+                    if(data.customVendors) customVendors = data.customVendors;
+                    try { localStorage.setItem('kadarosDataBackup', JSON.stringify({stores: storesData, orders: ordersData, customItems: customItems, customVendors: customVendors})); } catch(e){}
+                } else {
+                    storesData = []; ordersData = [];
+                }
+                window.updateAllUIs();
+                window.showToast("데이터를 성공적으로 최신화했습니다.");
+            } catch(e) {
+                console.error("새로고침 에러", e);
+                window.showToast("새로고침 실패. 네트워크를 확인해주세요.");
+            } finally {
+                setTimeout(() => { icon.parentElement.classList.remove('spinning'); }, 500); 
+            }
+        };
+
+        async function saveData() { 
+            if(!currentUser || !db) return;
+            try {
+                await db.collection('users').doc(currentUser.uid).set({ stores: storesData, orders: ordersData, customItems: customItems, customVendors: customVendors });
+            } catch(e) {
+                console.error("저장 실패", e);
+                window.showToast("서버 저장에 실패했습니다.");
+            }
+        }
+        
+        if (auth) {
+            auth.onAuthStateChanged(user => {
+                if(user) {
+                    currentUser = user; toggleAppUI(true); initRealtimeSync();
+                } else {
+                    currentUser = null;
+                    if(unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
+                    toggleAppUI(false);
+                }
+            });
+        }
+
+        window.handleLogin = async function() {
+            try {
+                const email = document.getElementById('login-email').value.trim();
+                const pw = document.getElementById('login-pw').value;
+                const remember = document.getElementById('login-remember').checked;
+
+                if(!email || !pw) return window.showToast("이메일과 비밀번호를 모두 입력해주세요.");
+                if(!auth) return window.showToast("서버 초기화에 실패했습니다. 키를 확인하세요.");
+                
+                window.showToast("로그인 중...");
+                let pStr = remember ? 'local' : 'session';
+                try { await auth.setPersistence(pStr); } catch(e) { console.warn("Persistence Error:", e); }
+                await auth.signInWithEmailAndPassword(email, pw);
+                
+            } catch(error) {
+                console.error("Login Error:", error);
+                if(error.code === 'auth/invalid-email') window.showToast("이메일 형식이 올바르지 않습니다.");
+                else if(error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') window.showToast("이메일 또는 비밀번호가 틀렸습니다.");
+                else window.showToast("로그인 실패: " + error.message);
+            }
+        };
+
+        window.handleLogout = function() {
+            if(!auth) return;
+            auth.signOut().then(() => {
+                window.showToast("로그아웃 되었습니다.");
+                storesData = []; ordersData = [];
+                document.getElementById('login-pw').value = '';
+            });
+        };
+
+        const regionData = {
+            "서울특별시": ["강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구", "성동구", "성북구", "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"],
+            "경기도": ["수원시", "성남시", "고양시", "용인시", "부천시", "안산시", "안양시", "남양주시", "화성시", "평택시", "의정부시", "시흥시", "파주시", "광명시", "김포시", "군포시", "광주시", "이천시", "양주시", "오산시", "구리시", "안성시", "포천시", "의왕시", "하남시", "여주시", "양평군", "동두천시", "과천시", "가평군", "연천군"]
+        };
+
+        const hygieneChecklistMaster = [
+            {
+                cat: "기본분야 (미준수 시 부적합)", items: [
+                    {id:"b1", txt:"종사자 건강검진 일자 준수", max:0, type:"basic"}, {id:"b2", txt:"위생모 및 마스크 착용", max:0, type:"basic"}, {id:"b3", txt:"영업자 위생교육 이수", max:0, type:"basic"},
+                    {id:"b4", txt:"표시사항 있는 식재료 사용", max:0, type:"basic"}, {id:"b5", txt:"소비기한 경과 원료 금지", max:0, type:"basic"}, {id:"b6", txt:"음식물 재사용 금지", max:0, type:"basic"},
+                    {id:"b7", txt:"식품용 적합 기구/용기 사용", max:0, type:"basic"}, {id:"b8", txt:"튀김용 유지 산가 3.0 이하", max:0, type:"basic"}
+                ]
+            },
+            {
+                cat: "객석 및 객실 (34점)", items: [
+                    {id:"g1_1", txt:"천장 및 조명 청결 (파손, 누수 없음) [2점]", max:2, type:"general"}, {id:"g1_2", txt:"벽면 파손, 끈적임 없이 청결 [2점]", max:2, type:"general"}, {id:"g1_3", txt:"바닥 파손, 끈적임 없이 청결 [2점]", max:2, type:"general"},
+                    {id:"g1_4", txt:"창문, 커튼 파손 및 이물 없이 청결 [3점]", max:3, type:"general"}, {id:"g1_5", txt:"환기시설(선풍기 등) 정상작동 [1점]", max:1, type:"general"}, {id:"g1_6", txt:"환기시설 내부 먼지 없이 청결 [3점]", max:3, type:"general"},
+                    {id:"g1_7", txt:"방충·방서 서식 흔적 없음 [2점]", max:2, type:"general"}, {id:"g1_8", txt:"방충·방서 설비 정상작동 및 청결 [3점]", max:3, type:"general"}, {id:"g1_9", txt:"식탁, 의자 장식품 청결 [2점]", max:2, type:"general"},
+                    {id:"g1_10", txt:"냅킨통, 소스통 청결 [2점]", max:2, type:"general"}, {id:"g1_11", txt:"객석 쓰레기통 덮개 및 청결 [1점]", max:1, type:"general"}, {id:"g1_12", txt:"수저통 덮개 구비 및 청결 [2점]", max:2, type:"general"},
+                    {id:"g1_13", txt:"손님용 앞치마 청결 [2점]", max:2, type:"general"}, {id:"g1_14", txt:"음용수 시설 정기 점검/정비 [1점]", max:1, type:"general"}, {id:"g1_15", txt:"정수기 추출구 이물 없이 청결 [1점]", max:1, type:"general"},
+                    {id:"g1_16", txt:"지하수 잔류염소/소독 입증 [2점]", max:2, type:"general"}, {id:"g1_17", txt:"객석용/주방용 행주 구분 보관 [1점]", max:1, type:"general"}, {id:"g1_18", txt:"행주 청결유지 [1점]", max:1, type:"general"},
+                    {id:"g1_19", txt:"키오스크, 샐러드바 덮개/청결 [1점]", max:1, type:"general"}
+                ]
+            },
+            {
+                cat: "조리장 관리 (72점)", items: [
+                    {id:"g2_1", txt:"천장 빗물/파손 없음 [1점]", max:1, type:"general"}, {id:"g2_2", txt:"천장/조명 거미줄, 곰팡이 없음 [2점]", max:2, type:"general"}, {id:"g2_3", txt:"벽/창문 파손 및 방충망 정상 [2점]", max:2, type:"general"},
+                    {id:"g2_4", txt:"벽/창문 곰팡이/빗물 없음 [3점]", max:3, type:"general"}, {id:"g2_5", txt:"환풍/후드 정상작동 및 청결 [4점]", max:4, type:"general"}, {id:"g2_6", txt:"배수시설 덮개 및 바닥 마름 [4점]", max:4, type:"general"},
+                    {id:"g2_7", txt:"식재료 바닥 이격 보관 [1점]", max:1, type:"general"}, {id:"g2_8", txt:"식재료 보관공간 청결/정돈 [3점]", max:3, type:"general"}, {id:"g2_9", txt:"기기/도구 소독방법 실시 [2점]", max:2, type:"general"},
+                    {id:"g2_10", txt:"도구 교차오염 방지 보관 [2점]", max:2, type:"general"}, {id:"g2_11", txt:"칼/도마 용도별 구분 사용 [2점]", max:2, type:"general"}, {id:"g2_12", txt:"기기/식기 청결유지 [4점]", max:4, type:"general"},
+                    {id:"g2_13", txt:"냉장·냉동고 청결 및 온도 [3점]", max:3, type:"general"}, {id:"g2_14", txt:"익힌음식 상단, 날음식 하단 보관 [2점]", max:2, type:"general"}, {id:"g2_15", txt:"외포장 제거 구분 보관 [2점]", max:2, type:"general"},
+                    {id:"g2_16", txt:"반조리 식품 밀폐 보관 [2점]", max:2, type:"general"}, {id:"g2_17", txt:"올바른 해동방법 준수 및 표시 [4점]", max:4, type:"general"}, {id:"g2_18", txt:"생채소 철저한 세척/소독 [2점]", max:2, type:"general"},
+                    {id:"g2_19", txt:"세척/소독제 규정적합 및 구분보관 [5점]", max:5, type:"general"}, {id:"g2_20", txt:"소분용기 청결/소비기한 [3점]", max:3, type:"general"}, {id:"g2_21", txt:"수족관 청결 관리 [2점]", max:2, type:"general"},
+                    {id:"g2_22", txt:"잔반/일반 쓰레기통 구분 및 청결 [4점]", max:4, type:"general"}, {id:"g2_23", txt:"손세척 시설 및 청결 [2점]", max:2, type:"general"}, {id:"g2_24", txt:"달걀/생선 등 온도 준수 보관 [5점]", max:5, type:"general"}
+                ]
+            },
+            {
+                cat: "종사자 및 화장실 관리 (12점)", items: [
+                    {id:"g3_1", txt:"위생교육 분기 1회 실시 [1점]", max:1, type:"general"}, {id:"g3_2", txt:"교육내용 주기적 확인 [2점]", max:2, type:"general"}, {id:"g3_3", txt:"두발/손톱 청결, 장신구 미착용 [1점]", max:1, type:"general"},
+                    {id:"g3_4", txt:"위생복/마스크 청결, 구분착용 [3점]", max:3, type:"general"}, {id:"g3_5", txt:"화장실 청결 및 환기 [2점]", max:2, type:"general"}, {id:"g3_6", txt:"손세척/건조 용품 구비 [3점]", max:3, type:"general"}
+                ]
+            },
+            {
+                cat: "공통분야 (가점)", items: [
+                    {id:"b_1", txt:"CCTV 주방 내부 실시간 공개 [2점]", max:2, type:"bonus"},
+                    {id:"b_2", txt:"식품관련 및 국가기관 자격증 소지자 [1점]", max:1, type:"bonus"},
+                    {id:"b_3", txt:"5년 이상 장기 근속자 [1점]", max:1, type:"bonus"},
+                    {id:"b_4", txt:"나트륨/당류 저감 메뉴 개발·판매 [1점]", max:1, type:"bonus"},
+                    {id:"b_5", txt:"알레르기, 영양성분 표시 등 [1점]", max:1, type:"bonus"},
+                    {id:"b_6", txt:"위생등급 유효기간 연장 이력 [3점]", max:3, type:"bonus"},
+                    {id:"b_7", txt:"모범음식점 등 지정업소 [2점]", max:2, type:"bonus"}
+                ]
+            }
+        ];
+
+        const canvas = document.getElementById('fx-canvas');
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const helperChar = document.getElementById('helper-char');
+        const motions = ['motion-jump', 'motion-spin', 'motion-squish', 'motion-wiggle']; 
+        const faces = ['face-happy', 'face-surprised', 'face-wink'];
+        
+        let isGolden = false; let isTransitioning = false; 
+        let pressTimer = null; let explodeTimer = null; let isPressing = false; 
+        let isInflating = false; let isPopped = false;
+        let pressStartTime = 0; let rafId = null;
+
+        function doClickAction() {
+            if (!isGolden && Math.random() < 0.03) { 
+                isTransitioning = true; isGolden = true; playMotionGraphicWipe(true); return; 
+            }
+            helperChar.classList.remove(...motions, ...faces, 'face-puff'); void helperChar.offsetWidth; 
+            const rm = motions[Math.floor(Math.random() * motions.length)]; const rf = faces[Math.floor(Math.random() * faces.length)];
+            helperChar.classList.add(rm, rf); setTimeout(() => { helperChar.classList.remove(rm, rf); }, 600);
+        }
+
+        function playMotionGraphicWipe(isToGolden) {
+            canvas.style.display = 'block'; 
+            let start = null; const duration = 2000;
+            const particles = Array.from({length: 100}, () => ({ x: Math.random() * canvas.width, y: -Math.random()*canvas.height, size: Math.random() * 4 + 1.5, speedY: Math.random() * 15 + 10, speedX: Math.random() * 4 - 2, opacity: Math.random() * 0.8 + 0.2 }));
+
+            function render(time) {
+                if (!start) start = time; const elapsed = time - start; const progress = Math.min(elapsed / duration, 1);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                let overlayAlpha = 0;
+                if (progress < 0.4) overlayAlpha = progress / 0.4;
+                else if (progress < 0.6) { overlayAlpha = 1; if (!canvas.dataset.swapped) { toggleThemeDOM(isToGolden); canvas.dataset.swapped = 'true'; if(navigator.vibrate) {try{navigator.vibrate([100, 50, 100]);}catch(e){}} } }
+                else overlayAlpha = 1 - ((progress - 0.6) / 0.4);
+
+                const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                if (isToGolden) { gradient.addColorStop(0, `rgba(255, 223, 0, ${overlayAlpha})`); gradient.addColorStop(1, `rgba(212, 175, 55, ${overlayAlpha})`); }
+                else { gradient.addColorStop(0, `rgba(3, 110, 184, ${overlayAlpha})`); gradient.addColorStop(1, `rgba(0, 80, 150, ${overlayAlpha})`); }
+                ctx.fillStyle = gradient; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                particles.forEach(p => { p.y += p.speedY * (progress * 2); p.x += Math.sin(progress * 10 + p.speedX) * 2; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fillStyle = isToGolden ? `rgba(255, 255, 255, ${p.opacity})` : `rgba(150, 200, 255, ${p.opacity})`; ctx.shadowBlur = 10; ctx.shadowColor = isToGolden ? "#FFF" : "#00FFFF"; ctx.fill(); });
+
+                if (progress < 1) requestAnimationFrame(render);
+                else { canvas.style.display = 'none'; canvas.dataset.swapped = ''; isTransitioning = false; }
+            }
+            requestAnimationFrame(render);
+        }
+
+        function toggleThemeDOM(toGolden) {
+            const greeting = document.getElementById('main-greeting');
+            if (toGolden) { document.body.classList.add('golden-theme'); helperChar.classList.add('golden'); greeting.innerHTML = "✨ 앗! 황금이 발견! ✨<br>오늘 하루 대박나실 거예요!"; }
+            else { document.body.classList.remove('golden-theme'); helperChar.classList.remove('golden'); greeting.innerHTML = "카다로스 업무 도우미입니다.<br>무엇을 도와드릴까요?"; }
+        }
+
+        function triggerLiquidPop() {
+            isPopped = true;
+            isInflating = false;
+            
+            helperChar.style.transition = 'none';
+            helperChar.style.opacity = '0';
+            helperChar.style.transform = 'scale(0)';
+            helperChar.classList.remove('face-puff');
+
+            canvas.style.display = 'block';
+
+            const rect = helperChar.parentElement.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            let pList = Array.from({length: 70}, () => {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 45 + 15; 
+                let pColor = isGolden ? 
+                    `rgba(${200 + Math.random()*55}, ${150 + Math.random()*50}, 30, 1)` : 
+                    `rgba(${10 + Math.random()*20}, ${90 + Math.random()*40}, ${170 + Math.random()*50}, 1)`;
+                return { x: centerX, y: centerY, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, size: Math.random() * 14 + 4, friction: 0.80 + Math.random() * 0.08, color: pColor };
+            });
+
+            let pStartTime = performance.now();
+
+            function renderPop(time) {
+                const elapsed = time - pStartTime;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                let allGathered = true;
+
+                pList.forEach(p => {
+                    if (elapsed < 800) {
+                        p.x += p.vx; p.y += p.vy; p.vx *= p.friction; p.vy *= p.friction; allGathered = false;
+                    } else if (elapsed >= 800 && elapsed < 1800) {
+                        const dx = centerX - p.x; const dy = centerY - p.y; const dist = Math.sqrt(dx*dx + dy*dy);
+                        if (dist > 8) {
+                            allGathered = false;
+                            const gatherForce = Math.pow((elapsed - 800) / 1000, 2) * 0.4; 
+                            p.vx += dx * gatherForce; p.vy += dy * gatherForce; p.vx *= 0.88; p.vy *= 0.88;
+                            p.x += p.vx; p.y += p.vy;
+                        } else { p.x = centerX; p.y = centerY; p.vx = 0; p.vy = 0; }
+                    }
+
+                    const speedSq = p.vx*p.vx + p.vy*p.vy;
+                    const stretch = Math.max(1, speedSq * 0.015);
+                    const angle = Math.atan2(p.vy, p.vx);
+
+                    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(angle); ctx.beginPath();
+                    ctx.ellipse(0, 0, p.size * stretch, p.size, 0, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color; ctx.fill(); ctx.restore();
+                });
+
+                if (elapsed < 1800 || !allGathered) { rafId = requestAnimationFrame(renderPop); } 
+                else {
+                    canvas.style.display = 'none';
+                    helperChar.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s';
+                    helperChar.style.opacity = '1';
+                    helperChar.style.transform = 'scale(1)';
+                    if(navigator.vibrate) {try{navigator.vibrate(40);}catch(e){}}
+                    setTimeout(() => { isPopped = false; helperChar.style.transition = 'transform 0.4s ease'; helperChar.style.transform = ''; }, 600);
+                }
+            }
+            if(navigator.vibrate) {try{navigator.vibrate([80, 40, 80]);}catch(e){}} 
+            rafId = requestAnimationFrame(renderPop);
+        }
+
+        const startPress = (e) => { 
+            if (isTransitioning || isPopped) return; 
+            isPressing = true; pressStartTime = Date.now();
+            pressTimer = setTimeout(() => { 
+                if(!isPressing) return;
+                isInflating = true; helperChar.classList.add('face-puff');
+                helperChar.style.transition = 'transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                helperChar.style.transform = 'scale(2.5)';
+                explodeTimer = setTimeout(() => { if(isInflating) triggerLiquidPop(); }, 1500); 
+            }, 500); 
+        };
+
+        const cancelPress = (e) => { 
+            if(!isPressing) return;
+            isPressing = false; clearTimeout(pressTimer); clearTimeout(explodeTimer);
+            const holdDuration = Date.now() - pressStartTime;
+            if(holdDuration < 500 && !isPopped && !isTransitioning) { doClickAction(); } 
+            else if (isInflating && !isPopped) {
+                isInflating = false; helperChar.classList.remove('face-puff');
+                helperChar.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                helperChar.style.transform = 'scale(1)';
+            }
+        };
+
+        if(helperChar) {
+            helperChar.addEventListener('mousedown', startPress); helperChar.addEventListener('touchstart', startPress, {passive: true});
+            helperChar.addEventListener('mouseup', cancelPress); helperChar.addEventListener('mouseleave', cancelPress);
+            helperChar.addEventListener('touchend', cancelPress); helperChar.addEventListener('touchcancel', cancelPress);
+        }
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active')); this.classList.add('active');
+                const targetId = this.getAttribute('data-target');
+                document.querySelectorAll('.view-section').forEach(section => { section.classList.remove('active'); });
+                document.getElementById(targetId).classList.add('active');
+                
+                if(targetId === 'view-calendar') { setTimeout(() => { try{ window.renderCalendar(); }catch(err){} }, 50); }
+                if(targetId === 'view-store') { window.openStoreView('main'); try{ window.renderBlockMap(); }catch(err){} }
+                if(targetId === 'view-consulting') { try{ window.renderConsultingList(); }catch(err){} }
+                if(targetId === 'view-settings') { window.openSettingsSub('settings-main'); }
+            });
+        });
+
+        document.querySelectorAll('[data-target-view]').forEach(el => {
+            el.addEventListener('click', () => {
+                const view = el.getAttribute('data-target-view');
+                const filter = el.getAttribute('data-filter');
+                window.openStoreView(view, filter ? filter.split(',') : null);
+            });
+        });
+
+        document.querySelectorAll('[data-target-sub]').forEach(el => {
+            el.addEventListener('click', () => {
+                window.openSettingsSub(el.getAttribute('data-target-sub'));
+            });
+        });
+
+        const searchInput = document.getElementById('home-search-input');
+        if(searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.trim().toLowerCase();
+                const dash = document.getElementById('dashboard'); const dashHeader = document.getElementById('home-dash-header'); const resWrap = document.getElementById('home-search-results');
+                if (query) {
+                    dash.style.display = 'none'; dashHeader.parentElement.style.display = 'none'; resWrap.style.display = 'flex'; resWrap.innerHTML = '';
+                    const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
+                    const matched = storesData.filter(s => s.name.toLowerCase().includes(query)).sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
+                    if (matched.length === 0) resWrap.innerHTML = '<div class="store-empty">검색 결과가 없습니다.</div>';
+                    else {
+                        matched.forEach(store => {
+                            const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`;
+                            card.onclick = () => { document.querySelector('.nav-item[data-target="view-store"]').click(); window.openStoreView('manage', [store.status]); window.openEditStore(store.id); };
+                            card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>지역</span> <strong>${store.region}</strong></div>`;
+                            resWrap.appendChild(card);
+                        });
+                    }
+                } else { dash.style.display = 'grid'; dashHeader.parentElement.style.display = 'flex'; resWrap.style.display = 'none'; }
+            });
+        }
+
+        function updateDashboard() {
+            let inProgressCount = 0; let passedCount = 0; let failedCount = 0; let thisWeekCount = 0; let nextWeekCount = 0;
+            const now = new Date(); now.setHours(0,0,0,0);
+            const endOfWeek = new Date(now); const diff = now.getDay() === 0 ? 0 : 7 - now.getDay(); endOfWeek.setDate(now.getDate() + diff); endOfWeek.setHours(23,59,59,999);
+            const nextWeekStart = new Date(endOfWeek); nextWeekStart.setDate(nextWeekStart.getDate() + 1); nextWeekStart.setHours(0,0,0,0);
+            const nextWeekEnd = new Date(nextWeekStart); nextWeekEnd.setDate(nextWeekStart.getDate() + 6); nextWeekEnd.setHours(23,59,59,999);
+
+            storesData.forEach(store => {
+                if (store.status === '진행중' || store.status === '보류') inProgressCount++;
+                if (store.status === '합격') passedCount++;
+                if (store.status === '불합격') failedCount++;
+                
+                [store.consult1, store.consult2].filter(d => d).forEach(dStr => {
+                    const d = new Date(dStr);
+                    if(d >= now && d <= endOfWeek) thisWeekCount++;
+                    if(d >= nextWeekStart && d <= nextWeekEnd) nextWeekCount++;
+                });
+            });
+
+            const completedCount = passedCount + failedCount;
+            const successRate = completedCount === 0 ? 0 : Math.round((passedCount / completedCount) * 100);
+
+            const e1 = document.getElementById('dash-inprogress'); if(e1) e1.innerHTML = `<b>${inProgressCount}</b>개의 매장을 진행중이에요.`;
+            const e2 = document.getElementById('dash-completed'); if(e2) e2.innerHTML = `<b>${completedCount}</b>개의 매장을<br>완료했어요.`;
+            const e3 = document.getElementById('dash-success'); if(e3) e3.innerHTML = `컨설팅 성공률은<br><b>${successRate}</b>%에요.`;
+            const e4 = document.getElementById('dash-this-week'); if(e4) e4.innerHTML = `<b>${thisWeekCount}</b>번의 방문<br>일정이 있어요!`;
+            const e5 = document.getElementById('dash-next-week'); if(e5) e5.innerHTML = `<b>${nextWeekCount}</b>번의 방문<br>일정이 있어요!`;
+        }
+
+        let currentDate = new Date(); let selectedDateStr = null;
+        function getSchedulesForDate(dateStr) {
+            let results = [];
+            storesData.forEach(store => {
+                if(store.applyDate === dateStr) results.push({ name: store.name, type: "신청일", typeClass: "type-apply" });
+                if(store.consult1 === dateStr) results.push({ name: store.name, type: "1차 컨설팅", typeClass: "" });
+                if(store.consult2 === dateStr) results.push({ name: store.name, type: "2차 컨설팅", typeClass: "" });
+                if(store.inspect === dateStr) results.push({ name: store.name, type: "심사일", typeClass: "type-inspect" });
+            }); return results;
+        }
+
+        function generateCalendarDOM() {
+            const year = currentDate.getFullYear(); const month = currentDate.getMonth(); const today = new Date();
+            const yEl = document.getElementById('cal-year'); if(yEl) yEl.textContent = year;
+            const mEl = document.getElementById('cal-month'); if(mEl) mEl.textContent = (month + 1) + '월';
+            const firstDay = new Date(year, month, 1).getDay(); const daysInMonth = new Date(year, month + 1, 0).getDate();
+            let html = '';
+            for (let i = 0; i < firstDay; i++) { html += `<div class="calendar-cell empty"></div>`; }
+            for (let i = 1; i <= daysInMonth; i++) {
+                const cellDateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`; let cls = 'calendar-cell';
+                if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) { cls += ' today'; if(!selectedDateStr) window.selectDate(cellDateStr); }
+                if (cellDateStr === selectedDateStr) cls += ' selected';
+                let markers = ''; const schedules = getSchedulesForDate(cellDateStr);
+                if (schedules.length > 0) {
+                    markers += '<div class="marker-wrap">';
+                    schedules.slice(0, 3).forEach(sch => { let mcls = 'marker'; if(sch.type === '심사일') mcls += ' marker-red'; if(sch.type === '신청일') mcls += ' marker-yellow'; markers += `<div class="${mcls}"></div>`; });
+                    markers += '</div>';
+                }
+                html += `<div class="${cls}" onclick="window.selectDate('${cellDateStr}')">${i}${markers}</div>`;
+            } return html;
+        }
+
+        window.renderCalendar = function() {
+            const grid = document.getElementById('calendar-grid'); 
+            if(!grid) return;
+            grid.innerHTML = generateCalendarDOM();
+        }
+
+        window.selectDate = function(dateStr) {
+            selectedDateStr = dateStr; const dateObj = new Date(dateStr); 
+            const sTitle = document.getElementById('selected-date-title');
+            if(sTitle) sTitle.textContent = `${dateObj.getMonth()+1}월 ${dateObj.getDate()}일 일정`;
+            const listEl = document.getElementById('schedule-list'); 
+            if(!listEl) return;
+            listEl.innerHTML = ''; const schedules = getSchedulesForDate(dateStr);
+            if (schedules.length > 0) schedules.forEach(item => { listEl.innerHTML += `<div class="schedule-box ${item.typeClass}"><span class="sch-name">${item.name}</span><span class="sch-type">${item.type}</span></div>`; });
+            else listEl.innerHTML = '<div class="schedule-empty">등록된 일정이 없습니다.</div>';
+            window.renderCalendar();
+        }
+
+        const calWrap = document.getElementById('calendar-wrapper'); let isTwoFing = false; let sX = 0; let cX = 0;
+        if(calWrap) {
+            calWrap.addEventListener('touchstart', (e) => { if (e.touches.length === 2) { isTwoFing = true; sX = (e.touches[0].clientX + e.touches[1].clientX) / 2; e.preventDefault(); } }, {passive: false});
+            calWrap.addEventListener('touchmove', (e) => { if (isTwoFing && e.touches.length === 2) { cX = (e.touches[0].clientX + e.touches[1].clientX) / 2; e.preventDefault(); } }, {passive: false});
+            calWrap.addEventListener('touchend', (e) => { 
+                if (isTwoFing) { 
+                    let dX = sX - cX; 
+                    if (Math.abs(dX) > 40 && cX !== 0) { 
+                        const grid = document.getElementById('calendar-grid');
+                        const outClass = dX > 0 ? 'slide-left-out' : 'slide-right-out'; const inClass = dX > 0 ? 'slide-right-in' : 'slide-left-in';
+                        grid.classList.add(outClass);
+                        setTimeout(() => {
+                            if (dX > 0) currentDate.setMonth(currentDate.getMonth() + 1); else currentDate.setMonth(currentDate.getMonth() - 1);
+                            grid.classList.remove(outClass); grid.innerHTML = generateCalendarDOM(); grid.classList.add(inClass);
+                            setTimeout(() => { grid.classList.remove(inClass); window.renderCalendar(); }, 50);
+                        }, 200);
+                    } isTwoFing = false; sX = 0; cX = 0; 
+                } 
+            });
+        }
+
+        window.openYearModal = function() { document.getElementById('year-input').value = currentDate.getFullYear(); document.getElementById('year-modal').style.display = 'flex'; void document.getElementById('year-modal').offsetWidth; document.getElementById('year-modal').classList.add('show'); };
+        window.closeYearModal = function() { document.getElementById('year-modal').classList.remove('show'); setTimeout(()=> {document.getElementById('year-modal').style.display = 'none';}, 200); };
+        window.applyYear = function() { const newYear = document.getElementById('year-input').value; if (newYear && !isNaN(newYear)) { currentDate.setFullYear(parseInt(newYear)); window.renderCalendar(); window.closeYearModal(); } };
+
+        let currentListFilters = []; let isSelectionMode = false; let selectedStoreIds = new Set();
+        window.goBackToStoreManage = function() { window.openStoreView('manage', currentListFilters && currentListFilters.length ? currentListFilters : ['진행중']); };
+
+        window.openStoreView = function(viewName, filters = null) {
+            document.querySelectorAll('.store-sub-view').forEach(s => s.classList.remove('active')); window.cancelSelectionMode();
+            if (filters) currentListFilters = filters; 
+            if (viewName === 'main') { document.getElementById('store-main-view').classList.add('active'); window.renderBlockMap(); }
+            if (viewName === 'register') document.getElementById('store-register').classList.add('active');
+            if (viewName === 'manage') {
+                if(!currentListFilters || currentListFilters.length === 0) currentListFilters = ['진행중', '보류', '합격', '불합격'];
+                document.getElementById('store-manage').classList.add('active');
+                let titleStr = "매장 목록";
+                if(currentListFilters.includes('진행중') && currentListFilters.length===1) titleStr = "진행 매장 관리";
+                if(currentListFilters.includes('보류') && currentListFilters.length===1) titleStr = "보류 매장 관리";
+                if(currentListFilters.includes('합격')) titleStr = "완료 매장 관리";
+                document.getElementById('store-list-title').textContent = titleStr;
+                renderStoreList();
+            }
+        };
+
+        const provSelect = document.getElementById('region-province'); const citySelect = document.getElementById('region-city');
+        if(provSelect) {
+            provSelect.addEventListener('change', function() {
+                const selected = this.value; citySelect.innerHTML = '<option value="" disabled selected>시/군/구</option>';
+                if(regionData[selected]) { regionData[selected].forEach(city => { const option = document.createElement('option'); option.value = city; option.textContent = city; citySelect.appendChild(option); }); citySelect.disabled = false; } else citySelect.disabled = true;
+            });
+        }
+
+        const storeForm = document.getElementById('new-store-form');
+        if(storeForm) {
+            storeForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const price = Number(document.getElementById('store-price').value) || 0;
+                const deposit = Number(document.getElementById('store-deposit').value) || 0;
+                const newStore = {
+                    id: Date.now(), name: document.getElementById('store-name').value, status: '진행중', 
+                    region: `${document.getElementById('region-province').value} ${document.getElementById('region-city').value}`,
+                    priceTotal: price, priceDeposit: deposit, vat: document.querySelector('input[name="vat"]:checked').value,
+                    applyDate: document.getElementById('date-apply').value, consult1: "", consult2: "", inspect: "",
+                    checklistData: null, memo: "", providedItems: {}, documents: {}
+                };
+                storesData.unshift(newStore); saveData(); window.updateAllUIs(); 
+                window.showToast("저장되었습니다.");
+                this.reset(); citySelect.innerHTML = '<option value="" disabled selected>시/군/구</option>'; citySelect.disabled = true;
+                window.openStoreView('manage', ['진행중']); 
+            });
+        }
+
+        function getStatusClass(status) {
+            if(status === '합격') return 'status-pass'; if(status === '불합격') return 'status-fail'; if(status === '보류') return 'status-pending'; return 'status-progress';
+        }
+
+        window.activateSelectionMode = function(firstId) { isSelectionMode = true; selectedStoreIds.add(firstId); renderStoreList(); window.updateSelectionBar(); };
+        window.cancelSelectionMode = function() { isSelectionMode = false; selectedStoreIds.clear(); document.getElementById('selection-bar').classList.remove('active'); renderStoreList(); };
+        window.updateSelectionBar = function() {
+            const bar = document.getElementById('selection-bar');
+            if(isSelectionMode) { bar.classList.add('active'); document.getElementById('selection-count').textContent = `${selectedStoreIds.size}개 선택됨`; } else bar.classList.remove('active');
+        };
+
+        let pwTargetAction = null; let deleteTargetId = null;
+
+        window.checkPwAndOpenAction = function(action, id = null) {
+            pwTargetAction = action; deleteTargetId = id;
+            document.getElementById('pw-modal-title').textContent = "관리자 비밀번호 입력";
+            document.getElementById('del-pw-input').value = '';
+            document.getElementById('pw-modal').style.display = 'flex';
+            void document.getElementById('pw-modal').offsetWidth;
+            document.getElementById('pw-modal').classList.add('show');
+        };
+        
+        window.openDeletePwModal = function(type) {
+            if(type === 'store' && selectedStoreIds.size === 0) return;
+            if(type === 'order' && selectedOrderIds.size === 0) return;
+            window.checkPwAndOpenAction('delete_' + type);
+        };
+
+        window.closePwModal = function() {
+            document.getElementById('pw-modal').classList.remove('show');
+            setTimeout(() => document.getElementById('pw-modal').style.display = 'none', 200);
+        };
+
+        window.confirmPwAction = function() {
+            const inputPw = document.getElementById('del-pw-input').value;
+            if(inputPw === adminPw) {
+                window.closePwModal();
+                if(pwTargetAction === 'delete_store') { storesData = storesData.filter(s => !selectedStoreIds.has(s.id)); window.cancelSelectionMode(); saveData(); window.updateAllUIs(); window.showToast("삭제되었습니다."); } 
+                else if(pwTargetAction === 'delete_order') { ordersData = ordersData.filter(o => !selectedOrderIds.has(o.id)); window.cancelOrderSelectionMode(); saveData(); window.updateAllUIs(); window.showToast("삭제되었습니다."); }
+                else if(pwTargetAction === 'delete_item') { customItems = customItems.filter((_, idx) => idx !== deleteTargetId); saveData(); window.updateAllUIs(); window.showToast("삭제되었습니다."); }
+                else if(pwTargetAction === 'delete_vendor') { customVendors = customVendors.filter((_, idx) => idx !== deleteTargetId); saveData(); window.updateAllUIs(); window.showToast("삭제되었습니다."); }
+                else if(pwTargetAction === 'open_manage_items') { window.openSettingsSub('settings-manage-items'); }
+                else if(pwTargetAction === 'open_manage_vendors') { window.openSettingsSub('settings-manage-vendors'); }
+            } else { window.showToast("비밀번호가 일치하지 않습니다."); }
+        };
+
+        function renderStoreList() {
+            const container = document.getElementById('store-list-container');
+            if(!container) return;
+            container.innerHTML = ''; container.classList.toggle('selection-mode-active', isSelectionMode);
+
+            const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
+            const filtered = storesData.filter(s => currentListFilters.includes(s.status)).sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
+
+            if(filtered.length === 0) { container.innerHTML = '<div class="store-empty">해당되는 매장이 없습니다.</div>'; return; }
+            
+            filtered.forEach(store => {
+                const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`;
+                if (selectedStoreIds.has(store.id)) card.classList.add('is-selected');
+                
+                const balance = (store.priceTotal || 0) - (store.priceDeposit || 0);
+                let balanceHtml = balance > 0 ? `<div class="store-info-line"><span>미수금</span> <strong style="color:var(--red-color)">${balance.toLocaleString()}원</strong></div>` : `<div class="store-info-line"><span>미수금</span> <strong style="color:var(--brand-color)">결제 완료</strong></div>`;
+
+                card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>지역</span> <strong>${store.region}</strong></div><div class="store-info-line"><span>신청일</span> <strong>${store.applyDate || '-'}</strong></div>${balanceHtml}<div class="select-indicator"></div>`;
+
+                let tPressTimer; let tIsPressing = false; let startY = 0;
+                const cStartPress = (e) => { if(isSelectionMode) return; tIsPressing = true; startY = e.touches ? e.touches[0].clientY : e.clientY; tPressTimer = setTimeout(() => { tIsPressing = false; window.activateSelectionMode(store.id); if(navigator.vibrate){ try{ navigator.vibrate(50); }catch(err){} } }, 1500); };
+                const cCancelPress = () => { clearTimeout(tPressTimer); tIsPressing = false; };
+                const movePress = (e) => { const currentY = e.touches ? e.touches[0].clientY : e.clientY; if(Math.abs(currentY - startY) > 10) cCancelPress(); };
+
+                card.addEventListener('mousedown', cStartPress); card.addEventListener('touchstart', cStartPress, {passive:true});
+                card.addEventListener('mousemove', movePress); card.addEventListener('touchmove', movePress, {passive:true});
+                card.addEventListener('mouseup', cCancelPress); card.addEventListener('mouseleave', cCancelPress); card.addEventListener('touchend', cCancelPress);
+
+                card.addEventListener('click', () => {
+                    if (isSelectionMode) { if (selectedStoreIds.has(store.id)) selectedStoreIds.delete(store.id); else selectedStoreIds.add(store.id); renderStoreList(); window.updateSelectionBar(); }
+                    else window.openEditStore(store.id);
+                }); container.appendChild(card);
+            });
+        }
+
+        window.openEditStore = function(id) {
+            const store = storesData.find(s => s.id === id); if(!store) return;
+            document.getElementById('edit-store-id').value = store.id; 
+            document.getElementById('edit-store-status').value = store.status; 
+            document.getElementById('edit-store-name').value = store.name; 
+            document.getElementById('edit-store-price').value = store.priceTotal || 0;
+            document.getElementById('edit-store-deposit').value = store.priceDeposit || 0;
+            document.getElementById('edit-date-apply').value = store.applyDate; 
+            document.getElementById('edit-date-consult1').value = store.consult1; 
+            document.getElementById('edit-date-consult2').value = store.consult2; 
+            document.getElementById('edit-date-inspect').value = store.inspect;
+            
+            const viewBtn = document.getElementById('btn-view-checklist');
+            if(store.checklistData || store.memo || (store.providedItems && Object.keys(store.providedItems).length > 0) || (store.documents && Object.keys(store.documents).length > 0)) {
+                viewBtn.style.display = 'block';
+                viewBtn.onclick = () => { document.querySelector('.nav-item[data-target="view-consulting"]').click(); window.openChecklist(store.id); };
+            } else { viewBtn.style.display = 'none'; }
+
+            document.querySelectorAll('.store-sub-view').forEach(s => s.classList.remove('active')); document.getElementById('store-edit').classList.add('active');
+        };
+
+        const editForm = document.getElementById('edit-store-form');
+        if(editForm) {
+            editForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const store = storesData.find(s => s.id === parseInt(document.getElementById('edit-store-id').value));
+                if(store) {
+                    store.status = document.getElementById('edit-store-status').value; 
+                    store.name = document.getElementById('edit-store-name').value; 
+                    store.priceTotal = Number(document.getElementById('edit-store-price').value) || 0;
+                    store.priceDeposit = Number(document.getElementById('edit-store-deposit').value) || 0;
+                    store.applyDate = document.getElementById('edit-date-apply').value; 
+                    store.consult1 = document.getElementById('edit-date-consult1').value; 
+                    store.consult2 = document.getElementById('edit-date-consult2').value; 
+                    store.inspect = document.getElementById('edit-date-inspect').value;
+                    saveData(); window.updateAllUIs(); window.showToast("저장되었습니다."); window.goBackToStoreManage(); 
+                }
+            });
+        }
+
+        window.openChangePwModal = function() {
+            document.getElementById('current-pw-input').value = ''; document.getElementById('new-pw-input').value = '';
+            document.getElementById('change-pw-modal').style.display = 'flex'; void document.getElementById('change-pw-modal').offsetWidth; document.getElementById('change-pw-modal').classList.add('show');
+        };
+        window.closeChangePwModal = function() { document.getElementById('change-pw-modal').classList.remove('show'); setTimeout(() => document.getElementById('change-pw-modal').style.display = 'none', 200); };
+        window.confirmChangePw = function() {
+            const current = document.getElementById('current-pw-input').value; const newPw = document.getElementById('new-pw-input').value;
+            if(current === adminPw) {
+                if(newPw.length < 4) { window.showToast("새 비밀번호는 4자리 이상 입력해주세요."); return; }
+                adminPw = newPw; localStorage.setItem('kadarosAdminPw', adminPw); window.closeChangePwModal(); window.showToast("비밀번호가 성공적으로 변경되었습니다.");
+            } else { window.showToast("현재 비밀번호가 틀립니다."); }
+        };
+
+        window.switchMapTab = function(regionKey) {
+            document.querySelectorAll('.map-tab').forEach(t => t.classList.remove('active')); document.querySelector(`.map-tab[data-target="${regionKey}"]`).classList.add('active');
+            document.getElementById('block-map-seoul').style.display = regionKey === 'seoul' ? 'grid' : 'none'; document.getElementById('block-map-gyeonggi').style.display = regionKey === 'gyeonggi' ? 'grid' : 'none';
+        };
+
+        window.renderBlockMap = function() {
+            const drawBlocks = (targetId, dataArr) => {
+                const grid = document.getElementById(targetId);
+                if(!grid) return;
+                grid.innerHTML = '';
+                dataArr.forEach(cityName => {
+                    const count = storesData.filter(s => s.region.includes(cityName)).length;
+                    const block = document.createElement('div'); block.className = `map-block ${count > 0 ? (count > 2 ? 'has-store-dense' : 'has-store') : ''}`; block.innerHTML = cityName + (count > 0 ? `<div class="badge">${count}</div>` : '');
+                    block.onclick = () => {
+                        document.querySelectorAll('.map-block').forEach(b => b.classList.remove('popped')); block.classList.add('popped'); document.getElementById('dimmer').classList.add('active');
+                        document.getElementById('ts-title').textContent = cityName + " 현황"; const list = document.getElementById('ts-content'); list.innerHTML = '';
+                        const statusPriority = { '진행중': 1, '보류': 2, '불합격': 3, '합격': 4 };
+                        const matched = storesData.filter(s => s.region.includes(cityName)).sort((a, b) => statusPriority[a.status] - statusPriority[b.status]);
+                        if(matched.length === 0) list.innerHTML = '<div class="store-empty" style="margin-top:20px;">등록된 매장이 없습니다.</div>';
+                        else {
+                            matched.forEach(store => {
+                                const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`; card.style.marginBottom = '10px'; card.onclick = () => { window.closeMapOverlay(); window.openStoreView('manage', [store.status]); window.openEditStore(store.id); };
+                                
+                                const bal = (store.priceTotal || 0) - (store.priceDeposit || 0);
+                                let balHtml = bal > 0 ? `<strong style="color:var(--red-color)">미수금 ${bal.toLocaleString()}원</strong>` : `<strong style="color:var(--brand-color)">결제 완료</strong>`;
+                                
+                                card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>결제현황</span> ${balHtml}</div>`; list.appendChild(card);
+                            });
+                        }
+                        document.getElementById('top-sheet').classList.add('active');
+                    }; grid.appendChild(block);
+                });
+            };
+            drawBlocks('block-map-seoul', regionData["서울특별시"]); drawBlocks('block-map-gyeonggi', regionData["경기도"]);
+        }
+        window.closeMapOverlay = function() { document.querySelectorAll('.map-block').forEach(b => b.classList.remove('popped')); document.getElementById('dimmer').classList.remove('active'); document.getElementById('top-sheet').classList.remove('active'); };
+
+        window.renderConsultingList = function() {
+            document.getElementById('consult-check-view').style.display = 'none'; document.getElementById('consult-list-view').style.display = 'flex';
+            const list = document.getElementById('consult-store-list'); 
+            if(!list) return;
+            list.innerHTML = '';
+            const inProgress = storesData.filter(s => s.status === '진행중' || s.status === '보류');
+            if(inProgress.length === 0) { list.innerHTML = '<div class="store-empty">진행중인 매장이 없습니다.</div>'; return; }
+            inProgress.forEach(store => {
+                const card = document.createElement('div'); card.className = `store-card ${getStatusClass(store.status)}`; card.onclick = () => window.openChecklist(store.id);
+                card.innerHTML = `<h3>${store.name} <span class="status-badge">${store.status}</span></h3><div class="store-info-line"><span>신청일</span> <strong>${store.applyDate || '-'}</strong></div>`; list.appendChild(card);
+            });
+        }
+
+        window.openChecklist = function(storeId) {
+            currentChecklistStoreId = storeId;
+            const store = storesData.find(s => s.id === storeId); if(!store) return;
+            currentChecklistData = store.checklistData || {};
+            document.getElementById('memo-textarea').value = store.memo || '';
+            document.getElementById('check-store-title').textContent = `${store.name} 평가표`;
+            document.getElementById('consult-list-view').style.display = 'none'; document.getElementById('consult-check-view').style.display = 'flex';
+            
+            const accordion = document.getElementById('checklist-accordion'); accordion.innerHTML = '';
+            hygieneChecklistMaster.forEach((cat, index) => {
+                const itemDiv = document.createElement('div'); itemDiv.className = 'accordion-item';
+                let html = `<div class="accordion-header" onclick="this.nextElementSibling.classList.toggle('active'); this.classList.toggle('active');">
+                                ${cat.cat} <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+                            </div><div class="accordion-content ${index===0 ? 'active' : ''}">`; 
+                cat.items.forEach(itm => {
+                    const savedVal = currentChecklistData[itm.id];
+                    let isChecked = false; let isNA = (savedVal === 'NA');
+                    if (!isNA) {
+                        if (itm.type === 'basic') isChecked = (savedVal === 'O');
+                        else isChecked = (savedVal !== undefined && parseInt(savedVal) === itm.max); 
+                    }
+
+                    let naHtml = '';
+                    if (itm.type === 'general') { naHtml = `<button class="btn-na ${isNA ? 'active' : ''}" onclick="window.toggleNA(this)">비해당</button>`; }
+
+                    let formattedTxt = itm.txt.replace(/(\[[0-9]+점\])/g, '<span style="color:var(--gray-400); font-size:13px; font-weight:500; margin-left:2px;">$1</span>');
+
+                    html += `
+                        <div class="check-item-row" data-na="${isNA}">
+                            <div class="chk-info"><span class="chk-text">${formattedTxt}</span></div>
+                            <div class="chk-actions">
+                                ${naHtml}
+                                <label>
+                                    <input type="checkbox" class="hygiene-check score-input" data-id="${itm.id}" data-type="${itm.type}" value="${itm.max}" ${isChecked ? 'checked' : ''} ${isNA ? 'disabled' : ''} onchange="window.calcTotal()">
+                                    <div class="custom-chk"></div>
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`; itemDiv.innerHTML = html; accordion.appendChild(itemDiv);
+            });
+            window.calcTotal();
+        };
+
+        window.closeChecklist = function() { window.renderConsultingList(); };
+
+        window.toggleNA = function(btn) {
+            const row = btn.closest('.check-item-row'); const chk = row.querySelector('.hygiene-check'); const isNA = row.dataset.na === 'true';
+            if (isNA) { row.dataset.na = 'false'; btn.classList.remove('active'); chk.disabled = false; } else { row.dataset.na = 'true'; btn.classList.add('active'); chk.disabled = true; chk.checked = false; }
+            window.calcTotal();
+        };
+
+        window.calcTotal = function() {
+            let sumGenPossible = 0; let sumGenObtained = 0; let sumBonus = 0;
+
+            document.querySelectorAll('.check-item-row').forEach(row => {
+                const chk = row.querySelector('.hygiene-check');
+                const isNA = row.dataset.na === 'true'; const isChecked = chk.checked;
+                const type = chk.dataset.type; const max = parseInt(chk.value) || 0;
+
+                if (type === 'general') { if (!isNA) { sumGenPossible += max; if (isChecked) sumGenObtained += max; } } 
+                else if (type === 'bonus') { if (isChecked) sumBonus += max; }
+            });
+
+            let score1 = 0;
+            if (sumGenPossible > 0) score1 = Math.round((sumGenObtained / sumGenPossible) * 100);
+            
+            let total = score1 + sumBonus;
+            const scoreEl = document.getElementById('check-total-score');
+            scoreEl.textContent = total + "점";
+            document.getElementById('check-breakdown').textContent = `(환산 ${score1}점 + 가점 ${sumBonus}점)`;
+
+            if(total < 85) scoreEl.style.color = 'var(--red-color)';
+            else scoreEl.style.color = 'var(--brand-color)';
+        };
+
+        window.saveChecklist = function() {
+            const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
+            const newData = {};
+            document.querySelectorAll('.check-item-row').forEach(row => {
+                const chk = row.querySelector('.score-input'); const isNA = row.dataset.na === 'true';
+                if(isNA) newData[chk.dataset.id] = 'NA';
+                else if(chk.dataset.type === 'basic') newData[chk.dataset.id] = chk.checked ? 'O' : 'X';
+                else newData[chk.dataset.id] = chk.checked ? chk.value : '0';
+            });
+            store.checklistData = newData; store.memo = document.getElementById('memo-textarea').value;
+            saveData(); window.showToast("저장되었습니다."); window.closeChecklist();
+        };
+
+        window.openMemo = function() { document.getElementById('memo-modal').classList.add('active'); };
+        window.closeMemo = function() { document.getElementById('memo-modal').classList.remove('active'); };
+        window.saveMemo = function() { 
+            const store = storesData.find(s => s.id === currentChecklistStoreId);
+            if(store) { store.memo = document.getElementById('memo-textarea').value; saveData(); }
+            window.closeMemo(); window.showToast("저장되었습니다."); 
+        };
+
+        window.openItemsModal = function() {
+            const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
+            const pItems = store.providedItems || {};
+            
+            const listContainer = document.getElementById('items-modal-list');
+            listContainer.innerHTML = '';
+
+            customItems.forEach(itemName => {
+                const isChecked = pItems[itemName] && pItems[itemName] > 0;
+                const qty = isChecked ? pItems[itemName] : '';
+                const display = isChecked ? 'block' : 'none';
+
+                listContainer.innerHTML += `
+                    <div class="item-chk-row-qty">
+                        <span>${itemName}</span>
+                        <input type="number" class="item-qty-input form-input" style="width:70px; padding:8px; margin-right:12px; text-align:center; display:${display};" min="1" placeholder="수량" value="${qty}">
+                        <label style="display:flex; align-items:center; cursor:pointer;">
+                            <input type="checkbox" class="hygiene-check item-chk" value="${itemName}" ${isChecked ? 'checked' : ''} onchange="window.toggleItemQty(this)">
+                            <div class="custom-chk"></div>
+                        </label>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('items-modal').classList.add('active');
+        };
+
+        window.toggleItemQty = function(chk) {
+            const row = chk.closest('.item-chk-row-qty');
+            const qtyInput = row.querySelector('.item-qty-input');
+            if(chk.checked) {
+                qtyInput.style.display = 'block';
+                if(!qtyInput.value) qtyInput.value = 1;
+            } else {
+                qtyInput.style.display = 'none';
+                qtyInput.value = '';
+            }
+        };
+
+        window.closeItemsModal = function() { document.getElementById('items-modal').classList.remove('active'); };
+        
+        window.saveItems = function() {
+            const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
+            const pItems = {};
+            document.querySelectorAll('.item-chk-row-qty').forEach(row => {
+                const chk = row.querySelector('.item-chk');
+                const qtyInput = row.querySelector('.item-qty-input');
+                if(chk.checked && qtyInput.value) {
+                    const qty = parseInt(qtyInput.value) || 0;
+                    if(qty > 0) pItems[chk.value] = qty;
+                }
+            });
+            store.providedItems = pItems;
+            saveData(); window.closeItemsModal(); window.showToast("저장되었습니다.");
+        };
+
+        window.openDocModal = function() {
+            const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
+            const docs = store.documents || {};
+            document.querySelectorAll('.doc-chk').forEach(chk => { chk.checked = !!docs[chk.value]; });
+            document.getElementById('doc-modal').classList.add('active');
+        };
+        window.closeDocModal = function() { document.getElementById('doc-modal').classList.remove('active'); };
+        window.saveDocs = function() {
+            const store = storesData.find(s => s.id === currentChecklistStoreId); if(!store) return;
+            const docs = {};
+            document.querySelectorAll('.doc-chk').forEach(chk => { docs[chk.value] = chk.checked; });
+            store.documents = docs;
+            saveData(); window.closeDocModal(); window.showToast("저장되었습니다.");
+        };
+
+        window.openSettingsSub = function(viewId) {
+            document.querySelectorAll('.settings-sub-view').forEach(el => el.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            if(viewId === 'settings-stock') window.renderStockTable();
+            if(viewId === 'settings-orders') { window.updateDropdowns(); window.renderOrderList(); }
+            if(viewId === 'settings-manage-items') window.renderManageItemsList();
+            if(viewId === 'settings-manage-vendors') window.renderManageVendorsList();
+        };
+
+        window.updateDropdowns = function() {
+            const itemSel = document.getElementById('order-item-sel');
+            const vendorSel = document.getElementById('order-vendor-sel');
+            if(itemSel) {
+                itemSel.innerHTML = '';
+                customItems.forEach(item => { const opt = document.createElement('option'); opt.value = item; opt.textContent = item; itemSel.appendChild(opt); });
+            }
+            if(vendorSel) {
+                vendorSel.innerHTML = '';
+                customVendors.forEach(vendor => { const opt = document.createElement('option'); opt.value = vendor; opt.textContent = vendor; vendorSel.appendChild(opt); });
+            }
+        };
+
+        window.renderStockTable = function() {
+            const tbody = document.getElementById('stock-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            
+            customItems.forEach(itemName => {
+                let totalOrdered = 0;
+                ordersData.forEach(order => { if(order.itemName === itemName) totalOrdered += order.qty; });
+                
+                let totalProvided = 0;
+                storesData.forEach(store => {
+                    if(store.providedItems && store.providedItems[itemName]) { totalProvided += store.providedItems[itemName]; }
+                });
+                
+                let currentStock = totalOrdered - totalProvided;
+                if(currentStock < 0) currentStock = 0;
+
+                let isRed = false;
+                if (itemName === '식품관리라벨(+@)' && currentStock <= 200) isRed = true;
+                else if (itemName !== '식품관리라벨(+@)' && currentStock <= 2) isRed = true;
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="text-align:left; padding-left:16px;">${itemName}</td>
+                        <td style="font-weight:800; color:${isRed ? 'var(--red-color)' : 'var(--brand-color)'}; font-size:16px;">${currentStock} 개</td>
+                    </tr>
+                `;
+            });
+        };
+
+        window.renderManageItemsList = function() {
+            const container = document.getElementById('manage-items-list');
+            if(!container) return;
+            container.innerHTML = '';
+            customItems.forEach((item, idx) => {
+                container.innerHTML += `
+                    <div class="list-item-card">
+                        <span>${item}</span>
+                        <button class="btn-sm-del" onclick="window.checkPwAndOpenAction('delete_item', ${idx})">삭제</button>
+                    </div>
+                `;
+            });
+        };
+
+        window.addCustomItem = function() {
+            const input = document.getElementById('new-custom-item-input');
+            const val = input.value.trim();
+            if(!val) return window.showToast("품목명을 입력하세요.");
+            if(customItems.includes(val)) return window.showToast("이미 존재하는 품목입니다.");
+            customItems.push(val); saveData(); window.updateAllUIs(); input.value = ''; window.showToast("추가되었습니다.");
+        };
+
+        window.renderManageVendorsList = function() {
+            const container = document.getElementById('manage-vendors-list');
+            if(!container) return;
+            container.innerHTML = '';
+            customVendors.forEach((vendor, idx) => {
+                container.innerHTML += `
+                    <div class="list-item-card">
+                        <span>${vendor}</span>
+                        <button class="btn-sm-del" onclick="window.checkPwAndOpenAction('delete_vendor', ${idx})">삭제</button>
+                    </div>
+                `;
+            });
+        };
+
+        window.addCustomVendor = function() {
+            const input = document.getElementById('new-custom-vendor-input');
+            const val = input.value.trim();
+            if(!val) return window.showToast("발주처를 입력하세요.");
+            if(customVendors.includes(val)) return window.showToast("이미 존재하는 발주처입니다.");
+            customVendors.push(val); saveData(); window.updateAllUIs(); input.value = ''; window.showToast("추가되었습니다.");
+        };
+
+        const orderForm = document.getElementById('new-order-form');
+        if(orderForm) {
+            orderForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const newOrder = {
+                    id: Date.now(),
+                    itemName: document.getElementById('order-item-sel').value,
+                    vendorName: document.getElementById('order-vendor-sel').value,
+                    qty: parseInt(document.getElementById('order-qty-input').value),
+                    price: parseInt(document.getElementById('order-price-input').value),
+                    date: document.getElementById('order-date-input').value
+                };
+                ordersData.unshift(newOrder);
+                saveData(); window.updateAllUIs(); 
+                this.reset(); window.showToast("발주 기록이 추가되었습니다.");
+            });
+        }
+
+        let selectedOrderIds = new Set();
+        let isOrderSelectionMode = false;
+
+        window.activateOrderSelectionMode = function(firstId) {
+            isOrderSelectionMode = true; selectedOrderIds.add(firstId); 
+            window.renderOrderList(); window.updateOrderSelectionBar(); 
+        };
+        window.cancelOrderSelectionMode = function() { 
+            isOrderSelectionMode = false; selectedOrderIds.clear(); 
+            document.getElementById('order-selection-bar').classList.remove('active'); 
+            window.renderOrderList(); 
+        };
+        window.updateOrderSelectionBar = function() {
+            const bar = document.getElementById('order-selection-bar');
+            if(isOrderSelectionMode) { 
+                bar.classList.add('active'); 
+                document.getElementById('order-selection-count').textContent = `${selectedOrderIds.size}개 선택됨`; 
+            } else { bar.classList.remove('active'); }
+        };
+
+        window.renderOrderList = function() {
+            const container = document.getElementById('order-list-container');
+            if(!container) return;
+            container.innerHTML = '';
+            container.classList.toggle('selection-mode-active', isOrderSelectionMode);
+
+            if(ordersData.length === 0) {
+                container.innerHTML = '<div class="store-empty" style="padding:30px;">발주 기록이 없습니다.</div>'; return;
+            }
+
+            const sorted = [...ordersData].sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            sorted.forEach(order => {
+                const card = document.createElement('div'); 
+                card.className = `store-card`;
+                if (selectedOrderIds.has(order.id)) card.classList.add('is-selected');
+
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <h3 style="margin:0; font-size:17px;"><span style="color:var(--gray-600); font-weight:600; font-size:13px; margin-right:4px;">[${order.vendorName}]</span>${order.itemName}</h3>
+                        <span style="font-weight:800; color:var(--brand-color); font-size:16px;">${order.qty} 개</span>
+                    </div>
+                    <div class="store-info-line"><span>발주일</span> <strong>${order.date}</strong></div>
+                    <div class="store-info-line"><span>결제금액</span> <strong>${(order.price || 0).toLocaleString()}원</strong></div>
+                    <div class="select-indicator"></div>
+                `;
+
+                let tPressTimer; let tIsPressing = false; let startY = 0;
+                const cStartPress = (e) => { if(isOrderSelectionMode) return; tIsPressing = true; startY = e.touches ? e.touches[0].clientY : e.clientY; tPressTimer = setTimeout(() => { tIsPressing = false; window.activateOrderSelectionMode(order.id); if(navigator.vibrate){ try{ navigator.vibrate(50); }catch(err){} } }, 1500); };
+                const cCancelPress = () => { clearTimeout(tPressTimer); tIsPressing = false; };
+                const movePress = (e) => { const currentY = e.touches ? e.touches[0].clientY : e.clientY; if(Math.abs(currentY - startY) > 10) cCancelPress(); };
+
+                card.addEventListener('mousedown', cStartPress); card.addEventListener('touchstart', cStartPress, {passive:true});
+                card.addEventListener('mousemove', movePress); card.addEventListener('touchmove', movePress, {passive:true});
+                card.addEventListener('mouseup', cCancelPress); card.addEventListener('mouseleave', cCancelPress); card.addEventListener('touchend', cCancelPress);
+
+                card.addEventListener('click', () => {
+                    if (isOrderSelectionMode) { 
+                        if (selectedOrderIds.has(order.id)) selectedOrderIds.delete(order.id); 
+                        else selectedOrderIds.add(order.id); 
+                        window.renderOrderList(); window.updateOrderSelectionBar(); 
+                    }
+                }); 
+                container.appendChild(card);
+            });
+        };
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(()=>{});
+            });
+        }
+    });
+    </script>
 </body>
 </html>
